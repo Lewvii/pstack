@@ -1,78 +1,78 @@
-# Pi equivalence
+# Pi 等价性
 
-This table lists every Claude Code mechanism the pstack plugin depends on, found by scanning `plugins/pstack/` for tool names, agent fields, hooks, paths, bundled skills, CLIs, and model names. Each row says how Pi 1.1 provides the same behavior and what proves it. `tests/pi-equivalence.test.mjs` fails when a row lacks a valid status, when an `extension` or `script` row names a test that does not exist, or when a `difference` row gives no reason.
+本表列出 pstack 插件依赖的每一个 Claude Code 机制，做法是扫描 `plugins/pstack/` 中的工具名、agent 字段、hook、路径、内置技能、CLI 和模型名。每一行说明 Pi 1.1 如何提供同样的行为，以及由什么来证明。当某行缺少合法状态、某个 `extension` 或 `script` 行点名了不存在的测试，或某个 `difference` 行没有给出原因时，`tests/pi-equivalence.test.mjs` 会失败。
 
-Statuses:
+状态含义：
 
-- `native`: Pi does it without pstack code.
-- `extension`: the [pstack Pi extension](../plugins/pstack/pi/index.ts) does it, proven by the named offline test.
-- `script`: a vendored script reads Pi's layout, proven by the named test.
-- `mapping`: the skills already describe the behavior in prose, and [pi-tools.md](../plugins/pstack/skills/poteto-mode/references/pi-tools.md) names the Pi equivalent.
-- `difference`: Pi behaves differently, and the reason column says why no skill depends on it for a correct result.
-- `n/a`: the plugin mentions it but no behavior depends on it.
+- `native`：Pi 无需 pstack 代码即可完成。
+- `extension`：[pstack Pi 扩展](../plugins/pstack/pi/index.ts)完成，由点名的离线测试证明。
+- `script`：自带的脚本读取 Pi 的布局，由点名的测试证明。
+- `mapping`：技能已在正文中描述了该行为，[pi-tools.md](../plugins/pstack/skills/poteto-mode/references/pi-tools.md)点名了 Pi 的等价物。
+- `difference`：Pi 的行为不同，原因一栏说明为什么没有技能依赖它得出正确结果。
+- `n/a`：插件提到了它，但没有行为依赖它。
 
-The Live column records the end-to-end run on real Pi with `PSTACK_PI_LIVE=1` (`tests/pi/live.test.mjs`). A Live value of `n/a` means the live run did not exercise that row. The machine that ran it had only a ChatGPT sign-in on the `openai` provider, so the family names resolved through the shipped `openai` table (X01b). The `anthropic/*` IDs (X01a) and the `openai-codex/*` IDs (X01c) were never called live; `tests/pi/catalog.test.mjs` checks both tables against the model catalog of the installed Pi.
+Live 一栏记录在真实 Pi 上以 `PSTACK_PI_LIVE=1` 运行的端到端结果（`tests/pi/live.test.mjs`）。Live 值为 `n/a` 表示实跑没有覆盖该行。执行实跑的机器只在 `openai` 提供方上有 ChatGPT 登录，所以族名通过自带的 `openai` 表解析（X01b）。`anthropic/*` ID（X01a）和 `openai-codex/*` ID（X01c）从未实跑调用；`tests/pi/catalog.test.mjs` 对照已安装 Pi 的模型目录检查这两张表。
 
-| ID | Claude Code mechanism | On Pi | Status | Evidence | Live |
+| ID | Claude Code 机制 | 在 Pi 上 | Status | Evidence | Live |
 | --- | --- | --- | --- | --- | --- |
-| T01 | `Agent` tool dispatch | `agent` tool runs a child `pi --mode rpc` process and sends the prompt as an RPC command on its stdin | extension | `foreground waits, returns the final text and agentId, and runs the exact child command` | VERIFIED |
-| T02 | `subagent_type` | Resolves to the plugin's agent files; unknown types list the valid ones | extension | `unknown subagent_type is an error listing every valid type` | VERIFIED |
-| T03 | Per-call `model` | Family names resolve through `models.json` and the sheet's `pi models:` line | extension | `alias, sheet override, inherit-parent, auto, pass-through, and no parent model` | VERIFIED |
-| T04 | `run_in_background` | Returns the agent id at once; completion joins the running turn at the next tool boundary, or starts a turn when idle, after the process exits | extension | `background returns at once and the completion notice comes only after the process exits` | VERIFIED |
-| T05 | `readonly` (Cursor-era prose, not a Claude Code parameter) | `readonly: true` runs the child without the `edit` and `write` tools | extension | `readonly runs the child without the edit and write tools` | n/a |
-| T06 | Worktree per writer | `isolation: "worktree"` creates the worktree under `.claude/worktrees/` and removes it with its branch only when the agent left nothing: a change, a gitignored file it wrote, or a commit on its branch or on any commit its HEAD visited (reflog) keeps it; a retained path is reused on resume only while it is still a linked worktree of the same repository (a directory that is its own Git top level, shares the repository's common Git directory, and is listed by `git worktree list`), and anything else at that path fails the launch without deleting it; manual `git worktree` works through `bash` | extension | `a commit made on a detached HEAD and left behind by checking the branch out again is kept, through the reflog` | VERIFIED |
-| T07 | Message an agent (`SendMessage`) | `send_message` to a running agent is an RPC `steer` on the child's stdin, which the agent reads after its current tool calls, in the same run, so it reports once; a message to a finished agent, or to one that has settled and is exiting, resumes the same Pi session, model, and thinking once the process has exited | extension | `a message to a running agent reaches that run before it exits, and the agent reports once` | VERIFIED |
-| T08 | Stop an agent and confirm it stopped | `stop_agent` ends the child pi, which kills the bash command it has running, and reports `stopped` only after exit. A process a finished bash command left in the background runs in its own process group and outlives the agent. | extension | `ends the child and the bash command it has running, not a process a finished command left behind, and reports stopped once the child has exited` | VERIFIED |
-| T09 | Agent listing and completion notices | `list_agents`; status follows the process, so `completed` always means exited | extension | `list_agents survives a reload through the persisted entries` | VERIFIED |
-| T10 | Deferred tool loading (`ToolSearch`) | Every pstack tool registers at startup with `model-only` exposure, so Pi declares it to the model from the first turn, in every `codemode.mode`, and `tool_search` never has to load it | extension | `every pstack tool is model-only, so Pi declares it to the model in every codemode mode and never defers it` | VERIFIED |
-| T11 | `Skill` tool and `/command` | Pi lists skills in the system prompt; `/skill:<name>` forces one | native | Pi docs/skills.md | n/a |
-| T12 | `pstack:` skill namespace | Skills load under their bare names and run as `/skill:<name>`; agent types keep `pstack:` | difference | Command spelling only. Skills name each other by bare name in prose, and agent types resolve with the prefix. | n/a |
-| T13 | `AskUserQuestion` | `ask_user_question` with the same shape; without a UI, and in a child agent, it fails and tells the model to ask in plain text | extension | `a single-select question returns the chosen label` | n/a |
-| T14 | `TaskCreate`/`TaskUpdate`/`TodoWrite` | poteto-mode's own `todo.md` fallback | mapping | poteto-mode Platform Adaptation; pi-tools.md Tool actions | n/a |
-| T15 | `Read`/`Edit`/`Write`/`Bash`/`Grep`/`Glob` | `read`, `edit`, `write`, `bash`; `grep`, `find`, `ls` when enabled | native | pi-tools.md Tool actions | n/a |
-| T16 | `WebFetch`/`WebSearch` | `curl` through `bash`; web search through an MCP server | difference | No skill names either tool. Fetching works through `bash`. | n/a |
-| T17 | `ScheduleWakeup` (other named tools are never referenced) | `schedule_wakeup` with the same shape | extension | `clamps to 60 s and fires the prompt as a follow-up user message` | VERIFIED |
-| T18 | MCP tool discovery | Pi's built-in MCP; list servers from the session's tools or `pi mcp list` | mapping | pi-tools.md `why` note | n/a |
-| T19 | Facts named in the system prompt | Pi's system prompt lists tools and skills; the transcript directory is given in pi-tools.md | mapping | pi-tools.md `reflect` note | n/a |
-| T20 | Image-generation tool | None, as on Claude Code; draw with Mermaid or text | difference | Claude Code has no such tool either, so `teach` already falls back. | n/a |
-| T21 | Nested agents, up to three layers below the main conversation | A child at the third layer runs without the `agent` tool | extension | `agents nest at most three layers below the main session, as on Claude Code` | n/a |
-| A01 | `pstack:poteto-agent` | Resolved from `agents/poteto-agent.md` | extension | `every pstack agent type reaches its child with its own agent file as the system prompt` | VERIFIED |
-| A02 | Effort agents | `effort:` frontmatter becomes the child's `--thinking`; no effort inherits the parent's level | extension | `an effort agent passes its body as a 0600 system prompt file and its effort as --thinking; others run at the parent's level` | VERIFIED |
-| A03 | `pstack:comment-sicko` | Resolved from `agents/comment-sicko.md` | extension | `every pstack agent type reaches its child with its own agent file as the system prompt` | n/a |
-| A04 | Manifest `agents[]` registration | The extension reads `agents/` and `effort-agents/` at runtime | extension | `every pstack agent type reaches its child with its own agent file as the system prompt` | n/a |
-| A05 | `general-purpose` agent type | A child with no agent file | extension | `foreground waits, returns the final text and agentId, and runs the exact child command` | n/a |
-| A06 | Agent file body as the child's system prompt | Appended with `--append-system-prompt`, keeping Pi's skill list visible to the child | extension | `an effort agent passes its body as a 0600 system prompt file and its effort as --thinking; others run at the parent's level` | VERIFIED |
-| H01 | `SessionStart` hook | The routing instruction is added at every agent start, so it survives resume, clear, and compaction | extension | `injects the mandate and the full sheet on every agent start` | VERIFIED |
-| H02 | `CLAUDE_PLUGIN_ROOT` | The extension locates the plugin from its own file path | extension | `injects the mandate when there is no sheet` | n/a |
-| H03 | `~/.claude` config directory | `$PI_CODING_AGENT_DIR` or `~/.pi/agent` | mapping | setup-pstack Other runtimes | n/a |
-| H04 | Override sheet plus `@` include | The extension adds the whole sheet to the system prompt, children included | extension | `a child pi gets the sheet but not the mandate` | VERIFIED |
-| H05 | `CLAUDE.md` instructions file | Pi loads `AGENTS.md` or `CLAUDE.md` per directory, plus `~/.pi/agent/AGENTS.md` | native | pi-tools.md Instructions file | n/a |
-| H06 | `.claude/settings.local.json` env for todo tools | Pi has no todo tools; the `todo.md` fallback applies | n/a | poteto-mode Platform Adaptation | n/a |
-| F01 | `~/.claude/projects` transcripts | `find-transcript.mjs` reads Pi sessions and follows the active branch | script | `a Pi session's opening prompt is the first user message on the branch that ends at the last entry` | VERIFIED |
-| F07 | Own transcript as evidence | Same reader; `worktree-audit.mjs` scans Pi session roots | script | `a Pi session in a second transcripts root marks the worktree it ran in as a recent chat` | n/a |
-| F02 | `.claude/skills/` project and user skills | `.pi/skills/` or `.agents/skills/` | mapping | pi-tools.md `create-verification-skill` note | n/a |
-| F03 | `~/.claude/plugins/` install path | Skill files load from the Pi package directory that `pi list` shows | mapping | pi-tools.md `reflect` note | n/a |
-| F04 | `~/.claude/orchestrate/<slug>/` store | A plain directory, used unchanged | native | orchestrate playbook | n/a |
-| F05 | `~/.claude/shell-snapshots/` cleanup advice | Cleanup advice only | n/a | worktree-cleanup playbook | n/a |
-| F06 | `.claude/worktrees` | The extension uses the same path | extension | `keeps a worktree with changes and reports its path and branch` | n/a |
-| S01 | Bundled `run` skill | Run the app through `bash` | mapping | pi-tools.md Driver and bundled skills | n/a |
-| S02 | `verify` skill | Read the project skill by path or add it to Pi's `skills` setting | mapping | pi-tools.md Driver and bundled skills | n/a |
-| S03 | `loop` skill | `/loop [interval] <prompt>` and self-paced `schedule_wakeup` | extension | `a fixed interval runs now and then on every interval until /loop stop` | VERIFIED |
-| S04 | `plugin-dev:skill-development` | Pi's skills docs and the Agent Skills specification | mapping | pi-tools.md Driver and bundled skills | n/a |
-| S05 | Bundled `babysit` disambiguation | Pi has no bundled `babysit`, so only pstack's exists | n/a | poteto-mode Non-negotiables | n/a |
-| S06 | `superpowers`, `code-review`, `simplify`, `security-review` | Not present on Pi | difference | Mentions only. The hook text defers to other mandates, and no workflow requires these skills. | n/a |
-| S07a | Frontmatter `user-invocable: false` | Pi ignores it, so the 23 `principle-*` skills appear in `/skill:` completion | difference | Menu visibility only. The model still loads each principle skill by name, as on Claude Code. | n/a |
-| S07b | Frontmatter `paths:` auto-load | The extension notes the skill on the first matching file read or edit | extension | `the first matching file gets a one-line note naming the skill, once per session` | n/a |
-| S07c | Frontmatter `disable-model-invocation` | Honored by Pi; no pstack skill sets it | native | Pi docs/skills.md | n/a |
-| C01 | `gh` | Same CLI through `bash` | native | pi-tools.md Vendored scripts | n/a |
-| C02 | `origin` | Same CLI through `bash` | native | pi-tools.md Vendored scripts | n/a |
-| C04 | `claude`/`codex` CLI | Prose only (`claude mcp list`), mapped in the `why` note | mapping | pi-tools.md `why` note | n/a |
-| C05 | `bun` scripts | Same through `bash` | native | pi-tools.md Vendored scripts | n/a |
-| C06 | `node` scripts | Same through `bash` | native | pi-tools.md Vendored scripts | n/a |
-| X01a | Family names `opus`, `fable`, `sonnet`, `haiku` on an Anthropic session or any provider without its own table | The `anthropic` table of `models.json` maps them to `anthropic/*` IDs | extension | `a family name resolves in the table of the parent's provider, and in the fallback table on any other` | n/a |
-| X01b | Family names on a ChatGPT sign-in (`openai`, Pi's Sign in with ChatGPT) | The `openai` table maps them to GPT-6 models of the same tiers as the Codex defaults | extension | `a family name resolves in the table of the parent's provider, and in the fallback table on any other` | VERIFIED |
-| X01c | Family names on the legacy OpenAI Codex sign-in (`openai-codex`) | The `openai-codex` table maps them to the same GPT-6 models | extension | `a family name resolves in the table of the parent's provider, and in the fallback table on any other` | n/a |
-| X02 | Effort levels and `@level` | Same five levels, passed as `--thinking` | extension | `an effort agent passes its body as a 0600 system prompt file and its effort as --thinking; others run at the parent's level` | VERIFIED |
-| X03 | `inherit-parent` / `auto` | The child runs on the parent's current model | extension | `alias, sheet override, inherit-parent, auto, pass-through, and no parent model` | n/a |
-| X04 | Compaction and `/clear` | Injection on every agent start keeps the routing instruction | extension | `injects the mandate and the full sheet on every agent start` | VERIFIED |
-| X05 | Session scratchpad | Pi has none; the skills only warn against keeping durable state there | difference | The one reference (orchestrate) tells the agent not to use a scratchpad. | n/a |
+| T01 | `Agent` 工具派发 | `agent` 工具运行一个子 `pi --mode rpc` 进程，并把 prompt 作为 RPC 命令写入其 stdin | extension | `foreground waits, returns the final text and agentId, and runs the exact child command` | VERIFIED |
+| T02 | `subagent_type` | 解析为插件的 agent 文件；未知类型会列出全部合法类型 | extension | `unknown subagent_type is an error listing every valid type` | VERIFIED |
+| T03 | 逐调用的 `model` | 族名通过 `models.json` 和覆盖表的 `pi models:` 行解析 | extension | `alias, sheet override, inherit-parent, auto, pass-through, and no parent model` | VERIFIED |
+| T04 | `run_in_background` | 立即返回 agent id；进程退出后，完成通知在下一个工具边界并入运行中的回合，或在其空闲时开启一个回合 | extension | `background returns at once and the completion notice comes only after the process exits` | VERIFIED |
+| T05 | `readonly`（Cursor 时代的措辞，不是 Claude Code 参数） | `readonly: true` 让子进程在没有 `edit` 和 `write` 工具的情况下运行 | extension | `readonly runs the child without the edit and write tools` | n/a |
+| T06 | 每个写者一个 worktree | `isolation: "worktree"` 在 `.claude/worktrees/` 下创建 worktree，并且只在 agent 没有留下任何东西时才连同其分支一起删除：一个改动、它写下的 gitignore 文件，或它分支上的一个 commit 或它的 HEAD 曾访问过的任何 commit（reflog）都会保留它；保留的路径只在恢复时、且它仍是同一仓库的链接 worktree（自身即 Git 顶层、共享仓库的公共 Git 目录、并被 `git worktree list` 列出）时才被复用，该路径上的其他任何东西都会让启动失败而不删除它；手工 `git worktree` 通过 `bash` 工作 | extension | `a commit made on a detached HEAD and left behind by checking the branch out again is kept, through the reflog` | VERIFIED |
+| T07 | 给 agent 发消息（`SendMessage`） | 给运行中 agent 的 `send_message` 是子进程 stdin 上的 RPC `steer`，agent 在当前工具调用之后于同一次运行中读取，因此只报告一次；给已完成、或已沉降并正在退出的 agent 的消息，会在进程退出后恢复同一个 Pi 会话、模型与思考档位 | extension | `a message to a running agent reaches that run before it exits, and the agent reports once` | VERIFIED |
+| T08 | 停止 agent 并确认已停止 | `stop_agent` 结束子 pi，后者会杀掉它正在运行的 bash 命令，并且只在退出之后报告 `stopped`。已结束的 bash 命令留在后台的进程运行在自己的进程组中，会活得比 agent 更久。 | extension | `ends the child and the bash command it has running, not a process a finished command left behind, and reports stopped once the child has exited` | VERIFIED |
+| T09 | agent 列表与完成通知 | `list_agents`；状态跟随进程，所以 `completed` 始终意味着已退出 | extension | `list_agents survives a reload through the persisted entries` | VERIFIED |
+| T10 | 延迟工具加载（`ToolSearch`） | 每个 pstack 工具在启动时以 `model-only` 暴露注册，所以 Pi 从第一个回合起就向模型声明它，在任何 `codemode.mode` 下都是如此，`tool_search` 永远不需要加载它 | extension | `every pstack tool is model-only, so Pi declares it to the model in every codemode mode and never defers it` | VERIFIED |
+| T11 | `Skill` 工具与 `/command` | Pi 在系统提示中列出技能；`/skill:<name>` 强制调用其中一个 | native | Pi docs/skills.md | n/a |
+| T12 | `pstack:` 技能命名空间 | 技能以裸名加载，并以 `/skill:<name>` 运行；agent 类型保留 `pstack:` | difference | 只是命令拼写。技能在正文中以裸名互相点名，agent 类型带前缀解析。 | n/a |
+| T13 | `AskUserQuestion` | 形状相同的 `ask_user_question`；没有 UI 时，以及在子 agent 中，它会失败并让模型改用纯文本提问 | extension | `a single-select question returns the chosen label` | n/a |
+| T14 | `TaskCreate`/`TaskUpdate`/`TodoWrite` | poteto-mode 自带的 `todo.md` 回退 | mapping | poteto-mode Platform Adaptation；pi-tools.md Tool actions | n/a |
+| T15 | `Read`/`Edit`/`Write`/`Bash`/`Grep`/`Glob` | `read`、`edit`、`write`、`bash`；启用时用 `grep`、`find`、`ls` | native | pi-tools.md Tool actions | n/a |
+| T16 | `WebFetch`/`WebSearch` | 通过 `bash` 用 `curl`；网络搜索通过 MCP 服务器 | difference | 没有任何技能点名这两个工具。抓取通过 `bash` 即可工作。 | n/a |
+| T17 | `ScheduleWakeup`（其他具名工具从未被引用） | 形状相同的 `schedule_wakeup` | extension | `clamps to 60 s and fires the prompt as a follow-up user message` | VERIFIED |
+| T18 | MCP 工具发现 | Pi 内置的 MCP；从会话的工具或 `pi mcp list` 列出服务器 | mapping | pi-tools.md `why` note | n/a |
+| T19 | 系统提示中点名的事实 | Pi 的系统提示列出工具与技能；会话记录目录在 pi-tools.md 中给出 | mapping | pi-tools.md `reflect` note | n/a |
+| T20 | 图像生成工具 | 没有，与 Claude Code 相同；用 Mermaid 或文字绘制 | difference | Claude Code 也没有这类工具，所以 `teach` 本就有回退方案。 | n/a |
+| T21 | 嵌套 agent，最多低于主对话三层 | 第三层的子进程在没有 `agent` 工具的情况下运行 | extension | `agents nest at most three layers below the main session, as on Claude Code` | n/a |
+| A01 | `pstack:poteto-agent` | 从 `agents/poteto-agent.md` 解析 | extension | `every pstack agent type reaches its child with its own agent file as the system prompt` | VERIFIED |
+| A02 | 推理档位 agent | `effort:` frontmatter 成为子进程的 `--thinking`；没有档位则继承父级 | extension | `an effort agent passes its body as a 0600 system prompt file and its effort as --thinking; others run at the parent's level` | VERIFIED |
+| A03 | `pstack:comment-sicko` | 从 `agents/comment-sicko.md` 解析 | extension | `every pstack agent type reaches its child with its own agent file as the system prompt` | n/a |
+| A04 | 清单 `agents[]` 注册 | 扩展在运行时读取 `agents/` 和 `effort-agents/` | extension | `every pstack agent type reaches its child with its own agent file as the system prompt` | n/a |
+| A05 | `general-purpose` agent 类型 | 没有 agent 文件的子进程 | extension | `foreground waits, returns the final text and agentId, and runs the exact child command` | n/a |
+| A06 | agent 文件正文作为子进程的系统提示 | 用 `--append-system-prompt` 追加，使 Pi 的技能列表对子进程保持可见 | extension | `an effort agent passes its body as a 0600 system prompt file and its effort as --thinking; others run at the parent's level` | VERIFIED |
+| H01 | `SessionStart` hook | 每次 agent 启动时都加入路由指令，因此它挺过恢复、清空和压缩 | extension | `injects the mandate and the full sheet on every agent start` | VERIFIED |
+| H02 | `CLAUDE_PLUGIN_ROOT` | 扩展从自身文件路径定位插件 | extension | `injects the mandate when there is no sheet` | n/a |
+| H03 | `~/.claude` 配置目录 | `$PI_CODING_AGENT_DIR` 或 `~/.pi/agent` | mapping | setup-pstack Other runtimes | n/a |
+| H04 | 覆盖表加 `@` include | 扩展把整张表加入系统提示，子进程也一样 | extension | `a child pi gets the sheet but not the mandate` | VERIFIED |
+| H05 | `CLAUDE.md` 指令文件 | Pi 按目录加载 `AGENTS.md` 或 `CLAUDE.md`，外加 `~/.pi/agent/AGENTS.md` | native | pi-tools.md Instructions file | n/a |
+| H06 | `.claude/settings.local.json` 为 todo 工具设置的 env | Pi 没有 todo 工具；适用 `todo.md` 回退 | n/a | poteto-mode Platform Adaptation | n/a |
+| F01 | `~/.claude/projects` 会话记录 | `find-transcript.mjs` 读取 Pi 会话并跟随活跃分支 | script | `a Pi session's opening prompt is the first user message on the branch that ends at the last entry` | VERIFIED |
+| F07 | 自己的会话记录作为证据 | 同一个读取器；`worktree-audit.mjs` 扫描 Pi 会话根目录 | script | `a Pi session in a second transcripts root marks the worktree it ran in as a recent chat` | n/a |
+| F02 | `.claude/skills/` 项目与用户技能 | `.pi/skills/` 或 `.agents/skills/` | mapping | pi-tools.md `create-verification-skill` note | n/a |
+| F03 | `~/.claude/plugins/` 安装路径 | 技能文件从 `pi list` 显示的 Pi 包目录加载 | mapping | pi-tools.md `reflect` note | n/a |
+| F04 | `~/.claude/orchestrate/<slug>/` 存储 | 一个普通目录，原样使用 | native | orchestrate playbook | n/a |
+| F05 | `~/.claude/shell-snapshots/` 清理建议 | 仅清理建议 | n/a | worktree-cleanup playbook | n/a |
+| F06 | `.claude/worktrees` | 扩展使用同一路径 | extension | `keeps a worktree with changes and reports its path and branch` | n/a |
+| S01 | 内置 `run` 技能 | 通过 `bash` 运行应用 | mapping | pi-tools.md Driver and bundled skills | n/a |
+| S02 | `verify` 技能 | 按路径读取项目技能，或把它加入 Pi 的 `skills` 设置 | mapping | pi-tools.md Driver and bundled skills | n/a |
+| S03 | `loop` 技能 | `/loop [interval] <prompt>` 与自定节奏的 `schedule_wakeup` | extension | `a fixed interval runs now and then on every interval until /loop stop` | VERIFIED |
+| S04 | `plugin-dev:skill-development` | Pi 的技能文档与 Agent Skills 规范 | mapping | pi-tools.md Driver and bundled skills | n/a |
+| S05 | 内置 `babysit` 的消歧 | Pi 没有内置 `babysit`，所以只有 pstack 的那一个 | n/a | poteto-mode Non-negotiables | n/a |
+| S06 | `superpowers`、`code-review`、`simplify`、`security-review` | Pi 上不存在 | difference | 仅提及。hook 文本让位于其他指令，没有工作流要求这些技能。 | n/a |
+| S07a | frontmatter `user-invocable: false` | Pi 忽略它，所以 23 个 `principle-*` 技能会出现在 `/skill:` 补全中 | difference | 仅菜单可见性。模型仍按名字加载每个原则技能，与 Claude Code 相同。 | n/a |
+| S07b | frontmatter `paths:` 自动加载 | 扩展在第一次匹配的文件读取或编辑时注记该技能 | extension | `the first matching file gets a one-line note naming the skill, once per session` | n/a |
+| S07c | frontmatter `disable-model-invocation` | 被 Pi 尊重；没有 pstack 技能设置它 | native | Pi docs/skills.md | n/a |
+| C01 | `gh` | 通过 `bash` 使用同一个 CLI | native | pi-tools.md Vendored scripts | n/a |
+| C02 | `origin` | 通过 `bash` 使用同一个 CLI | native | pi-tools.md Vendored scripts | n/a |
+| C04 | `claude`/`codex` CLI | 仅正文提及（`claude mcp list`），在 `why` 注记中映射 | mapping | pi-tools.md `why` note | n/a |
+| C05 | `bun` 脚本 | 通过 `bash` 相同 | native | pi-tools.md Vendored scripts | n/a |
+| C06 | `node` 脚本 | 通过 `bash` 相同 | native | pi-tools.md Vendored scripts | n/a |
+| X01a | Anthropic 会话或任何没有自有表的提供方上的族名 `opus`、`fable`、`sonnet`、`haiku` | `models.json` 的 `anthropic` 表把它们映射到 `anthropic/*` ID | extension | `a family name resolves in the table of the parent's provider, and in the fallback table on any other` | n/a |
+| X01b | ChatGPT 登录（`openai`，Pi 的 Sign in with ChatGPT）上的族名 | `openai` 表把它们映射到与 Codex 默认值同档位的 GPT-6 模型 | extension | `a family name resolves in the table of the parent's provider, and in the fallback table on any other` | VERIFIED |
+| X01c | 旧 OpenAI Codex 登录（`openai-codex`）上的族名 | `openai-codex` 表把它们映射到同样的 GPT-6 模型 | extension | `a family name resolves in the table of the parent's provider, and in the fallback table on any other` | n/a |
+| X02 | 推理档位与 `@level` | 同样的五个档位，以 `--thinking` 传入 | extension | `an effort agent passes its body as a 0600 system prompt file and its effort as --thinking; others run at the parent's level` | VERIFIED |
+| X03 | `inherit-parent` / `auto` | 子进程在父级当前模型上运行 | extension | `alias, sheet override, inherit-parent, auto, pass-through, and no parent model` | n/a |
+| X04 | 压缩与 `/clear` | 每次 agent 启动都注入，从而保住路由指令 | extension | `injects the mandate and the full sheet on every agent start` | VERIFIED |
+| X05 | 会话暂存区 | Pi 没有；技能只警告不要在那里保存持久状态 | difference | 唯一的引用（orchestrate）告诉 agent 不要使用暂存区。 | n/a |

@@ -1,127 +1,134 @@
-# pstack reference
+# pstack 参考
 
-Start with the [README](../README.md) for installation and your first task.
+安装与第一个任务请先看 [README](../README.md)。
 
-## Slash commands
+<a id="slash-commands"></a>
+## 斜杠命令
 
-The package includes 65 skill directories: 41 public skills and 24 `principle-*` references. Claude Code uses `/pstack:<name>`, and Pi uses `/skill:<name>`. In Codex, request a skill by name or install the [optional shortcuts](#codex) for the `/name` form below.
+The package includes 65 skill directories: 41 public skills and 24 `principle-*` references. Claude Code 使用 `/pstack:<name>`，Pi 使用 `/skill:<name>`。在 Codex 中，按名字请求技能，或安装[可选快捷方式](#codex)以使用下表中的 `/name` 形式。
 
-Find each skill's instructions in the [skills tree](../plugins/pstack/skills/).
+每个技能的说明都在[技能树](../plugins/pstack/skills/)中。
 
 | command | use it when |
 | --- | --- |
-| `/poteto-mode` | default entry point for any non-trivial task |
-| `/how` | walk through how a subsystem works |
-| `/why` | investigate why something was built this way (parallel multi-MCP evidence) |
-| `/architect` | settle types and module shape before writing code that crosses a function boundary |
-| `/arena` | run N parallel attempts at the same task and pick the best parts |
-| `/interrogate` | have three different models try to break a diff |
-| `/automate-me` | draft your own personal -mode skill from recent transcripts |
-| `/reflect` | capture a long task's lessons as a skill edit |
-| `/correct` | find the mistakes agents keep repeating in a repo and make each one impossible, enforced at the highest level that works |
-| `/tdd` | fix a bug by writing the failing test first, then the fix |
-| `/benchmark-checklist` | vet a measured speedup or regression (limiter, tuning, errors, repeat runs, end-to-end relevance) before you report or act on it |
-| `/typescript-best-practices` | ground type-system discipline in TypeScript syntax |
-| `/teach` | explain a subsystem plainly by composing how + why |
-| `/swarm` | fan out N parallel workers across slices or races, then return one aggregated report |
-| `/technical-writing` | write docs, RFCs, readmes, PR descriptions, and commit messages to one layered standard |
-| `/bro` | restate the last message in plain human language, no jargon |
-| `/in-your-own-words` | play back your goal and the problem before the agent starts |
-| `/sharpen` | aim a task at what you are really after, the way a top expert would, without overspecifying it |
-| `/figure-it-out` | design a rigorous, auditable playbook for a task no bundled playbook fits |
-| `/show-me-your-work` | log decisions to a reviewable tsv decision trail |
-| `/blast-radius` | find what a change could break beyond the diff and prove safety by running code |
-| `/recall` | catch up on recent working context from chat history, live state, and the shared record |
-| `/ketchup` | catch up on everything in this chat since your last message, with an executive summary for each action item |
-| `/setup-pstack` | configure pstack per-role model choices |
-| `/poteto-help` | answer a question about pstack with the prompt to send and the file the answer came from |
-| `/unslop` | clean up writing by removing AI tells |
-| `/no-comments` | strip comments before review, fix the accepted findings, encode claimed constraints |
-| `/create-verification-skill` | generate a project-local verification skill and feature map |
-| `/maintain-verification-skill` | re-sync a drifted verification skill and its feature map |
-| `/create-formal-verification-skill` | generate a project-local skill that formally verifies one high-risk property |
-| `/maintain-formal-verification-skill` | re-sync a formal verification after the code it covers changed |
-| `/deslop` | deslop a diff before commit |
-| `/babysit` | monitor an open PR, fix CI/comments, keep it merge-ready |
-| `/thermo-nuclear-review` | audit a branch's changes for bugs, breakage, security issues, devex regressions, and feature-gate leaks |
-| `/thermo-nuclear-code-quality-review` | extremely strict maintainability audit |
-| `/thermos` | run both thermo-nuclear reviews as parallel subagents and synthesize their findings |
-| `/make-pr-easy-to-review` | clean noisy history and improve PR description before review |
-| `/fix-ci` | find failing PR checks, inspect logs, apply focused fixes |
-| `/fix-merge-conflicts` | non-interactively resolve merge conflicts, validate, finalize |
-| `/get-pr-comments` | fetch and summarize review comments from the active PR |
-| `/what-did-i-get-done` | summarize authored commits over a user-chosen period |
+| `/poteto-mode` | 任何非平凡任务的默认入口 |
+| `/how` | 走查一个子系统如何工作 |
+| `/why` | 调查某处为什么这样构建（并行多 MCP 证据） |
+| `/architect` | 在写跨函数边界的代码之前，先定下类型与模块形状 |
+| `/arena` | 同一任务并行跑 N 次尝试，挑出最好的部分 |
+| `/interrogate` | 让三个不同的模型尝试击破一个 diff |
+| `/automate-me` | 从近期会话记录起草你自己的个人 -mode 技能 |
+| `/reflect` | 把一次长任务的教训固化为技能修改 |
+| `/correct` | 找出 agent 在仓库里反复犯的错误，并以可行的最高层级让每一个不可能再犯 |
+| `/tdd` | 先写失败的测试，再修复缺陷 |
+| `/benchmark-checklist` | 在报告或依据某个实测加速/回退之前先做校验（限制因素、调优、误差、重复运行、端到端相关性） |
+| `/typescript-best-practices` | 用 TypeScript 语法落实类型系统纪律 |
+| `/teach` | 组合 how + why，把一个子系统讲清楚 |
+| `/swarm` | 跨切片或竞速并行铺开 N 个 worker，然后返回一份汇总报告 |
+| `/technical-writing` | 按统一的分层标准写文档、RFC、readme、PR 描述和提交信息 |
+| `/bro` | 用平实的人类语言复述上一条消息，不用行话 |
+| `/in-your-own-words` | 在 agent 开始之前，把你的目标与问题复述回来 |
+| `/sharpen` | 像顶尖专家那样，把任务瞄向你真正想要的东西，同时不过度规定 |
+| `/figure-it-out` | 为没有现成 playbook 可用的任务，设计一份严谨、可审计的 playbook |
+| `/show-me-your-work` | 把决策记录到一份可审查的 tsv 决策轨迹中 |
+| `/blast-radius` | 找出改动在 diff 之外可能破坏什么，并通过运行代码来证明安全 |
+| `/recall` | 从聊天历史、实时状态和共享记录中补上近期工作上下文 |
+| `/ketchup` | 补上这个对话自你上一条消息以来的所有内容，并为每个待办事项给出执行摘要 |
+| `/setup-pstack` | 配置 pstack 的逐角色模型选择 |
+| `/poteto-help` | 回答关于 pstack 的问题，并给出该发送的 prompt 和答案所出自的文件 |
+| `/unslop` | 清除 AI 腔调，把文字清理干净 |
+| `/no-comments` | 审查前剥掉注释，修复被接受的发现，把声称的约束编码进去 |
+| `/create-verification-skill` | 生成一个项目本地的验证技能与功能地图 |
+| `/maintain-verification-skill` | 重新同步一个已漂移的验证技能及其功能地图 |
+| `/create-formal-verification-skill` | 生成一个项目本地技能，对某一项高风险性质做形式验证 |
+| `/maintain-formal-verification-skill` | 在所覆盖的代码变化之后，重新同步形式验证 |
+| `/deslop` | 提交前对 diff 做 deslop |
+| `/babysit` | 盯住一个进行中的 PR，修 CI/评论，保持 merge-ready |
+| `/thermo-nuclear-review` | 审计一个分支的改动中的缺陷、破坏、安全问题、开发者体验回退和功能开关泄漏 |
+| `/thermo-nuclear-code-quality-review` | 极其严格的可维护性审计 |
+| `/thermos` | 把两个 thermo-nuclear 审查作为并行 subagent 运行，并综合它们的发现 |
+| `/make-pr-easy-to-review` | 审查前清理噪声历史并改进 PR 描述 |
+| `/fix-ci` | 找出失败的 PR 检查，查看日志，施加聚焦的修复 |
+| `/fix-merge-conflicts` | 非交互地解决合并冲突，验证并收尾 |
+| `/get-pr-comments` | 抓取并汇总当前 PR 的审查评论 |
+| `/what-did-i-get-done` | 汇总用户选定时间段内你提交的 commit |
 
-## Runtime support
+<a id="runtime-support"></a>
+## 运行时支持
 
-All runtimes share [one skills tree](../plugins/pstack/skills/). A skills-only installation includes the skills, scripts, agent references, and license notices. The Claude Code, Codex, and GitHub Copilot plugins also install automatic routing hooks, and the Pi package adds an extension that injects the same routing and supplies the subagent tools. Codex command shortcuts are separate.
+所有运行时共享[一棵技能树](../plugins/pstack/skills/)。纯技能安装包括技能、脚本、agent 引用和许可声明。Claude Code、Codex 和 GitHub Copilot 插件还会安装自动路由 hook，Pi 包则增加一个扩展，注入同样的路由并提供 subagent 工具。Codex 的命令快捷方式是独立的一步。
 
-| Runtime | Setup and recorded verification |
+| 运行时 | 配置与已记录的验证 |
 | --- | --- |
-| Claude Code | Install the marketplace plugin. Skills use Claude tool names and model defaults; the plugin installs automatic routing. |
-| Codex | Install the native plugin through the repository's marketplace and trust its hook through `/hooks`. The [Codex mapping](../plugins/pstack/skills/poteto-mode/references/codex-tools.md) translates Claude tools and model names. Shared skill symlinks were also detected in a live session. |
-| Pi | Install the repository as a Pi package with `pi install`. The [Pi extension](../plugins/pstack/pi/index.ts) registers the subagent, question, and wake-up tools and `/loop`, and the [Pi mapping](../plugins/pstack/skills/poteto-mode/references/pi-tools.md) translates Claude tools and model names. The [equivalence table](pi-equivalence.md) records each Claude Code mechanism and how it was verified on Pi 1.1. |
-| GitHub Copilot | Install the plugin through the repository's marketplace; the CLI and the GitHub Copilot app share it. The [Copilot mapping](../plugins/pstack/skills/poteto-mode/references/copilot-tools.md) translates Claude tools, paths, and model roles, and maps app-only tools to CLI fallbacks. Install, routing, agent dispatch, and first-run setup are smoke-tested on the CLI; see [GitHub Copilot](#github-copilot). |
-| Prime Agent | Its documentation describes shared-directory discovery; it has not been tested in a live session. Choose tools and models through Prime's configuration. |
-| opencode | Verified on version 2.0.30: discovery and skill loading in the CLI and the desktop app, and delegation through its `subagent` tool in the CLI. Configure agents, commands, and permissions in `opencode.json`. Its picker also lists principle skills. |
-| Gemini CLI | Its documentation describes shared-directory discovery; it has not been tested in a live session. Use `/skills list` to check discovery and `/skills reload` after changes. |
+| Claude Code | 安装 marketplace 插件。技能使用 Claude 的工具名和模型默认值；插件安装自动路由。 |
+| Codex | 通过仓库的 marketplace 安装原生插件，并通过 `/hooks` 信任它的 hook。[Codex 映射](../plugins/pstack/skills/poteto-mode/references/codex-tools.md)负责翻译 Claude 的工具与模型名。共享技能符号链接也在一次真实会话中被检测到。 |
+| Pi | 用 `pi install` 把仓库安装为 Pi 包。[Pi 扩展](../plugins/pstack/pi/index.ts)注册 subagent、提问和唤醒工具以及 `/loop`，[Pi 映射](../plugins/pstack/skills/poteto-mode/references/pi-tools.md)翻译 Claude 的工具与模型名。[等价表](pi-equivalence.md)记录每个 Claude Code 机制以及它在 Pi 1.1 上的验证方式。 |
+| GitHub Copilot | 通过仓库的 marketplace 安装插件；CLI 与 GitHub Copilot 应用共用它。[Copilot 映射](../plugins/pstack/skills/poteto-mode/references/copilot-tools.md)翻译 Claude 的工具、路径与模型角色，并把仅限应用的工具有对应地映射到 CLI 回退方案。安装、路由、agent 派发与首次运行的 setup 都在 CLI 上做过冒烟测试；见 [GitHub Copilot](#github-copilot)。 |
+| Prime Agent | 其文档描述了共享目录发现；尚未在真实会话中测试。通过 Prime 的配置选择工具与模型。 |
+| opencode | 在 2.0.30 版本上验证过：CLI 与桌面应用中的发现和技能加载，以及 CLI 中通过其 `subagent` 工具进行的委派。在 `opencode.json` 中配置 agent、命令与权限。它的选择器也会列出原则技能。 |
+| Gemini CLI | 其文档描述了共享目录发现；尚未在真实会话中测试。用 `/skills list` 检查发现情况，改动后用 `/skills reload`。 |
 
-These checks cover skill discovery. Delegation remains unverified on Prime Agent and Gemini CLI, and multi-model workflows on all three. On those runtimes, agents must adapt Claude-specific tools, models, and configuration. Each mapping applies only to its runtime.
+这些检查覆盖技能发现。委派在 Prime Agent 和 Gemini CLI 上仍未验证，多模型工作流在三个运行时上也都未验证。在这些运行时上，agent 必须自行适配 Claude 特有的工具、模型和配置。每份映射只适用于它对应的运行时。
 
-### Automatic routing
+<a id="automatic-routing"></a>
+### 自动路由
 
-The Claude Code, Codex, and GitHub Copilot plugins load the same short [routing instruction](../plugins/pstack/hooks/session-start-context.md) on startup, resume, clear, and compact. The [POSIX hook](../plugins/pstack/hooks/session-start.sh) runs on Claude Code, POSIX Codex, and GitHub Copilot, where it prints the instruction as JSON `additionalContext` with a Copilot addendum. On Windows, Codex uses a [PowerShell adapter](../plugins/pstack/hooks/session-start.ps1) through its `commandWindows` override and does not require Bash. The adapter runs with `-ExecutionPolicy Bypass`, which a machine or user execution policy set by Group Policy overrides; on such machines the hook fails and no instruction loads. Codex requires the user to trust plugin hooks through `/hooks`. On Pi, the [extension](../plugins/pstack/pi/prompt.ts) adds the same instruction to the system prompt at every agent start, so it survives compaction. The instruction invokes `poteto-mode` when a task meets any of these conditions:
+Claude Code、Codex 和 GitHub Copilot 插件在启动、恢复、清空和压缩时加载同一段简短的[路由指令](../plugins/pstack/hooks/session-start-context.md)。[POSIX hook](../plugins/pstack/hooks/session-start.sh)在 Claude Code、POSIX Codex 和 GitHub Copilot 上运行，把该指令作为 JSON `additionalContext` 打印，Copilot 还附带一段补充说明。在 Windows 上，Codex 通过其 `commandWindows` 覆盖项使用一个 [PowerShell 适配器](../plugins/pstack/hooks/session-start.ps1)，不需要 Bash。该适配器以 `-ExecutionPolicy Bypass` 运行，而由组策略设置的机器或用户执行策略会覆盖它；在这类机器上 hook 会失败，不加载任何指令。Codex 要求用户通过 `/hooks` 信任插件 hook。在 Pi 上，[扩展](../plugins/pstack/pi/prompt.ts)在每次 agent 启动时把同一条指令加入系统提示，因此它能挺过压缩。当任务满足以下任一条件时，该指令会调用 `poteto-mode`：
 
-- It touches more than one file or changes a signature other files call.
-- It involves a design or architecture choice.
-- It concerns a bug with an unknown cause or a performance issue.
+- 它触及不止一个文件，或改变了其他文件调用的签名。
+- 它涉及设计或架构选择。
+- 它涉及原因不明的缺陷，或性能问题。
 
-Smaller tasks proceed directly. The full skill loads when invoked, and explicit user instructions take precedence.
+更小的任务直接进行。完整技能在被调用时加载，用户明确的指令优先。
 
-To disable routing, run `setup-pstack` and turn off the session hook. In Claude Code, use `/pstack:setup-pstack`. You can also write `session hook: off` in the runtime's sheet, at the path in [setup-pstack's runtime table](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes). The hook reads that setting before injecting its instruction. Without the setting, routing stays on.
+要关闭路由，运行 `setup-pstack` 并关掉 session hook。在 Claude Code 中，用 `/pstack:setup-pstack`。你也可以在该运行时的覆盖表中写入 `session hook: off`，路径见 [setup-pstack 的运行时表](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes)。hook 在注入指令之前会读取该设置。没有该设置时，路由保持开启。
 
-Skills-only installs and other runtimes do not include the hook or the Pi extension. Request `poteto-mode` explicitly, or add a standing instruction to the runtime's instruction file.
+纯技能安装和其他运行时不含 hook 或 Pi 扩展。请显式请求 `poteto-mode`，或往该运行时的指令文件中加入一条常驻指令。
 
-### Shared skills installation
+<a id="shared-skills-installation"></a>
+### 共享技能安装
 
-Use this path for Prime Agent, opencode, Gemini CLI, or a skills-only Codex installation. Run the script under [Other harnesses](../README.md#other-harnesses) in the README, which clones the repository and links its skills into `~/.agents/skills/`.
+需要 Prime Agent、opencode、Gemini CLI，或纯技能的 Codex 安装时，走这条路径。运行 README 中[其他 harness](../README.md#other-harnesses)一节的脚本，它会克隆仓库并把技能链接进 `~/.agents/skills/`。
 
-Keep all skill directories, including the principle references. Leave the clone at this path while the links are installed.
+保留所有技能目录，包括原则参考。链接安装期间，把克隆留在该路径。
 
-### Manage linked skills
+<a id="manage-linked-skills"></a>
+### 管理已链接的技能
 
-If a destination already exists, inspect it before replacing it. The installation skips existing files, directories, and links.
+如果目标已存在，替换前先检查它。安装会跳过已存在的文件、目录和链接。
 
-To update, run `git pull` in the clone that the links point to, then run the install loop again. A pull updates skills that are already linked but does not link new skill directories. To uninstall a linked skill, remove its link at `~/.agents/skills/<name>`. This removes it from every runtime using that directory.
+要更新，先在做链接的那个克隆里运行 `git pull`，然后重跑安装循环。`pull` 会更新已链接的技能，但不会链接新增的技能目录。要卸载某个已链接的技能，删除它在 `~/.agents/skills/<name>` 的链接。这会把它从所有使用该目录的运行时中移除。
 
-### Install with the skills CLI
+<a id="install-with-the-skills-cli"></a>
+### 用 skills CLI 安装
 
-To install without keeping a local clone:
+不想保留本地克隆时：
 
 ```shell
 npx skills add https://github.com/michael-denyer/pstack-claude/tree/main/plugins/pstack/skills --skill "*" --agent "*" --yes
 ```
 
-The [CI installation check](../.github/workflows/ci.yml) uses the skills CLI to copy the checkout's skill tree and compare the installed files with their sources.
+[CI 安装检查](../.github/workflows/ci.yml)用 skills CLI 复制检出的技能树，并把安装后的文件与源文件比对。
 
+<a id="codex"></a>
 ### Codex
 
-The [native plugin manifest](../plugins/pstack/.codex-plugin/plugin.json) points to the shared skills directory and the Codex [SessionStart hook](../plugins/pstack/hooks/codex-hooks.json). The [marketplace catalog](../.agents/plugins/marketplace.json) lists `pstack` in the `pstack-claude` marketplace. Review and trust the hook through `/hooks`; Codex asks again when its definition changes.
+[原生插件清单](../plugins/pstack/.codex-plugin/plugin.json)指向共享技能目录和 Codex 的 [SessionStart hook](../plugins/pstack/hooks/codex-hooks.json)。[marketplace 目录](../.agents/plugins/marketplace.json)在 `pstack-claude` marketplace 中列出 `pstack`。通过 `/hooks` 审阅并信任该 hook；当它的定义变化时 Codex 会再次询问。
 
-The [README installation](../README.md#codex) registers that catalog with `codex plugin marketplace add`, then installs the plugin with `codex plugin add`. These commands match the help output from `codex-cli 0.154.0-alpha.6.2`. A fresh native installation was not tested for this documentation change.
+[README 安装](../README.md#codex)一节用 `codex plugin marketplace add` 注册该目录，再用 `codex plugin add` 安装插件。这些命令与 `codex-cli 0.154.0-alpha.6.2` 的帮助输出一致。本次文档改动没有测试全新的原生安装。
 
-OpenAI documents [marketplace registration and the plugin format](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli). If your CLI lacks `plugin add`, use the plugin browser after registering the marketplace, or use the [skills-only installation](#shared-skills-installation).
+OpenAI 记录了[marketplace 注册与插件格式](https://developers.openai.com/plugins/build/plugins#add-a-marketplace-from-the-cli)。如果你的 CLI 没有 `plugin add`，注册 marketplace 后使用插件浏览器，或改用[纯技能安装](#shared-skills-installation)。
 
-Request `poteto-mode` by name or select its entry, such as `pstack:poteto-mode`. To enable parallel subagents:
+按名字请求 `poteto-mode`，或选择它的条目，例如 `pstack:poteto-mode`。要启用并行 subagent：
 
 ```toml
 [features]
 multi_agent = true
 ```
 
-Add this setting to `~/.codex/config.toml` if subagents are disabled. Skills such as `arena`, `interrogate`, and `architect` use parallel agents. The [mapping](../plugins/pstack/skills/poteto-mode/references/codex-tools.md) describes a sequential fallback and translates Claude tool names, model defaults, and verification instructions.
+如果 subagent 被禁用，把该设置加入 `~/.codex/config.toml`。`arena`、`interrogate` 和 `architect` 这类技能会使用并行 agent。[映射](../plugins/pstack/skills/poteto-mode/references/codex-tools.md)描述了顺序回退方案，并翻译 Claude 的工具名、模型默认值与验证指令。
 
-For optional slash-command shortcuts, run this from the clone's root:
+需要可选的斜杠命令快捷方式时，在克隆根目录运行：
 
 ```shell
 mkdir -p ~/.codex/prompts
@@ -131,63 +138,68 @@ for c in plugins/pstack/.codex-plugin/prompts/*.md; do
 done
 ```
 
-Each shortcut invokes its skill. The commands skip existing files and links. Remove a shortcut by deleting its link at `~/.codex/prompts/<name>.md`. Both native-plugin and skills-only installations work without these shortcuts.
+每个快捷方式调用它对应的技能。这些命令会跳过已存在的文件和链接。要移除快捷方式，删除它在 `~/.codex/prompts/<name>.md` 的链接。原生插件与纯技能安装在没有这些快捷方式时都能工作。
 
+<a id="pi"></a>
 ### Pi
 
-The repository root is a [Pi package](https://pi.dev/packages): its [`package.json`](../package.json) lists the shared skills directory and the [pstack Pi extension](../plugins/pstack/pi/index.ts). Install it with `pi install git:github.com/michael-denyer/pstack-claude`, or `pi install <clone path>` for a local checkout.
+仓库根是一个 [Pi 包](https://pi.dev/packages)：它的 [`package.json`](../package.json)列出共享技能目录和 [pstack Pi 扩展](../plugins/pstack/pi/index.ts)。用 `pi install git:github.com/michael-denyer/pstack-claude` 安装，或对本地检出用 `pi install <clone path>`。
 
-The extension supplies what Pi lacks natively, under the Claude Code names the skills use:
+扩展在 Claude Code 的名称下提供 Pi 原生缺失的东西，技能正是用这些名称书写：
 
-- `agent` dispatches a child `pi --mode rpc` process with the skill's `subagent_type`, model, and effort, in the foreground or background, optionally in its own git worktree. A background agent's completion joins the running turn after its current tool calls, or starts a turn when the session is idle.
-- `send_message`, `list_agents`, and `stop_agent` message, list, and stop those agents. A message to a running agent is an RPC `steer` on the child's stdin, which the agent reads after its current tool calls before it carries on in the same run. A finished agent resumes with the message. An agent's status follows its process. `list_agents`, a foreground agent's result, and each completion notice name the child's transcript, `<timestamp>_<session id>.jsonl` under `<agent dir>/pstack/<parent session id>/agents/`, so a user can follow a running agent with `tail -f` or render a finished one with `pi --export`. A running agent's `list_agents` entry also carries `activity`, its current or last tool call and its latest message, read from the child's RPC events and kept in memory, so the model sees it only in a `list_agents` result. The top-level session shows the count and the most recently active agent in a `pstack-agents` footer line, and the user can run `/pstack-agents` for a per-agent view that is not sent to the model.
-- `ask_user_question` and `schedule_wakeup` match `AskUserQuestion` and `ScheduleWakeup`, and `/loop` matches the `loop` skill. In a child agent, asking a question and scheduling a wakeup both return an error.
-- At every agent start it adds the routing instruction, the override sheet `~/.pi/agent/pstack-models.md`, and a pointer to the Pi mapping to the system prompt.
+- `agent` 以技能给出的 `subagent_type`、模型和推理档位派发一个子 `pi --mode rpc` 进程，可前台或后台运行，并可选择使用它自己的 git worktree。后台 agent 完成时，会在其当前工具调用之后并入正在运行的回合；若会话空闲则开启一个回合。
+- `send_message`、`list_agents` 和 `stop_agent` 负责向这些 agent 发消息、列出和停止。给运行中 agent 的消息是子进程 stdin 上的 RPC `steer`，agent 在其当前工具调用之后读取，然后在同一次运行中继续。已完成的 agent 会带着该消息恢复。agent 的状态跟随它的进程。`list_agents`、前台 agent 的结果以及每条完成通知都会点名子进程的会话记录 `<agent dir>/pstack/<parent session id>/agents/` 下的 `<timestamp>_<session id>.jsonl`，因此用户可以用 `tail -f` 跟踪运行中的 agent，或用 `pi --export` 渲染已完成的 agent。运行中 agent 的 `list_agents` 条目还带有 `activity`：它当前或最后一次工具调用及最新消息，从子进程的 RPC 事件读取并保存在内存中，所以模型只能在 `list_agents` 结果中看到它。顶层会话在 `pstack-agents` 页脚行显示数量与最近活跃的 agent，用户可以运行 `/pstack-agents` 查看逐 agent 视图，该视图不发送给模型。
+- `ask_user_question` 和 `schedule_wakeup` 对应 `AskUserQuestion` 和 `ScheduleWakeup`，`/loop` 对应 `loop` 技能。在子 agent 中，提问与安排唤醒都会返回错误。
+- 每次 agent 启动时，它把路由指令、覆盖表 `~/.pi/agent/pstack-models.md`，以及指向 Pi 映射的一行加入系统提示。
 
-Family names such as `opus` resolve through the `pi` block of [`models.json`](../plugins/pstack/models.json) to model IDs for the provider the Pi session runs on. A ChatGPT sign-in (`openai`, or the legacy `openai-codex`) gets OpenAI models, and Anthropic or any other provider gets Claude models. Pi warns that Anthropic bills Claude used through Pi per token, as extra usage, even on a Claude subscription, and every subagent pstack starts adds to that bill. Run pstack in Claude Code to stay within a Claude plan's limits. A `pi models:` line in the sheet remaps any family name. The [Pi mapping](../plugins/pstack/skills/poteto-mode/references/pi-tools.md) lists every translation, and the [equivalence table](pi-equivalence.md) records what was verified and how.
+`opus` 这类族名通过 [`models.json`](../plugins/pstack/models.json)的 `pi` 块，解析为 Pi 会话所用提供方的模型 ID。ChatGPT 登录（`openai`，或旧的 `openai-codex`）得到 OpenAI 模型，Anthropic 或任何其他提供方得到 Claude 模型。Pi 会警告：即使你有 Claude 订阅，Anthropic 也会把通过 Pi 使用的 Claude 按 token 计为额外用量，而 pstack 启动的每个 subagent 都会增加这笔账单。要在 Claude 计划的额度内使用，请在 Claude Code 中运行 pstack。覆盖表中的 `pi models:` 行可以重映射任何族名。[Pi 映射](../plugins/pstack/skills/poteto-mode/references/pi-tools.md)列出每一处翻译，[等价表](pi-equivalence.md)记录了什么被验证以及如何验证。
 
+<a id="github-copilot"></a>
 ### GitHub Copilot
 
-The Copilot CLI reads the Claude Code [marketplace](../.claude-plugin/marketplace.json). For the plugin it looks for `.github/plugin/plugin.json` before `.claude-plugin/plugin.json`, so pstack ships a [Copilot manifest](../plugins/pstack/.github/plugin/plugin.json) whose `hooks` field names [`hooks/copilot-hooks.json`](../plugins/pstack/hooks/copilot-hooks.json). Copilot then skips the Claude Code `hooks/hooks.json`, so each hook runs once, and Claude Code keeps reading its own manifest. The GitHub Copilot app loads plugins installed into `~/.copilot`; a manual app check of routing, first-run setup, agent dispatch, `session hook: off`, and the app-only tools passed on 2026-09-25. To try a local checkout, pass its absolute path to `copilot plugin marketplace add`. Skills load by bare name through the `skill` tool, and a user types `/pstack:<skill>` in the CLI prompt; the agents keep their prefix, `pstack:poteto-agent` and `pstack:comment-sicko`.
+Copilot CLI 读取 Claude Code 的 [marketplace](../.claude-plugin/marketplace.json)。对插件，它会先查找 `.github/plugin/plugin.json`，再查找 `.claude-plugin/plugin.json`，所以 pstack 提供了一份 [Copilot 清单](../plugins/pstack/.github/plugin/plugin.json)，其 `hooks` 字段点名 [`hooks/copilot-hooks.json`](../plugins/pstack/hooks/copilot-hooks.json)。这样 Copilot 会跳过 Claude Code 的 `hooks/hooks.json`，每个 hook 只跑一次，而 Claude Code 继续读它自己的清单。GitHub Copilot 应用加载安装进 `~/.copilot` 的插件；2026-09-25 对路由、首次运行 setup、agent 派发、`session hook: off` 和仅限应用的工具做过一次手工应用侧检查，全部通过。要试本地检出，把它的绝对路径传给 `copilot plugin marketplace add`。技能通过 `skill` 工具按裸名加载，用户在 CLI 提示符中输入 `/pstack:<skill>`；agent 保留前缀，即 `pstack:poteto-agent` 和 `pstack:comment-sicko`。
 
-Copilot's hook file runs the [SessionStart hook](../plugins/pstack/hooks/session-start.sh) with the `copilot` argument. It prints JSON `additionalContext`: the routing instruction plus a [Copilot addendum](../plugins/pstack/hooks/session-start-copilot.md). It reads the model sheet, which sits outside Copilot's path sandbox, and checks it with the [same POSIX `awk` validator](../plugins/pstack/skills/setup-pstack/scripts/sheet.awk) that `setup-pstack` runs through `check-sheet.sh` after it writes the sheet. A valid sheet adds one line per known role, rebuilt from the checked values, so no other sheet text reaches the context. An invalid sheet adds `sheet invalid:` with each problem, and a missing sheet adds a note; both tell the session to run `setup-pstack` first. A second hook, [`pre-tool-use.sh`](../plugins/pstack/hooks/pre-tool-use.sh) with the matcher `view|task|bash`, does three things on Copilot. It approves reads inside the plugin directory so playbooks and references load without a path-access prompt. It approves registered scripts with their declared argument contracts and matching interpreters, using a strict command form with no shell metacharacters. It checks path operands separately from prose fields; unknown scripts and argument forms take the normal permission flow. Setup, SessionStart, and PreToolUse share one sheet decoder, including UTF-16LE support. While the sheet is valid, it denies a `pstack:*` `task` call whose `model` is not one of the saved choices, with the saved IDs in the reason. It stays silent on everything else and always exits 0, because Copilot denies a tool call when the hook fails; an `awk` error still reaches stderr. Copilot runs plugin hooks on every session start, so the Claude matcher does not apply. The hook runs lazily, after the first message is submitted and before the first model turn, including when that message is a slash command such as `/pstack:arena`. A resumed session runs it again with source `resume`, and the model still sees one routing block. On CLI 1.0.87 through 1.0.92, the context of several plugins' session-start hooks merges ([github/copilot-cli#3589](https://github.com/github/copilot-cli/issues/3589) reported that only the last one survived). If a version drops the merge, use the standing instruction from `setup-pstack`. On 1.0.92, when the CLI's cached experiment assignment turns on computer use, `-p` sessions load no plugin skills while interactive sessions still do; the smoke test clears that cache before each `-p` probe.
+Copilot 的 hook 文件以 `copilot` 参数运行 [SessionStart hook](../plugins/pstack/hooks/session-start.sh)。它打印 JSON `additionalContext`：路由指令加上一段 [Copilot 补充说明](../plugins/pstack/hooks/session-start-copilot.md)。它读取位于 Copilot 路径沙箱之外的模型覆盖表，并用与 `setup-pstack` 写完表后经 `check-sheet.sh` 运行的[同一个 POSIX `awk` 校验器](../plugins/pstack/skills/setup-pstack/scripts/sheet.awk)检查它。合法的表会按已知角色各加一行，内容由已检查的值重建，因此表中其他文字不会进入上下文。非法的表会加上 `sheet invalid:` 与每个问题，缺失的表会加一条注记；两者都告诉会话先运行 `setup-pstack`。第二个 hook，[`pre-tool-use.sh`](../plugins/pstack/hooks/pre-tool-use.sh) 配 `view|task|bash` 匹配器，在 Copilot 上做三件事。它批准插件目录内的读取，让 playbook 和参考文件无需路径访问提示即可加载。它批准带有声明参数契约且解释器匹配的已注册脚本，使用不含 shell 元字符的严格命令形式。它把路径操作数与散文字段分开检查；未知脚本和参数形式走正常的权限流程。setup、SessionStart 和 PreToolUse 共用一个表解码器，包括 UTF-16LE 支持。表合法期间，它会拒绝 `model` 不在已保存选项之内的 `pstack:*` `task` 调用，并在原因中列出已保存的 ID。其他情况保持沉默并总是以 0 退出，因为 hook 失败时 Copilot 会拒绝工具调用；`awk` 错误仍会到达 stderr。Copilot 在每次会话启动时都运行插件 hook，所以 Claude 的匹配器不适用。该 hook 惰性运行：在第一条消息提交之后、第一个模型回合之前，包括该消息是 `/pstack:arena` 这类斜杠命令时。恢复的会话会以 `resume` 来源再运行一次，模型仍然只看到一个路由块。在 CLI 1.0.87 到 1.0.92 上，多个插件的 session-start hook 上下文会合并（[github/copilot-cli#3589](https://github.com/github/copilot-cli/issues/3589)曾报告只有最后一个存活）。如果某个版本不再合并，请使用 `setup-pstack` 提供的常驻指令。在 1.0.92 上，当 CLI 缓存的实验分组开启 computer use 时，`-p` 会话不加载任何插件技能，而交互式会话仍然加载；冒烟测试在每次 `-p` 探测前清除该缓存。
 
-pstack ships no default Copilot models, because the models an account reaches depend on its plan and policy. The first skill that dispatches on role models runs `setup-pstack`. It asks one `ask_user` question per tier and panel slot, each a short list drawn from the `task` tool's models and grouped by vendor, and recommends no model. It then writes `${COPILOT_HOME:-~/.copilot}/pstack-models.md` and runs `check-sheet.sh`, and later sessions receive its choices from the hook. Choose panel models from distinct vendors. A role value's `@<level>` suffix and the sheet's `default effort` line map to the `task` tool's `reasoning_effort`.
+pstack 不自带 Copilot 的默认模型，因为账号能触达的模型取决于它的计划与策略。第一个按角色模型派发的技能会运行 `setup-pstack`。它按档位和 panel 槽位各问一个 `ask_user` 问题，每个都是来自 `task` 工具模型列表的简短选项，并按厂商分组，不推荐任何模型。然后它写入 `${COPILOT_HOME:-~/.copilot}/pstack-models.md` 并运行 `check-sheet.sh`，之后的会话通过 hook 收到这些选择。panel 模型请从不同厂商中选择。角色值上的 `@<level>` 后缀与表中的 `default effort` 行映射到 `task` 工具的 `reasoning_effort`。
 
-Copilot lists only part of a large plugin's skills in its prompt, so some pstack skills do not appear there; each one still loads by name. If another hook or a skills-only install displaces the routing instruction, `setup-pstack` offers a standing instruction for `~/.copilot/copilot-instructions.md`.
+Copilot 在其提示中只列出大型插件的部分技能，所以有些 pstack 技能不会出现在那里；每个技能仍可按名字加载。如果另一个 hook 或纯技能安装挤掉了路由指令，`setup-pstack` 会提供一个写进 `~/.copilot/copilot-instructions.md` 的常驻指令。
 
-[`tests/copilot-smoke.sh`](../tests/copilot-smoke.sh) installs the checkout into a throwaway `COPILOT_HOME` and checks installation, routing, `session hook: off`, agent dispatch with an explicit model, first-run setup, that setup writes no sheet without the user's answers and exactly the supplied IDs with them, and that saved choices and plugin files reach a session without `--allow-all-paths` or any path-access request, from each session's `events.jsonl` and the written sheet. It runs the setup checks once per model in `SMOKE_SETUP_MODELS`. It also checks the `PreToolUse` deny, a vendored script and `check-sheet.sh` run with no permission request, that an injected sheet line stays out of the context, that an invalid sheet yields `sheet invalid`, that each hook fires once, the merge with a second plugin's session-start context, a `-p` resume, and, on a pseudo-terminal through [`tests/copilot-tui.py`](../tests/copilot-tui.py), a slash-command first message and an interactive resume. It needs a signed-in `copilot` CLI, spends about twenty premium requests, and skips when `copilot` is missing. CI does not run it.
+[`tests/copilot-smoke.sh`](../tests/copilot-smoke.sh)把检出安装进一次性的 `COPILOT_HOME`，并从每个会话的 `events.jsonl` 与写出的表中检查：安装、路由、`session hook: off`、带显式模型的 agent 派发、首次运行 setup、setup 在没有用户回答时不写表而有了回答时只写所提供的 ID，以及已保存的选择和插件文件在无 `--allow-all-paths`、无任何路径访问请求的情况下抵达会话。它对 `SMOKE_SETUP_MODELS` 中的每个模型各跑一次 setup 检查。它还检查 `PreToolUse` 的拒绝、一个 vendored 脚本与 `check-sheet.sh` 在无权限请求下运行、注入的表行不会进入上下文、非法表产出 `sheet invalid`、每个 hook 只触发一次、与第二个插件 session-start 上下文的合并、`-p` 恢复，以及通过 [`tests/copilot-tui.py`](../tests/copilot-tui.py)在伪终端上的一条斜杠命令首条消息与一次交互式恢复。它需要已登录的 `copilot` CLI，消耗约二十次 premium 请求，缺少 `copilot` 时跳过。CI 不运行它。
 
-## Configuration and dependencies
+<a id="configuration-and-dependencies"></a>
+## 配置与依赖
 
-Invoke [setup-pstack](../plugins/pstack/skills/setup-pstack/SKILL.md) to choose models for each role. It detects available models, confirms the choices, and writes an override sheet. Its [runtime table](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes) names the sheet path and loading mechanism for each runtime. Defaults live in [models.json](../plugins/pstack/models.json).
+调用 [setup-pstack](../plugins/pstack/skills/setup-pstack/SKILL.md)为每个角色选择模型。它会检测可用模型、确认选择并写出覆盖表。它的[运行时表](../plugins/pstack/skills/setup-pstack/SKILL.md#other-runtimes)为每个运行时给出覆盖表路径与加载机制。默认值位于 [models.json](../plugins/pstack/models.json)。
 
-For design comparisons and reviews, choose distinct models available to your runtime. The default panel uses different Claude models.
+做设计比较与审查时，请选择你的运行时可用且彼此不同的模型。默认 panel 使用不同的 Claude 模型。
 
-Install dependencies for the workflows you use:
+按你使用的工作流安装依赖：
 
-| Dependency | When you need it |
+| 依赖 | 何时需要 |
 | --- | --- |
-| GitHub CLI, `gh` | PR monitoring, shipping, and the `orch` stack frontier. Authenticate with `gh auth login`. The playbooks use Origin's CLI, `origin`, instead when it can resolve the repository. |
-| Bun | The bundled `watch-pr` and `orch` scripts. Their bootstrap installs script dependencies on first run. |
-| `plugin-dev` | Claude Code skill-authoring guidance used by `automate-me`, `reflect`, and `poteto-mode`. |
+| GitHub CLI，`gh` | PR 监控、交付，以及 `orch` 的 stack frontier。用 `gh auth login` 认证。当 Origin 的 CLI `origin` 能解析仓库时，playbook 改用它。 |
+| Bun | 自带的 `watch-pr` 与 `orch` 脚本。它们的 bootstrap 在首次运行时安装脚本依赖。 |
+| `plugin-dev` | `automate-me`、`reflect` 和 `poteto-mode` 使用的 Claude Code 技能编写指导。 |
 
-Install the Claude Code skill-authoring companion with:
+用以下命令安装 Claude Code 技能编写配套插件：
 
 ```text
 /plugin marketplace add anthropics/claude-plugins-official
 /plugin install plugin-dev@claude-plugins-official
 ```
 
-Those authoring workflows need `plugin-dev` for their guidance; other workflows do not. Codex and GitHub Copilot use the equivalents named in their mappings: [Codex](../plugins/pstack/skills/poteto-mode/references/codex-tools.md#driver-and-bundled-skills-pstack-references) and [Copilot](../plugins/pstack/skills/poteto-mode/references/copilot-tools.md#driver-and-bundled-skills-pstack-references).
+这些编写类工作流需要 `plugin-dev` 提供指导；其他工作流不需要。Codex 和 GitHub Copilot 使用各自映射中点名的等价物：[Codex](../plugins/pstack/skills/poteto-mode/references/codex-tools.md#driver-and-bundled-skills-pstack-references) 和 [Copilot](../plugins/pstack/skills/poteto-mode/references/copilot-tools.md#driver-and-bundled-skills-pstack-references)。
 
-Playbooks use the runtime's task-tracking tools or an uncommitted `todo.md` checklist. For Claude Code, the repository documents `CLAUDE_CODE_ENABLE_TODO_TOOLS=1`; see [platform adaptation](../plugins/pstack/skills/poteto-mode/SKILL.md#platform-adaptation).
+Playbook 使用运行时的任务跟踪工具，或一份未提交的 `todo.md` 清单。对 Claude Code，仓库记录了 `CLAUDE_CODE_ENABLE_TODO_TOOLS=1`；见[平台适配](../plugins/pstack/skills/poteto-mode/SKILL.md#platform-adaptation)。
 
-Use [create-verification-skill](../plugins/pstack/skills/create-verification-skill/SKILL.md) to record how the agent should run and check your project, following the [driver policy](../plugins/pstack/skills/poteto-mode/SKILL.md#non-negotiables).
+用 [create-verification-skill](../plugins/pstack/skills/create-verification-skill/SKILL.md)记录 agent 应如何运行和检查你的项目，遵循 [driver 策略](../plugins/pstack/skills/poteto-mode/SKILL.md#non-negotiables)。
 
-## Maintenance
+<a id="maintenance"></a>
+## 维护
 
-### Repository layout
+<a id="repository-layout"></a>
+### 仓库布局
 
 ```text
 .claude-plugin/marketplace.json    Claude Code marketplace
@@ -205,15 +217,16 @@ tools/                           Generation, validation, and upstream sync
 tests/                           Repository checks
 ```
 
-Skills-only installs use `plugins/pstack/skills/`. Agent references and license files are included under `poteto-mode/references/`.
+纯技能安装使用 `plugins/pstack/skills/`。agent 引用与许可文件包含在 `poteto-mode/references/` 下。
 
-### Generated files and checks
+<a id="generated-files-and-checks"></a>
+### 生成文件与检查
 
-The [generator](../tools/generate.mjs) updates versions, model defaults, Codex prompts, Copilot preambles and role lists, and portable reference files, and validates the Pi package manifest. The [slash-command table](#slash-commands) supplies the Codex prompt descriptions and order. Edit that table when changing a menu description, then regenerate. Keep a row for every public skill, with `poteto-mode` first.
+[生成器](../tools/generate.mjs)更新版本、模型默认值、Codex prompt、Copilot preamble 与角色列表，以及可移植的参考文件，并校验 Pi 包清单。[斜杠命令表](#slash-commands)提供 Codex prompt 的描述与顺序。改菜单描述时编辑该表，然后重新生成。为每个公开技能保留一行，`poteto-mode` 放在最前。
 
-[Documentation fact tests](../tests/readme-facts.test.mjs) check the skill counts and upstream pin. The table parser requires the header `| command | use it when |`.
+[文档事实测试](../tests/readme-facts.test.mjs)检查技能计数与上游 pin。表解析器要求表头为 `| command | use it when |`。
 
-Run the generator and repository tests with Bun:
+用 Bun 运行生成器与仓库测试：
 
 ```shell
 bun install --frozen-lockfile
@@ -221,18 +234,19 @@ bun tools/generate.mjs
 bun test tests/
 ```
 
-The install step reads the root `bun.lock` and fetches `typebox`, which the Pi extension and its tests import.
+安装步骤读取根 `bun.lock` 并拉取 `typebox`，Pi 扩展及其测试会导入它。
 
-CI also checks shell scripts, workflows, Markdown, relative links, and the bundled Bun tools. See [local checks](../CONTRIBUTING.md#things-that-will-fail-ci) for commands and [release instructions](../CONTRIBUTING.md#releasing) for versioning and the live Claude Code command check.
+CI 还会检查 shell 脚本、工作流、Markdown、相对链接，以及自带的 Bun 工具。命令见[本地检查](../CONTRIBUTING.md#things-that-will-fail-ci)，版本管理与真实 Claude Code 命令检查见[发布说明](../CONTRIBUTING.md#releasing)。
 
-### Port scope and attribution
+<a id="port-scope-and-attribution"></a>
+### 移植范围与署名
 
-The skill tree is synced against upstream `7b353f7` (v0.15.27 and later). The thermos skills and agents are synced against `118e73b` (thermos 1.0.0).
+技能树同步自上游 `7b353f7`（v0.15.27 及之后）。thermos 技能与 agent 同步自 `118e73b`（thermos 1.0.0）。
 
-This repository ports Lauren Tan's pstack from Cursor to Claude Code and shares the skills with other runtimes. It includes six cursor-team-kit skills, the three thermos skills with their two review subagents, and an independently authored `babysit` skill. The port supplies Claude Code plugin registration and routing, Codex manifests and shortcuts, the Codex tool mapping, the Pi package, extension, and tool mapping, and the GitHub Copilot hooks and tool mapping.
+本仓库把 Lauren Tan 的 pstack 从 Cursor 移植到 Claude Code，并与其他运行时共享技能。它包含六个 cursor-team-kit 技能、三个 thermos 技能及其两个审查 subagent，以及一个独立编写的 `babysit` 技能。移植提供 Claude Code 插件注册与路由、Codex 清单与快捷方式、Codex 工具映射、Pi 包、扩展与工具映射，以及 GitHub Copilot 的 hook 与工具映射。
 
-Cursor-specific automations, sticky-mode metadata, the Grok Bot UI workflow, and the Cursor UI tutorial are excluded. [tools/upstream.json](../tools/upstream.json) records the revisions and exclusions, [tools/substitutions.json](../tools/substitutions.json) holds the Cursor-to-Claude rewrite rules, and [CHANGES.md](../CHANGES.md) records each release. The bundled `thermo-nuclear-code-quality-review` provides a maintainability review when a workflow calls for one, `thermo-nuclear-review` a correctness and security audit, and `thermos` runs both as parallel subagents.
+Cursor 特有的 automation、sticky-mode 元数据、Grok Bot UI 工作流和 Cursor UI 教程被排除。[tools/upstream.json](../tools/upstream.json)记录修订与排除项，[tools/substitutions.json](../tools/substitutions.json)存放 Cursor 到 Claude 的重写规则，[CHANGES.md](../CHANGES.md)记录每个版本。自带的 `thermo-nuclear-code-quality-review` 在工作流需要时提供可维护性审查，`thermo-nuclear-review` 提供正确性与安全审计，`thermos` 把两者作为并行 subagent 运行。
 
-For skill changes, follow the [sync boundary](../CONTRIBUTING.md#the-sync-boundary). Runtime adaptations and workflow changes both land here, and a workflow change is declared as a fork.
+技能改动请遵循[同步边界](../CONTRIBUTING.md#the-sync-boundary)。运行时适配与工作流改动都落在这里，工作流改动要声明为分叉。
 
-See the [license summary](../README.md#license) for licenses and full-plugin attribution. [NOTICE-skills.md](../NOTICE-skills.md) is the notice for skills-only installations.
+许可与完整插件署名见[许可摘要](../README.md#license)。[NOTICE-skills.md](../NOTICE-skills.md)是纯技能安装的声明。

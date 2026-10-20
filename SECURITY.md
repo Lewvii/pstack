@@ -1,7 +1,7 @@
-# Security
+# 安全
 
-Report a vulnerability through [GitHub's private vulnerability reporting form](https://github.com/michael-denyer/pstack-claude/security/advisories/new), which is enabled on this repository. Please do not open a public issue for a vulnerability, because the issue tracker is public from the moment you press submit. A private advisory keeps the details between us until a fix is released.
+请通过 [GitHub 的私密漏洞报告表单](https://github.com/michael-denyer/pstack-claude/security/advisories/new)报告漏洞，本仓库已启用该功能。请不要为漏洞开公开 issue，因为 issue 追踪器在你按下提交的那一刻就是公开的。私密公告能让细节只留在你我之间，直到修复发布。
 
-The skill tree, the hooks, the vendored bun scripts under `plugins/pstack/skills/poteto-mode/scripts`, and the CI workflows are all in scope. Anything that makes an agent run a command the user did not intend, exfiltrate a secret, or reach outside the repository it was pointed at counts, as does a supply-chain weakness in how this repository pins and installs its own dependencies. Findings in Claude Code itself belong to Anthropic, and findings in the upstream project this repository syncs from belong upstream.
+以下范围都在受理之列：技能树、hook、`plugins/pstack/skills/poteto-mode/scripts` 下的 vendored bun 脚本，以及 CI 工作流。任何能让 agent 运行用户并未打算运行的命令、外泄密钥、或越出它被指向的仓库的行为，都算在内；本仓库在固定和安装自身依赖方式上的供应链弱点也算。Claude Code 本身的发现属于 Anthropic，本仓库所同步的上游项目中的发现属于上游。
 
-Only the latest release on `main` receives fixes. Plugin auto-update installs by version number, so a fix ships as a new release rather than as a patch to an older one, and there are no maintained release branches to back-port to.
+只有 `main` 上的最新发行版会收到修复。插件自动更新按版本号安装，所以修复以新版本发布，而不是给旧版本打补丁，也没有需要回移的维护分支。
