@@ -1,17 +1,17 @@
-# Slack Conversations
+# Slack 对话
 
-## How to search it
+## 如何搜索
 
-Slack MCP tools vary. Check which Slack MCP is available and inspect its tool schema first. It may require `mcp_auth`. If authentication fails, stop and report the gap.
+Slack MCP 的工具各不相同。先确认有哪个 Slack MCP 可用，并检查它的工具 schema。它可能需要 `mcp_auth`。如果认证失败，停下来并报告这个缺口。
 
-1. **Author-bounded search.** Messages from the PR author around the PR merge date. Limits scope dramatically and often hits gold.
-3. **PR URL search.** Slack often links PRs when they're reviewed or discussed. Search for the PR URL (or just `/pull/<number>`).
-4. **Error string search.** If the code handles a specific error, search for the error string. Incident threads often surface.
+1. **按作者限定搜索。** 搜索 PR 作者在 PR 合并日期前后发的消息。这能大幅缩小范围，而且常常直接命中。
+3. **按 PR URL 搜索。** Slack 中在评审或讨论 PR 时常会贴出 PR 链接。搜索 PR URL（或只搜 `/pull/<number>`）。
+4. **按错误字符串搜索。** 如果代码处理某个特定错误，就搜索这个错误字符串。往往会搜出事故讨论串。
 
-## Common pitfalls
+## 常见陷阱
 
-- **Channel archaeology limits.** Very old messages may be gone due to retention policies. If you can't find anything before a certain date, note the retention cliff.
-- **Unsearched DMs.** Many decisions happen in DMs that aren't searchable. You'll miss them. That's a known limitation.
-- **Speculative jokes as "decisions."** Slack is casual. "Lol just do the thing" isn't a decision, even if it preceded the commit. Look for considered discussion.
-- **Context collapse in single messages.** Without the thread, a single message often reads differently than in context. Always fetch threads.
-- **Auth failures.** If the MCP isn't authenticated, stop. Don't make up findings. Report that Slack wasn't searchable.
+- **频道考古的限制。** 很旧的消息可能因保留策略而消失。如果在某个日期之前什么都找不到，记下这个保留期断崖。
+- **未搜索的私信。** 很多决定发生在无法搜索的私信里。你会错过它们。这是已知的局限。
+- **把玩笑式的随口一说当成「决定」。** Slack 很随意。"Lol just do the thing" 不是一个决定，即使它出现在提交之前。要找经过考虑的讨论。
+- **单条消息的上下文坍缩。** 脱离讨论串，单条消息读起来往往与在上下文中不同。始终拉取整个讨论串。
+- **认证失败。** 如果 MCP 没有认证，停下来。不要编造发现。报告 Slack 无法搜索。

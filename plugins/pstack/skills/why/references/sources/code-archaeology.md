@@ -1,21 +1,21 @@
-# Code Archaeology (git + in-repo)
+# 代码考古（git + 仓库内）
 
-## What this source contains
+## 这个来源包含什么
 
-- Commit history (messages, dates, authors, diffs)
-- PR descriptions, review comments, and discussion threads (via `gh`)
-- Inline code comments, TODOs, FIXMEs, deprecation notes
-- ADRs (architectural decision records) if the repo keeps them
-- Tests, whose names and assertions often encode the edge cases that motivated a change
-- Related files modified in the same commits (co-change signal)
-- CHANGELOG entries and release notes in the repo
-- Issue/ticket IDs in commit messages and PR bodies
+- 提交历史（消息、日期、作者、diff）
+- PR 描述、评审评论和讨论串（通过 `gh`）
+- 行内代码注释、TODO、FIXME、弃用说明
+- ADR（架构决策记录），如果仓库有保留
+- 测试，其名称和断言往往编码了驱动改动的边界情况
+- 在同一批提交中被修改的相关文件（共变信号）
+- 仓库中的 CHANGELOG 条目和发布说明
+- 提交消息和 PR 正文中的 issue/工单 ID
 
-The most trustworthy source, tied directly to the code, and the most complete. Everything that went through the repo should be here.
+这是最可信的来源，直接与代码绑定，也是最完整的。凡是经过仓库的东西都应该在这里。
 
-## How to search it
+## 如何搜索
 
-Expand the seed commit list:
+扩展种子提交列表：
 
 ```bash
 # History through renames
@@ -37,7 +37,7 @@ git show <hash>
 git log <old>..<new> -p -- <file>
 ```
 
-Look for out-of-band docs:
+寻找带外文档：
 
 ```bash
 # ADRs often live in docs/adr/ or similar

@@ -1,44 +1,44 @@
 ---
 name: create-formal-verification-skill
-description: "Generate a project-local skill that formally verifies the code where a bug costs the most and tests reach the least, in any language, with whichever verification tool fits. Use for /create-formal-verification-skill, \"model-check this race\", \"prove this invariant\", or when concurrency, retries, state machines, parsers, or unsafe code need more than tests."
+description: "生成一个项目本地技能，对 bug 代价最高、测试最难覆盖的代码做形式化验证，不限语言，选用最合适的验证工具。用于 /create-formal-verification-skill、\"model-check this race\"、\"prove this invariant\"，或者并发、重试、状态机、解析器、unsafe 代码需要比测试更强的保证时。"
 ---
 
-# Create a formal verification skill
+# 创建形式化验证技能
 
 On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md), including its per-skill notes, before following this skill.
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-A test checks the cases that someone thought to write. Formal verification checks every case in a stated scope: every order of steps in a model, every input up to a bound, or every input. This skill finds the part of the repo where that matters most, verifies one property of it, and leaves a project-local skill that lets the next agent check a change against that property. Write that skill for an agent who reads it cold, mid-change, and has never seen your work. The user must be able to trust the result and act on it without learning the verification language.
+测试只检查有人想到要写的用例。形式化验证检查给定范围内的每一种情况：模型中步骤的每一种顺序，某个界限内的每一个输入，或者全部输入。本技能找出仓库中最需要这种保证的部分，验证它的一条性质，并留下一个项目本地技能，让下一个代理能用这条性质检查某次改动。写这个技能时，假设读者是一个在改动中途、毫无背景地打开它、从未见过你工作的代理。用户必须能信任结果并据此行动，而不需要学习验证语言。
 
-## Choose the target from the code
+## 从代码中选择目标
 
-Answer from the codebase, and ask the user only what you cannot observe. If the user named an area or a bug, start there.
+从代码库中找答案，只向用户询问你无法观察到的东西。如果用户点名了某个区域或某个 bug，就从那里开始。
 
-A good target is a promise the code makes, where a break harms users and tests rarely reach the case that breaks it. Choose the strongest such target in the repo, not the one that is easiest to verify.
+好的目标是代码做出的一个承诺：一旦被打破就会伤害用户，而测试又很少触及打破它的那种情况。在仓库里选最有分量的这类目标，而不是最容易验证的那个。
 
-## Let the question choose the tool
+## 让问题决定工具
 
-Pick the tool that answers the question at the lowest cost: a model checker, a proof assistant, an SMT-backed verifier, or another tool. Whether events can happen in a bad order usually suits a model checker over a small model of the design, and TLA+ is the default for that in any language. Whether the code itself behaves for every input, as with memory safety, overflow, or a data-structure invariant, usually suits a verifier that runs on the code. If no verifier runs on this language, say so, and test the real code with generated inputs, not a hand model of the function. A property that must hold at every size, where a bound is not enough, can need a proof. Prefer a tool that the repo's developers can install and run, and tell the user why you chose it.
+选择以最低成本回答问题的工具：模型检查器、证明助手、基于 SMT 的验证器，或其他工具。事件能否以错误顺序发生，这类问题通常适合在设计的小模型上用模型检查器，无论什么语言，TLA+ 都是默认选择。代码本身是否对每个输入都表现正确，比如内存安全、溢出、数据结构不变量，通常适合直接在代码上运行的验证器。如果这门语言没有可用的验证器，就明确说出来，并用生成的输入去测试真实代码，而不是给函数手写一个模型。必须在任意规模下都成立、界限不够用的性质，可能需要证明。优先选择仓库开发者能安装和运行的工具，并告诉用户你为什么选它。
 
-## What makes it good
+## 好的标准
 
-- **True to the code.** Every part of the model or proof points to code that a reviewer can open. What the verification treats as one indivisible step is one indivisible step in the code. Names come from this repo.
-- **Able to fail.** A check that you have never seen fail proves nothing. Show each property failing on a broken variant of the code it guards, such as a removed check or a reordered step.
-- **Findings stay findings.** When the current code breaks the property, report it with the counterexample in the code's terms. Do not weaken the property or the model until it passes, and do not change product code unless the user asks.
-- **Honest about scope.** Say what is verified, under which bounds and assumptions, and what is left out. A pass covers the model or the bound, not the whole system.
-- **Readable without the tool.** State the property and the harm in one plain sentence each. Tell a counterexample as a short sequence of steps in the code's words.
-- **Cheap to rerun.** One command, a reproducible tool version, and a run short enough that the next agent will use it on every relevant change.
-- **Kept in step with the code.** Record which files and functions each check covers, and the commit at which you last confirmed that the verification describes them. When the covered code changes after that commit, the next agent can see that the verification needs another look.
+- **忠于代码。** 模型或证明的每个部分都指向审阅者能打开的代码。验证视为一个不可分割步骤的东西，在代码中也必须是一个不可分割的步骤。命名取自本仓库。
+- **能够失败。** 一个你从未见它失败过的检查什么也证明不了。对它所守护的代码做一个破坏版本，比如删掉一个检查或调换一个步骤，展示每条性质都会失败。
+- **发现就是发现。** 当前代码违反性质时，用代码自己的语言给出反例并报告。不要削弱性质或模型直到它通过，除非用户要求，也不要修改产品代码。
+- **如实说明范围。** 说清楚验证了什么、在哪些界限和假设下、遗漏了什么。通过只覆盖模型或界限，而不是整个系统。
+- **不懂工具也能读懂。** 用一句平实的话说明性质，再用一句说明危害。把反例讲成一串简短的步骤，用代码的用词。
+- **重跑成本低。** 一条命令，可复现的工具版本，运行时间短到下一个代理愿意在每次相关改动时都跑。
+- **与代码保持同步。** 记录每个检查覆盖哪些文件和函数，以及你最后一次确认验证与它们相符时所在的提交。当被覆盖的代码在该提交之后发生变化，下一个代理就能看出验证需要重新审视。
 
-## Generate the formal verification skill
+## 生成形式化验证技能
 
-Write a project-local skill with frontmatter that names the area and says when to use it. Name the skill for the area, never `verify` or a `verify-` prefix, which belong to the driver skill `/create-verification-skill` writes. On Claude Code it lives at `.claude/skills/<area>/SKILL.md`. Without frontmatter, the skill never registers. From the skill alone, the next agent must be able to tell whether a change touches the verified code, run the check, tell a real bug from a modeling error, and update the verification when a change is intended. Put the coverage record and the sync commit in the skill, and tell the next agent to move the sync commit forward only after it confirms that the verification describes the code at the new commit. Use this repo's real commands, paths, and nouns, and leave no placeholders.
+编写一个项目本地技能，frontmatter 中写明它所针对的区域以及何时使用。以区域命名该技能，never `verify` or a `verify-` prefix, which belong to the driver skill `/create-verification-skill` writes（也就是说，绝不能叫 `verify` 或以 `verify-` 开头，这些名字属于 `/create-verification-skill` 生成的驱动技能）。在 Claude Code 上，它位于 `.claude/skills/<area>/SKILL.md`。没有 frontmatter，技能永远不会注册。仅凭这个技能，下一个代理必须能判断一次改动是否触及被验证的代码，运行检查，区分真实 bug 与建模错误，并在改动是有意为之时更新验证。把覆盖记录和同步提交写进技能，并告诉下一个代理：只有在确认验证与新提交处的代码相符之后，才能把同步提交往前移。使用本仓库真实的命令、路径和名词，不留任何占位符。
 
-## Prove it before you hand off
+## 交付前先证明它
 
-Follow the generated skill once, as the next agent would, on a scratch change that breaks the property in the real code. It must catch the break. Then drop the scratch change and confirm that the check is back where it started: passing, or failing only on the findings you will report. A formal verification skill that was never run is a draft. If the skill misses the break or a step does not run, fix the skill or the verification, not the scratch change.
+像下一个代理那样把生成的技能完整走一遍，作用在一个在真实代码中打破该性质的临时改动上。它必须抓住这个破坏。然后丢弃临时改动，确认检查回到了起始状态：通过，或者只在你将要报告的发现上失败。从未运行过的形式化验证技能只是草稿。如果技能没抓住破坏，或者某一步跑不起来，要修的是技能或验证，而不是临时改动。
 
-## Hand off
+## 交接
 
-Tell the user what you verified, which tool you used and why, the bounds, what the check found in plain words, how to run it, and what it does not cover. Suggest a second target only if you found a close one. Point the user at `/maintain-formal-verification-skill` for bringing the verification back in line after changes that did not recheck it.
+告诉用户：你验证了什么，用了哪个工具以及原因，界限是什么，检查用平实的话说发现了什么，怎么运行它，以及它没有覆盖什么。只有在你发现了一个相近的目标时，才建议第二个目标。对于那些没有重新检查验证的改动，引导用户使用 `/maintain-formal-verification-skill` 让验证重新与代码对齐。

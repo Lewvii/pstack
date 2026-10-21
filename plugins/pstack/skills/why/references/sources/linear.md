@@ -1,48 +1,48 @@
-# Linear Tickets
+# Linear 工单
 
-## What this source contains
+## 这个来源包含什么
 
-- Issues describing features, bugs, and their motivation
-- Project docs attached to issues (often PRDs or specs)
-- Parent/sub-issue relationships (broader initiative → specific tickets)
-- Comments on issues (clarifications, scope changes, "why we're doing this" rationale)
-- Labels (e.g., `compliance`, `customer-request`, `perf`) that signal the type of motivation
-- Status updates that explain scope changes
-- Attachments and linked GitHub PRs
+- 描述功能、缺陷及其动机的 issue
+- 附在 issue 上的项目文档（通常是 PRD 或规格说明）
+- 父 issue / 子 issue 关系（更宽泛的计划 → 具体工单）
+- issue 上的评论（澄清、范围变更、「我们为什么做这个」的理由）
+- 标签（例如 `compliance`、`customer-request`、`perf`），提示动机的类型
+- 解释范围变更的状态更新
+- 附件和关联的 GitHub PR
 
-Linear is where the product/business context often lives: the "we're doing this because customer X asked" or "this is for the Q3 compliance initiative" layer.
+产品/业务背景往往就在 Linear 里：也就是「我们这么做是因为客户 X 提出了要求」或「这是为了 Q3 合规计划」那一层。
 
-## How to search it
+## 如何搜索
 
-Use the Linear MCP.
+使用 Linear MCP。
 
-1. **Start with linked tickets.** If the seed commits or PRs reference ticket IDs (e.g., `ENG-1234`, `[BUG-567]`), fetch those first with `get_issue`. Read the full issue including comments.
-2. **List related issues by keyword.** Use `list_issues` with text search for the feature name, key symbol, or business term. Try multiple phrasings.
-3. **Walk the issue tree.** If you land on a sub-issue, fetch its parent. Sub-issues are tactical. Parents often carry the "why."
-4. **Read project docs.** If the issue belongs to a project, use `get_project` and check attached docs. Project-level documents are where specs and rationale are most often captured.
-5. **Check labels and milestones.** Labels hint at the category of motivation (customer-request, incident-followup, compliance). Milestones tie work to deadlines, which often reveal motivation.
+1. **从关联工单开始。** 如果种子提交或 PR 引用了工单 ID（例如 `ENG-1234`、`[BUG-567]`），先用 `get_issue` 拉取它们。完整阅读 issue，包括评论。
+2. **按关键词列出相关 issue。** 用 `list_issues` 的文本搜索查功能名、关键符号或业务术语。尝试多种说法。
+3. **遍历 issue 树。** 如果你落在一个子 issue 上，拉取它的父 issue。子 issue 偏战术层面。父 issue 往往承载着「为什么」。
+4. **阅读项目文档。** 如果该 issue 属于某个项目，用 `get_project` 查看附带的文档。项目级文档是最常记录规格和理由的地方。
+5. **检查标签和里程碑。** 标签提示动机的类别（customer-request、incident-followup、compliance）。里程碑把工作与截止日期绑定，而截止日期常常揭示动机。
 
-## What good evidence looks like here
+## 好的证据在这里长什么样
 
-- An issue description stating the business problem: "Customer Acme needs X because of their SOC2 audit"
-- A comment recording a decision: "We decided to go with approach B because approach A would require touching the billing service"
-- A parent issue titled like an initiative: "Q3 Enterprise Readiness" or "Reduce Payment Failures"
-- An attached PRD or spec
-- Labels like `customer:acme`, `incident-followup`, `compliance`, `perf-regression`
+- 陈述业务问题的 issue 描述："Customer Acme needs X because of their SOC2 audit"
+- 记录了决定的评论："We decided to go with approach B because approach A would require touching the billing service"
+- 标题像一项计划的父 issue："Q3 Enterprise Readiness" 或 "Reduce Payment Failures"
+- 附带的 PRD 或规格说明
+- 诸如 `customer:acme`、`incident-followup`、`compliance`、`perf-regression` 的标签
 
-## Common pitfalls
+## 常见陷阱
 
-- **Scope drift.** The ticket the PR references may have been closed and reopened with a different scope. Read the whole history.
-- **Mechanical templates.** Some teams require "Why" sections but fill them with boilerplate. Generic text ("improve user experience") is probably not a real answer.
-- **Stale tickets.** Old tickets often reflect a version of the plan that changed. Check dates and cross-reference with the code's ship date.
-- **Closed-as-duplicate chains.** Follow the duplicate-of relationships back to the canonical ticket.
-- **Private workspace content.** If you can't access an issue, note that as a gap rather than guessing.
+- **范围漂移。** PR 引用的工单可能被关闭后又以不同的范围重新打开。阅读完整历史。
+- **机械化模板。** 有些团队要求写 "Why" 小节，却用套话填充。泛泛的文字（"improve user experience"）大概不是真正的答案。
+- **过时的工单。** 旧工单往往反映的是后来改变了的计划版本。检查日期，并与代码的上线日期交叉核对。
+- **作为重复关闭的链条。** 顺着 duplicate-of 关系追溯到标准工单。
+- **私有工作区内容。** 如果无法访问某个 issue，把它记为缺口，而不是去猜。
 
-## What to return
+## 返回什么
 
-For each relevant ticket:
-- Ticket ID and title
-- The problem/motivation quoted from the description or comments (not paraphrased. The synthesizer needs the exact text to cite)
-- Labels, parent issue, project
-- Author, created date, closed date
-- Link to the ticket if available
+对每个相关工单：
+- 工单 ID 和标题
+- 从描述或评论中引用的问题/动机（不要转述。综合者需要确切文本来引证）
+- 标签、父 issue、项目
+- 作者、创建日期、关闭日期
+- 工单链接（如可得）

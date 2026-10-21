@@ -2,19 +2,19 @@
 
 Resolve the driver skill through [poteto-mode's Non-negotiables](../SKILL.md#non-negotiables).
 
-**You own the plan, not the code. The plan is a checklist an owner runs box by box and the operator audits from the evidence.** The plan is the deliverable. Do not implement.
+**你负责的是计划，不是代码。计划是一份清单：owner 逐项执行，operator 依据证据审计。** 计划本身就是交付物。不要动手实现。
 
-1. When the change is one or two files with an obvious approach, skip the plan. Say so and stop.
-2. Settle open questions by prototype before you write. Run `playbooks/prototype.md` for each. Keep the branch, the SHA, and the screenshots for Appendix A. Ask the operator only about a product or preference call that no run can settle. Give options (the **never-block-on-the-human** principle skill).
-3. Explore in subagents with `subagent_type: "pstack:poteto-agent"` and an explicit model per the Subagents section (the **guard-the-context-window** principle skill). Pick each subagent's reasoning level for the job, per the Subagents section. Each returns file pointers, conventions, test commands, and entry points. No inlined dumps.
-4. Copy the skeleton below into the plan file and fill every placeholder. Unless the operator names a path, write the file under the agent store (`~/.claude/orchestrate/<slug>/docs/`). Keep every heading and every sub-block in the order shown. One section per PR. One PR is one change with its own evidence (the **sequence-verifiable-units** principle skill). Name the execution playbook in **How to read this**. Pick between `playbooks/autopilot-full.md` and `playbooks/autopilot-stack.md` per the rule at the end of `playbooks/autopilot-stack.md`. A standing program takes `playbooks/orchestrate.md`. The execution playbook owns base selection, topology changes, and merge authority. Do not copy its rebase steps into the plan.
-5. Write under `/technical-writing` in full, then `/unslop`. The body is one Diátaxis mode, how-to. Appendices hold explanation and reference. Each heading states the task or the finding. No long dashes. No mid-sentence colons.
-6. Run `node skills/poteto-mode/scripts/check-plan.mjs <plan.md>` from the installed plugin and fix every line it prints (the **encode-lessons-in-structure** principle skill).
-7. Hand back. Post the plan path and the script's output, then stop. Execution starts on the operator's explicit go, under the execution playbook the plan names.
+1. 如果改动只涉及一两个文件且做法显而易见，跳过计划。说明这一点，然后停止。
+2. 动笔之前，用原型解决未决问题。每个问题跑一遍 `playbooks/prototype.md`。保留分支、SHA 和截图，供附录 A 使用。只有在任何运行都无法回答的产品或偏好问题上才询问 operator，并给出选项（the **never-block-on-the-human** principle skill）。
+3. 在 subagent 中探索，使用 `subagent_type: "pstack:poteto-agent"`，并按 Subagents 一节显式指定模型（the **guard-the-context-window** principle skill）。按 Subagents 一节，为每个 subagent 选择与任务匹配的推理级别。每个 subagent 返回文件指针、约定、测试命令和入口点。不要内联大段转储。
+4. 把下方骨架复制到计划文件中，填满每个占位符。除非 operator 指定路径，否则把文件写在 agent store 下（`~/.claude/orchestrate/<slug>/docs/`）。保留每个标题和每个子块，并保持所示顺序。每个 PR 一节。一个 PR 是一项带有自身证据的改动（the **sequence-verifiable-units** principle skill）。在 **How to read this** 中写明执行 playbook。按 `playbooks/autopilot-stack.md` 末尾的规则，在 `playbooks/autopilot-full.md` 和 `playbooks/autopilot-stack.md` 之间选择。常设项目使用 `playbooks/orchestrate.md`。执行 playbook 负责 base 选择、拓扑变更和合并权限。不要把它的 rebase 步骤抄进计划。
+5. 先完整按 `/technical-writing` 写作，再跑 `/unslop`。正文只用一种 Diátaxis 模式，即 how-to。附录承载解释和参考。每个标题陈述任务或结论。不用长破折号。句中不用冒号。
+6. 在已安装的插件中运行 `node skills/poteto-mode/scripts/check-plan.mjs <plan.md>`，修掉它打印的每一行（the **encode-lessons-in-structure** principle skill）。
+7. 交回。贴出计划路径和脚本输出，然后停止。执行要等 operator 明确放行后才开始，并遵循计划所指定的执行 playbook。
 
-**Verification.** Tests alone are not sufficient verification. A PR is verified only when its unit, live, and perf boxes are all checked (the **prove-it-works** principle skill). That sentence is the verification rule. Every verification block opens with it. The live block is mandatory. Ten lanes on the configured `swarm workers` model at the PR head drive the real surface through its driver skill, per the **swarm** skill. Each lane is one box with a concrete scenario, the screenshot it saves, and its pass predicate. One lane is the **Regression lane against trunk.** It runs the same load-bearing scenario on trunk and head. If trunk does not have the feature, the lane records that fact and gates the behavior the diff adds plus the end state the user waits for instead of inventing a trunk result. The perf gate is dual-sided. Trunk and head must both produce the named metric. If trunk lacks the feature, also isolate the work the diff adds and set an absolute budget for that work plus the end-to-end state the user waits for. Do not claim a ratio between unlike scenarios. The perf block names the metric, the interleaved probe, the trunk baseline measured first, and the rule with the number that fails. A PR that changes an interaction is review-gated. The operator reviews it in chat with screenshots and a video before merge. A PR that changes no interaction writes `**Review gate.** None. <PR id> is not review-gated.` and no boxes under it.
+**验证。** Tests alone are not sufficient verification.（仅有测试不足以构成验证。）只有当一个 PR 的 unit、live 和 perf 三类复选框全部勾选时，它才算通过验证（the **prove-it-works** principle skill）。这句话就是验证规则，每个验证块都以它开头。live 块是必需的。Ten lanes on the configured `swarm workers` model at the PR head（即在 PR head 上用配置的 `swarm workers` 模型跑十条 lane），按 the **swarm** skill，通过 driver skill 驱动真实界面。每条 lane 是一个复选框，写明具体场景、它保存的截图以及通过判据。其中一条是 **Regression lane against trunk.**（针对 trunk 的回归 lane）。它在 trunk 和 head 上运行同一个关键场景。如果 trunk 还没有该功能，这条 lane 记录这一事实，改为对 diff 新增的行为以及用户等待的最终状态设门禁，而不是编造一个 trunk 结果。性能门禁是双边的：trunk 和 head 都必须产出指定的指标。如果 trunk 缺少该功能，还要单独隔离 diff 新增的工作，并为这部分工作以及用户等待的端到端状态设定绝对预算。不要在不同场景之间声称比值。perf 块要写明指标、交错执行的探针、先测得的 trunk 基线，以及带失败阈值的规则。改变交互的 PR 需要过 review 门禁：合并前，operator 在聊天中通过截图和视频进行 review。不改变交互的 PR 写 `**Review gate.** None. <PR id> is not review-gated.`，下面不放复选框。
 
-**Driver skill.** Select it through the Non-negotiables and put the resolved skill path or exact commands in each live lane's boot recipe. Native mobile uses whatever simulator-driving skill the repo has. A PR that touches two surfaces gets lanes on both. A surface with no driver skill is a risk in Appendix C, and its live block still names how each lane drives it.
+**Driver skill。** 通过 Non-negotiables 选定它，并在每条 live lane 的启动配方中写入解析后的 skill 路径或确切命令。原生移动端使用仓库中现有的模拟器驱动 skill。触及两个界面的 PR 在两个界面上都要有 lane。没有 driver skill 的界面要作为风险写入附录 C，它的 live 块仍需写明每条 lane 如何驱动它。
 
 ````markdown
 # <Program> plan
@@ -155,4 +155,4 @@ Each live lane runs in its own worktree at the PR head. Drive through the skill 
 <Docs to read before editing. Which PRs get `skills/how/SKILL.md` and `skills/interrogate/SKILL.md`. The trail per `skills/show-me-your-work/SKILL.md`.>
 ````
 
-**Reply:** the plan path, the PR ids with their dependencies and the review-gated set, what the prototypes proved and what stays unproven, and the check script's output.
+**回复：** 计划路径，各 PR id 及其依赖和需要 review 门禁的集合，原型证明了什么、哪些仍未证明，以及检查脚本的输出。

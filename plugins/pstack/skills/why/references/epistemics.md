@@ -1,79 +1,92 @@
-# Epistemics
+# 认知框架
 
-How to reason about confidence when evidence is historical, fragmentary, and sometimes contradictory, and how to tell the user without flattening it into false certainty. Code shows what it does, not *why it exists*. The why lives in commits, PRs, tickets, docs, and conversations, all incomplete, biased, and sometimes missing. Pretending otherwise produces confident-sounding guesses that mislead the user.
+当证据是历史性的、零碎的、有时相互矛盾时，如何推断置信度，以及如何在告诉用户时不把它压平成虚假的确定性。代码展示的是它做什么，而不是*它为什么存在*。「为什么」存在于提交、PR、工单、文档和对话之中，而这些都不完整、有偏差，有时甚至缺失。假装不是这样，只会产出听起来很自信、实则误导用户的猜测。
 
-## Claims about human decisions
+<a id="claims-about-human-decisions"></a>
+## 关于人类决策的论断
 
-Before investigating whether a rule permits an action, identify the component or stage that owns the action and whether the question affects the current task. Ownership elsewhere may make the question unnecessary; it does not end a relevant cross-component investigation.
+在调查某条规则是否允许某个动作之前，先确定拥有该动作的组件或阶段，以及这个问题是否影响当前任务。动作归别处所有，可能让这个问题变得不必要；但它不会终止一项相关的跨组件调查。
 
-When the exact scope of a human ruling matters, locate the person's original attributable words. Preserve a source pointer, the speaker, and enough original wording to establish scope. Label an agent summary or interpretation as such, regardless of its age. A paraphrase alone cannot establish the original instruction's exact scope. If the original is unavailable, say so and leave that scope uncertain; do not invent a firm restriction or permission.
+当一条人类裁定的确切范围很重要时，找到这个人原始的、可归属的原话。保留来源指针、说话人，以及足以确立范围的原始措辞。把 agent 的总结或解读标记为总结或解读，不论它有多久。仅凭转述无法确立原始指令的确切范围。如果原文不可得，就如实说明，并让该范围保持不确定；不要凭空捏造一条硬性限制或许可。
 
-For example, "avoid that endpoint during this migration" and an agent's "the user permanently forbids that endpoint" are different claims. Report the scoped original and the broader interpretation separately. Copies of that interpretation in several notes form one dependent evidence chain, not independent decisions. Trace them to their source before increasing confidence. This rule concerns human rulings; ordinary factual reporting does not require verbatim quotes for every claim.
+例如，"avoid that endpoint during this migration" 与 agent 的 "the user permanently forbids that endpoint" 是两个不同的论断。把有范围限定的原文和更宽泛的解读分开报告。同一解读在多份笔记中的副本构成一条相互依赖的证据链，而不是多个独立的决定。在提高置信度之前，先把它们追溯到源头。本规则针对人类裁定；普通的事实性报告不要求每个论断都附逐字引文。
 
-## Confidence Tiers
+<a id="confidence-tiers"></a>
+## 置信度分级
 
-Every claim in the output must sit in one tier. The tier sets its section and its phrasing.
+输出中的每个论断都必须落在一个等级中。等级决定它所在的段落和它的措辞。
 
+<a id="1-direct"></a>
 ### 1. Direct
 
-An explicit, textual citation answers the question: something an author actually *wrote* that says why, not "the code does X so the author must have wanted X." For example, a PR description "this fixes the bug where users with >1000 items couldn't paginate", a ticket "we're adding this because customer Acme requested it in their security review", a code comment "// clamp to 100 because the upstream API rejects larger values", a design doc "we chose option A over option B because we need persistence across restarts", or a chat message from the author "switching to this approach since the old one was flaky in tests".
+有明确的文字引证回答了这个问题：作者实际*写下*的、说明原因的内容，而不是「代码做了 X，所以作者一定想要 X」。例如，PR 描述 "this fixes the bug where users with >1000 items couldn't paginate"，工单 "we're adding this because customer Acme requested it in their security review"，代码注释 "// clamp to 100 because the upstream API rejects larger values"，设计文档 "we chose option A over option B because we need persistence across restarts"，或作者的一条聊天消息 "switching to this approach since the old one was flaky in tests"。
 
-Phrasing: confident, present tense, cited. "This exists because X."
+措辞：自信、现在时、带引证。"This exists because X."
 
+<a id="2-supported"></a>
 ### 2. Supported
 
-Multiple pieces of indirect evidence converge on one conclusion. No single source states it explicitly, but the pattern across sources makes it likely. For example, the PR title says "improve performance", the ticket is labeled "perf", and the surrounding commits all touch the same hot path. Or several tests added with the change all exercise very large inputs. Or the author's other PRs from the same week all name the same incident.
+多条间接证据汇聚到同一结论。没有单一来源明确陈述它，但跨来源的模式让它很可能成立。例如，PR 标题写着 "improve performance"，工单打了 "perf" 标签，周边的提交都触及同一条热路径。或者随改动一起加入的几个测试都在测极大的输入。或者作者同一周的其他 PR 都提到了同一次事故。
 
-Phrasing: confident but clearly derived, citing each item. "The evidence points strongly to X: [the specific pieces]."
+措辞：自信但明显是推导出来的，逐条引证。"The evidence points strongly to X: [the specific pieces]."
 
+<a id="3-inferred"></a>
 ### 3. Inferred
 
-A reasonable reading of the context that nothing explicitly supports. It is *your interpretation*, not a fact from the record. For example, the PR doesn't say why, but the error was happening in production (per the incident channel timing) and the fix was rushed (merged the same day), so it was likely a hotfix. Or the function name suggests retry logic, and its retry count of 3 matches the team's 3-retry convention elsewhere in the codebase.
+对上下文的一种合理解读，但没有任何内容明确支持它。它是*你的解读*，不是记录中的事实。例如，PR 没说原因，但错误当时正在生产环境发生（根据事故频道的时间线），而且修复很仓促（当天合并），所以它很可能是个热修复。或者函数名暗示了重试逻辑，而它的重试次数 3 与代码库其他地方团队惯用的 3 次重试一致。
 
-Phrasing: hedged, with the chain explicit. "Given A and B, C seems likely because D."
+措辞：有所保留，并把推理链写明。"Given A and B, C seems likely because D."
 
+<a id="4-speculative"></a>
 ### 4. Speculative
 
-A plausible hypothesis on thin evidence, where other explanations fit equally well. Worth presenting, since the user may know which is right, but mark it as a guess. For example, "This might be a workaround for a browser bug that's since been fixed, but we found no contemporary evidence of that", or "It's possible this threshold was chosen to match an SLA commitment, but no SLA doc references it."
+证据单薄的合理假设，其他解释同样说得通。值得提出，因为用户可能知道哪个是对的，但要标记为猜测。例如 "This might be a workaround for a browser bug that's since been fixed, but we found no contemporary evidence of that"，或 "It's possible this threshold was chosen to match an SLA commitment, but no SLA doc references it."
 
-Phrasing: "One possibility is X, but we have no direct evidence." Usually lives in Competing Hypotheses, alongside other possibilities.
+措辞："One possibility is X, but we have no direct evidence." 通常放在 Competing Hypotheses 中，与其他可能性并列。
 
+<a id="5-unknown"></a>
 ### 5. Unknown
 
-You looked and couldn't find out. A valid, important outcome. Document it.
+你查过了，但没能查明。这是一个有效且重要的结果。把它记录下来。
 
-Phrasing: "We searched X, Y, and Z and found no evidence of why." Be specific about *what* you searched. "We couldn't find out" is less useful than "We searched the ticket tracker with keywords A and B, scanned the 6 PRs that touched this file since 2023, and grep'd the repo for string literals matching the threshold. None surfaced a rationale."
+措辞："We searched X, Y, and Z and found no evidence of why." 要具体说明你搜了*什么*。"We couldn't find out" 远不如 "We searched the ticket tracker with keywords A and B, scanned the 6 PRs that touched this file since 2023, and grep'd the repo for string literals matching the threshold. None surfaced a rationale." 有用。
 
-## Phrasing Guide
+<a id="phrasing-guide"></a>
+## 措辞指南
 
-**Confidence words** imply Direct or Supported evidence and need a citation immediately adjacent. Never use them for inferences: "because", "the reason is", "was designed to" (claims author intent), "fixes" / "addresses" / "solves" (claims the change achieved its goal), "the team decided" (claims a group decision happened).
+**确定性词汇**意味着 Direct 或 Supported 证据，需要紧挨着引证。绝不要把它们用于推断："because"、"the reason is"、"was designed to"（声称了作者意图）、"fixes" / "addresses" / "solves"（声称改动达成了目标）、"the team decided"（声称发生过一次团队决策）。
 
-**Hedges** signal interpretation, not report. Use them liberally in What We Can Reasonably Infer: "appears to", "seems to", "likely", "suggests", "is consistent with", "one reading is", "plausibly", "may have been", "the evidence points toward".
+**保留语**表示解读，而非报告。在 What We Can Reasonably Infer 中可以大量使用："appears to"、"seems to"、"likely"、"suggests"、"is consistent with"、"one reading is"、"plausibly"、"may have been"、"the evidence points toward"。
 
-**Words to avoid:**
+**要避免的词：**
 
-- "obviously". If it were obvious, the user wouldn't be asking
-- "clearly". Almost always precedes a claim that isn't clear
-- "of course". Same
-- "just" (as in "it's just X for performance"). Dismissive and usually hides uncertainty
-- "I think" / "I believe". You're synthesizing evidence, not giving a personal opinion. Use "the evidence suggests" instead.
+- "obviously"。如果真的显而易见，用户就不会问了
+- "clearly"。几乎总是出现在一个并不清楚的论断之前
+- "of course"。同上
+- "just"（如 "it's just X for performance"）。带有轻视意味，通常掩盖了不确定性
+- "I think" / "I believe"。你是在综合证据，不是在发表个人观点。改用 "the evidence suggests"。
 
-## Avoid Rationalization
+<a id="avoid-rationalization"></a>
+## 避免合理化
 
-Code that "makes sense" today may have been written for reasons that no longer apply, or that were wrong at the time. Don't retrofit a clean rationale onto messy history. Don't assume the author did the "right" thing and work backward to justify it. Don't assume a consistent pattern was intentional when it might be copy-paste. Don't turn an absence of evidence into evidence of absence ("no one mentioned security concerns, so it must not have been a concern").
+今天看起来「说得通」的代码，当初写下它的理由可能已不再适用，甚至在当时就是错的。不要给混乱的历史事后套上一个干净的理由。不要假设作者做了「正确」的事，再倒推为它辩护。不要假设一致的模式是有意为之，它可能只是复制粘贴。不要把缺乏证据当成否定的证据（"no one mentioned security concerns, so it must not have been a concern"）。
 
-## The Sycophancy Trap
+<a id="the-sycophancy-trap"></a>
+## 迎合陷阱
 
-Users often embed a hypothesis: "Why do we do it this way, I assume it's for performance?" Don't simply confirm it. The guess is a prompt for investigation, not a conclusion to validate. Treat it as one candidate among others and check the evidence independently. If the evidence supports it, say so with citations. If not, say so, and present what the evidence *does* support.
+用户常常在问题里嵌入一个假设："Why do we do it this way, I assume it's for performance?" 不要简单地确认它。这个猜测是调查的提示，而不是待验证的结论。把它当作多个候选之一，独立检查证据。如果证据支持它，就带着引证这么说。如果不支持，也如实说，并给出证据*确实*支持的内容。
 
-## When Evidence Contradicts
+<a id="when-evidence-contradicts"></a>
+## 当证据相互矛盾时
 
-Surface both sources in the output, with citations. Don't pick the one that fits a tidier narrative. For example, the ticket says "we need this for customer X's compliance requirement" and the PR says "cleaning up tech debt in this area". Both may be true (the ticket motivated the work, the PR gave the author's framing), or one may be wrong. Let the user make the call.
+在输出中同时呈现两个来源，并附引证。不要挑那个更符合整洁叙事的。例如，工单说 "we need this for customer X's compliance requirement"，而 PR 说 "cleaning up tech debt in this area"。两者可能都对（工单驱动了这项工作，PR 给出的是作者的表述框架），也可能有一个是错的。让用户来判断。
 
-## When Evidence Is Missing
+<a id="when-evidence-is-missing"></a>
+## 当证据缺失时
 
-An honest "we don't know" is one of the most valuable outputs. The user learns the answer isn't in the obvious places, that they'll need to ask a human (the original author, the product owner, the team lead), or that they can decide the question isn't worth pursuing further. Failing to mark a gap, and instead filling it with a confident guess, actively harms the user, because they'll act on the guess. Name each gap concretely: the question, the sources searched, what you searched for in each, and what you found (nothing, or only tangential material).
+诚实的「我们不知道」是最有价值的输出之一。用户由此得知答案不在显而易见的地方，需要去问人（原作者、产品负责人、团队负责人），或者可以判定这个问题不值得继续追。不标记缺口、反而用自信的猜测填上它，会实实在在地伤害用户，因为他们会依据这个猜测行动。具体地命名每个缺口：问题是什么、搜了哪些来源、在每个来源里搜了什么、找到了什么（什么都没有，或只有不相干的材料）。
 
-## Before Finalizing
+<a id="before-finalizing"></a>
+## 定稿之前
 
-Before the synthesizer delivers the output, it checks every claim in "What We Found" and "What We Can Reasonably Infer". Each claim has a citation or moves to Inferred or Hypotheses. Its phrasing matches its tier. It doesn't treat code as evidence for its own intent (if it does, remove or reclassify it). The output has a "What We Don't Know" section. If no gaps are mentioned, that's suspicious. Either the evidence was unusually complete or something is being swept under the rug.
+综合者在交付输出之前，要检查 "What We Found" 和 "What We Can Reasonably Infer" 中的每个论断。每个论断都有引证，否则移到 Inferred 或 Hypotheses。它的措辞与其等级相符。它没有把代码当作其自身意图的证据（如果有，就删除或重新归类）。输出包含 "What We Don't Know" 一节。如果完全没有提到缺口，那就很可疑。要么证据异常完整，要么有东西被掩盖了。

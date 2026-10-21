@@ -1,6 +1,6 @@
 ---
 name: interrogate
-description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Multiple LLM reviewers challenge changes from independent angles."
+description: "用于 \"interrogate\"、\"adversarial review\"、\"multi-model review\"、\"challenge this\"、\"stress test this code\"、\"find blind spots\" 或 \"tear this apart\"。多个 LLM 评审者从相互独立的角度挑战改动。"
 ---
 
 # Interrogate
@@ -9,25 +9,25 @@ On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md),
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-Spawn one reviewer per configured model to adversarially review code changes. The adversarial signal comes from model diversity, not assigned personas. The deliverable is a synthesized verdict. Do NOT auto-apply changes.
+为每个配置的模型派生一个评审者，对代码改动做对抗式评审。对抗信号来自模型的多样性，而不是指派的角色。交付物是一份综合后的结论。不要自动应用改动。
 
-## Step 1, Scope
+## 第 1 步：范围
 
-Identify what to review from context:
+从上下文中确定要评审什么：
 
-- If the user points at specific files or a diff, use that.
-- If on a feature branch, run `git diff main...HEAD` (or the appropriate base branch) for the full changeset.
-- If the user's message references recent work, gather the relevant files.
+- 如果用户指向了具体文件或某个 diff，就用它。
+- 如果在功能分支上，运行 `git diff main...HEAD`（或相应的基线分支）获取完整变更集。
+- 如果用户的消息提到了最近的工作，收集相关文件。
 
-Package the diff or file contents with any surrounding context files the reviewers need to understand the code.
+把 diff 或文件内容打包，连同评审者理解代码所需的周边上下文文件一起提供。
 
-## Step 2, Intent
+## 第 2 步：意图
 
-Before spawning reviewers, state the intent in one clear paragraph from the user's message, commit messages, the PR description if one exists, and the code. If you're unsure about the intent, ask the user before proceeding.
+在派生评审者之前，根据用户的消息、提交信息、PR 描述（如果有）以及代码，用一段清晰的话陈述意图。如果你对意图没有把握，先问用户再继续。
 
-## Step 3, Spawn Reviewers
+## 第 3 步：派生评审者
 
-Launch all reviewers in a single message with the `Agent` tool, one per entry on the `interrogate reviewers` line in `pstack-models.md`, labeled Reviewer A, B, and so on to match the entry count. If the sheet or that line is missing, use the table defaults.
+在一条消息里用 `Agent` 工具启动所有评审者，`pstack-models.md` 中 `interrogate reviewers` 行的每个条目对应一个，按条目数依次标记为 Reviewer A、B 等。如果该表格或该行缺失，使用表中的默认值。
 
 | Subagent | Default model |
 |----------|---------------|
@@ -36,47 +36,47 @@ Launch all reviewers in a single message with the `Agent` tool, one per entry on
 | Reviewer C | `sonnet` |
 | Reviewer D | `haiku` |
 
-Each reviewer gets `subagent_type: "general-purpose"`, `readonly: true`, and `model` set to its configured entry, or its table default when there is no configured line. Omit `model` for an `auto` or `inherit-parent` entry, so that reviewer runs on the parent model.
+每个评审者都使用 `subagent_type: "general-purpose"`、`readonly: true`，并把 `model` 设为它配置的条目；没有配置行时用表中默认值。条目为 `auto` 或 `inherit-parent` 时省略 `model`，让该评审者运行在父模型上。
 
-If the `Agent` tool rejects a configured entry, run that reviewer on its family's table default and say so. Families go by model name, such as Opus, Fable, or Sonnet. With no family match, use Reviewer A's default. If it rejects a table default, spawn with the closest equivalent from the valid slugs in its error message (prefer the same family and reasoning tier), and open a separate PR to update the default table. Do not block the review on the slug issue. Never treat an alias entry as a rejected slug or apply either fallback to it.
+如果 `Agent` 工具拒绝某个配置条目，就让该评审者使用其所属家族在表中的默认值运行，并说明这一点。家族按模型名划分，比如 Opus、Fable 或 Sonnet。没有匹配的家族时，使用 Reviewer A 的默认值。如果它拒绝了表中的默认值，就从错误信息给出的合法 slug 中选最接近的等价项派生（优先同家族、同推理档位），并另开一个 PR 更新默认表。不要因为 slug 问题阻塞评审。绝不要把别名条目当作被拒绝的 slug，也不要对它应用上述任何一种回退。
 
-Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
+阅读 `references/reviewer-prompt.md`，为每个评审者填写同一份模板，填入陈述的意图、diff 或文件内容、`references/rubric.md` 中的评分标准，以及 `references/code-quality-review.md` 中的代码质量视角。按任务挑选每个子代理的推理等级，参见 the **poteto-mode** skill 的 Subagents 段。
 
-## Step 4, Synthesize
+## 第 4 步：综合
 
-As results come back, build a unified picture. Parse every reviewer's findings. Merge findings that describe the same issue differently, and note which models raised each one. Findings two or more models raised independently are the highest signal. Read a lone model's finding, but weight it accordingly. Note disagreements. If one model flags something and another explicitly says the opposite, that is context for the verdict.
+结果陆续返回时，建立一幅统一的图景。解析每个评审者的发现。把以不同方式描述同一问题的发现合并，并注明每条是哪些模型提出的。两个或更多模型独立提出的发现信号最强。单个模型提出的发现也要读，但相应地降低权重。记下分歧。如果一个模型标记了某个问题，而另一个明确持相反意见，这就是下结论时的背景。
 
-## Step 5, Lead Judgment
+## 第 5 步：主评审判断
 
-You are the lead reviewer, a pragmatic senior engineer, not a neutral aggregator. Read `references/lead-judgment.md` for the full framework. Put every finding in one of four buckets, with the model(s) that raised it and a one-line rationale.
+你是主评审者，一位务实的资深工程师，而不是中立的汇总者。完整框架见 `references/lead-judgment.md`。把每条发现归入四个类别之一，注明提出它的模型，并附一行理由。
 
-- **Act on**. Real issues affecting correctness, security, or maintainability given the actual goals. They would block a real PR.
-- **Consider**. Legitimate, but you're not sure they outweigh the cost of addressing them now. Worth the user's attention.
-- **Noted**. Technically valid but not actionable. Context-dependent, premature optimization, or low-impact at this stage.
-- **Dismissed**. Wrong, nitpicky, or missing context, with a brief reason.
+- **Act on（需处理）**。在实际目标下影响正确性、安全性或可维护性的真实问题。它们会阻塞一个真实的 PR。
+- **Consider（可考虑）**。合理，但你不确定它们是否值得现在付出处理成本。值得用户关注。
+- **Noted（已记录）**。技术上成立但不可执行。依赖具体情境、属于过早优化，或在当前阶段影响很小。
+- **Dismissed（驳回）**。错误、吹毛求疵或缺少上下文，附简短理由。
 
-## Output Format
+## 输出格式
 
 ### Intent
-> [The stated intent paragraph from Step 2]
+> [第 2 步陈述的意图段落]
 
 ### Reviewers
-- Reviewer [label]: [model name], [N findings] (one bullet per reviewer)
+- Reviewer [label]: [model name], [N findings]（每个评审者一条）
 
 ### Act On
-[Each: description, which models raised it, why it matters.]
+[每条：描述，哪些模型提出，为什么重要。]
 
 ### Consider
-[Each: description, which models raised it, the tradeoff.]
+[每条：描述，哪些模型提出，取舍是什么。]
 
 ### Noted
-[Brief list.]
+[简短列表。]
 
 ### Dismissed
-[Each with a brief rationale.]
+[每条附简短理由。]
 
 ### Agreement Map
-[Where models agreed and diverged, and what that pattern tells us.]
+[模型在哪里一致、在哪里分歧，以及这种模式说明了什么。]
 
 ## Reasoning effort
 

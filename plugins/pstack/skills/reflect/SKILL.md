@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: Spawn three parallel review subagents over the active transcript, surface learnings, and route each to a concrete edit on an existing skill. Use when the user says reflect.
+description: 在当前对话记录上并行派生三个评审子代理，提炼出经验，并把每条经验落到对某个现有技能的具体修改上。在用户说 reflect 时使用。
 ---
 
 # Reflect
@@ -9,67 +9,67 @@ On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md),
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-Mine the current conversation for durable learnings, then route them into skill edits.
+从当前对话中挖掘持久的经验，然后把它们转成技能修改。
 
-Invoke when the user says "reflect" or "/reflect". Skip when the conversation is trivial, off-topic, or already covered by an existing skill the parent followed correctly. One-offs are not learnings.
+在用户说 "reflect" 或 "/reflect" 时调用。如果对话很琐碎、离题，或者已经被某个现有技能覆盖且父代理正确遵循了它，就跳过。一次性的事情不算经验。
 
-## 1. Locate the active transcript
+## 1. 定位当前对话记录
 
-Before fanning out, find this conversation's transcript in Claude Code's per-project transcripts directory at `~/.claude/projects/<encoded-cwd>/`. Do not glob across `~/.claude/projects/`. That crosses workspace boundaries and reads private chats from unrelated projects.
+在并行展开之前，先在 Claude Code 的按项目对话记录目录 `~/.claude/projects/<encoded-cwd>/` 中找到本次对话的记录。不要跨 `~/.claude/projects/` 做 glob。那会越过工作区边界，读取无关项目的私密对话。
 
-Run the finder at `skills/reflect/scripts/find-transcript.mjs` under the installed plugin with the projects directory and a fragment of the conversation's opening user prompt:
+运行已安装插件下位于 `skills/reflect/scripts/find-transcript.mjs` 的查找脚本，传入项目目录和本次对话开头用户提示的一个片段：
 
 ```bash
 node <plugin>/skills/reflect/scripts/find-transcript.mjs ~/.claude/projects/<encoded-cwd> "<opening prompt fragment>"
 ```
 
-It covers the three layouts (flat `<id>.jsonl`, nested `<id>/<id>.jsonl`, subagent `<parent>/subagents/<child>.jsonl`), newest first, and prints the first path whose opening typed prompt carries the fragment. Do not reimplement the scan by hand: the first line of a transcript is session metadata, not a message, a session that starts with `/clear` or a `!` shell command records that command's wrapper and output as `user` records before the prompt, and files run to several megabytes, so the finder streams each candidate and stops at its first typed `user` record. If it exits 1, write a tight digest of the session and pass that instead. It lists, one line each in turn order, the user's prompts and corrections, the tool calls and their results, and the files touched. It states no diagnosis, verdict, or cause. The reviewers judge the session, not your conclusions about it.
+它覆盖三种布局（扁平的 `<id>.jsonl`、嵌套的 `<id>/<id>.jsonl`、子代理的 `<parent>/subagents/<child>.jsonl`），按从新到旧排列，并打印第一个开头键入提示包含该片段的路径。不要手工重新实现这套扫描：对话记录的第一行是会话元数据而不是消息；以 `/clear` 或 `!` shell 命令开头的会话，会在提示之前把该命令的包装和输出记录为 `user` 记录；文件可达数 MB，所以查找脚本以流式方式读取每个候选，并在遇到第一条键入的 `user` 记录时停下。如果它以 1 退出，就为本次会话写一份紧凑的摘要并传入它。摘要按轮次顺序，每项一行，列出用户的提示和纠正、工具调用及其结果、以及改动过的文件。It states no diagnosis, verdict, or cause.（摘要不给出任何诊断、结论或原因。）评审者评判的是会话本身，而不是你对它的结论。
 
-## 2. Spawn three reviewers in parallel
+## 2. 并行派生三个评审者
 
-One message, three `Agent` calls, `subagent_type: "general-purpose"`. Reviewers need MCP access to look up the tickets, chat threads, and observability traces the transcript references, so pick a subagent_type that retains MCP access. The prompt forbids file writes. The parent applies edits.
+一条消息，三次 `Agent` 调用，`subagent_type: "general-purpose"`。评审者需要 MCP 访问权限来查找对话记录中引用的工单、聊天线程和可观测性追踪，所以要选一个保留 MCP 访问权限的 subagent_type。提示禁止写文件。修改由父代理来应用。
 
-Each reviewer and the synthesizer name a role line in `pstack-models.md` and a default in [Models](#models). Set `model` to that line's value, or to the default if the sheet or the line is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the `Agent` tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
+每个评审者和综合者都对应 `pstack-models.md` 中的一个角色行，以及 [Models](#models) 中的一个默认值。把 `model` 设为该行的值，若表格或该行缺失则用默认值。当值为 `auto` 或 `inherit-parent` 时不设置 `model`。如果 `Agent` 工具拒绝某个 slug，使用默认值并说明这一点。如果它拒绝默认值，根据其错误信息选择同族中最接近的合法 slug。按任务挑选每个子代理的推理等级，参见 the **poteto-mode** skill 的 Subagents 段。
 
-| Lens | Role line | Prompt template |
+| 视角 | 角色行 | 提示模板 |
 |---|---|---|
 | Judgment | `reflect judgment, divergent, synthesizer` | `references/judgment-reviewer.md` |
 | Tooling | `reflect tooling` | `references/tooling-reviewer.md` |
 | Divergent | `reflect judgment, divergent, synthesizer` | `references/divergent-reviewer.md` |
 
-Pass each template verbatim, substituting the transcript path or digest where marked. Add nothing beside a transcript path, not even a focus note for a long transcript. Reviewers return findings in the `Agent` response body.
+逐字传入每个模板，只在标记处替换为对话记录路径或摘要。Add nothing beside a transcript path, not even a focus note for a long transcript.（除对话记录路径外什么都不要加，即使对话记录很长，也不要加关注点说明。）评审者在 `Agent` 响应正文中返回发现。
 
-## 3. Synthesize
+## 3. 综合
 
-One `Agent` call, `subagent_type: "general-purpose"`, `model` from the `reflect judgment, divergent, synthesizer` line (default in [Models](#models)). It spot-verifies citations through MCP, so pick a subagent_type that retains MCP access. Pass `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. It returns an Accepted / Rejected / Backlog list.
+一次 `Agent` 调用，`subagent_type: "general-purpose"`，`model` 取自 `reflect judgment, divergent, synthesizer` 行（默认值见 [Models](#models)）。它会通过 MCP 抽查引用，所以要选一个保留 MCP 访问权限的 subagent_type。逐字传入 `references/synthesizer.md`，并在标记处内联每个评审者的完整输出。它返回一份 Accepted / Rejected / Backlog 列表。
 
-## 4. Structural enforcement check
+## 4. 结构化约束检查
 
-Move any Accepted item that a lint rule, script, metadata flag, or runtime check would enforce more reliably to Backlog. See the **encode-lessons-in-structure** principle skill.
+把任何用 lint 规则、脚本、元数据标志或运行时检查来约束会更可靠的 Accepted 条目移到 Backlog。参见 **encode-lessons-in-structure** principle skill。
 
-## 5. Apply
+## 5. 应用
 
-Present the synthesizer's full Accepted / Rejected / Backlog output and wait for explicit approval before applying any Accepted edit. The user picks the subset and may redirect routings. Skill changes affect every future agent in the org. Do not auto-apply.
+展示综合者完整的 Accepted / Rejected / Backlog 输出，并在应用任何 Accepted 修改之前等待明确批准。用户挑选子集，也可以改变分流去向。技能的改动会影响组织里今后的每一个代理。不要自动应用。
 
-File each Backlog item to your team's devex or backlog tracker without waiting. Only the Accepted list waits for approval.
+把每个 Backlog 条目直接提交到团队的 devex 或 backlog 跟踪器，不必等待。只有 Accepted 列表需要等待批准。
 
-Follow each approved row's Routing exactly:
+严格按照每个已批准行的 Routing 执行：
 
-- Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): the parent does it directly.
-- Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): hand to the **plugin-dev:skill-development** skill and run its draft / test / iterate loop.
-- `tune description: <skill path>` (the skill exists but didn't trigger when it should have): hand to `plugin-dev:skill-development` and run its description-optimization loop.
-- `new skill via plugin-dev:skill-development: <kebab-name>`: hand creation to `plugin-dev:skill-development`. Do not invent the shape ad hoc.
+- 对现有技能的小修改（一条单行要点、一句收紧的表述、一个过时事实的更正）：父代理直接完成。
+- 对现有技能的实质性修改（新增一段、一张新的模式表、超过约 10 行）：交给 the **plugin-dev:skill-development** skill，运行它的起草 / 测试 / 迭代循环。
+- `tune description: <skill path>`（技能存在，但在应该触发时没有触发）：交给 `plugin-dev:skill-development`，运行它的描述优化循环。
+- `new skill via plugin-dev:skill-development: <kebab-name>`：把创建工作交给 `plugin-dev:skill-development`。不要临时自创技能形式。
 
-If your environment ships a SKILL.md validator, run it on every touched skill before declaring done.
+如果你的环境附带 SKILL.md 校验器，在宣布完成之前对每个改动过的技能运行它。
 
-## 6. Summarize for the user
+## 6. 向用户总结
 
-Short list, no preamble:
+简短列表，不要开场白：
 
-- Edits applied: `<skill path>`. What changed, one line each.
-- New skills created: `<skill path>`. One line each (rare).
-- Backlog filed to the devex tracker: `<issue title>` (`<tags>`). One line each.
-- Dropped: one line per rejected finding + reason from the synthesizer.
+- 已应用的修改：`<skill path>`。改了什么，每条一行。
+- 新建的技能：`<skill path>`。每条一行（少见）。
+- 提交到 devex 跟踪器的 Backlog：`<issue title>`（`<tags>`）。每条一行。
+- 已舍弃：每个被拒绝的发现一行，附综合者给出的理由。
 
 ## Models
 
