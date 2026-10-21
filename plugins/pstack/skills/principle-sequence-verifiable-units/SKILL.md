@@ -1,17 +1,17 @@
 ---
 name: principle-sequence-verifiable-units
-description: "Apply to multi-step work (sweeps, migrations, runs of similar edits) and to how you stack commits and PRs. Break work into small units that each end in a verifiable state, check each before the next, and order delivery so the sequence proves itself to a reviewer."
+description: "适用于多步骤工作（批量扫改、迁移、一连串相似的编辑），也适用于你如何堆叠 commit 和 PR。把工作拆成若干小单元，每个都结束于可核验的状态，逐个检查后再进入下一个，并安排交付顺序，让这串序列向复查者自证。"
 user-invocable: false
 ---
 
-# Sequence work into verifiable units
+# 把工作编排成可核验的单元
 
-Order work as a sequence of small units, each ending in a state you can check, and don't advance until the current one is green.
+把工作排成一串小单元，每个单元都结束于一个可检查的状态，当前单元没变绿就不往下走。
 
-**Why:** A break caught at the unit that caused it is cheap to localize. A break caught after a batch is buried, and you have already built further on a broken base. Sequencing those same units into a delivery a reviewer can replay turns "trust me" into "watch it go red, then green."
+**为什么：** 在造成它的那个单元处抓到的破损，定位成本很低。一批改动之后才抓到的破损已经被埋起来了，而且你已经在一个坏掉的基础上继续搭建。把同样这些单元编排成复查者可以重放的交付序列，就能把“相信我”变成“看它先变红，再变绿”。
 
-**Execution.** In a sweep, migration, or any run of similar edits, verify each change before starting the next. Each unit is a before/after bracket: known-good state, one change, run the check, then proceed. Rebase onto clean trunk first so every check measures against the real baseline. When a lever does the edits, the per-unit check is nearly free. Run it anyway.
+**执行。** 在批量扫改、迁移或任何一连串相似的编辑中，每开始下一项之前先核验当前这一项。每个单元都是一个 before/after 括号：已知良好状态、一次改动、跑检查、然后继续。先 rebase 到干净的 trunk 上，让每次检查都对着真实基线度量。当某个 lever 负责执行这些编辑时，逐单元检查几乎不花成本。即便如此也要跑。
 
-**Delivery.** Stack commits and PRs in the order that proves the work. The canonical shape is the failing test first, then the fix on top. Other story orders are a subtraction before the reshape, a baseline capture before the treatment, the scaffold before the feature. Each commit lands on its own and the sequence reads as an argument.
+**交付。** 按能证明这项工作的顺序堆叠 commit 和 PR。典型形态是先放失败的测试，再在其上放修复。其他的叙事顺序包括：重塑之前先做减法、处理之前先取基线、功能之前先搭脚手架。每个 commit 都能独立落地，整串读起来像一段论证。
 
-The sequencing complement to the **prove-it-works** principle skill, which keeps each check real, and the **build-the-lever** principle skill, which makes the per-unit check cheap.
+这是 the **prove-it-works** principle skill 在编排层面的补充：后者保证每次检查都是真的；而 the **build-the-lever** principle skill 让逐单元检查变得廉价。

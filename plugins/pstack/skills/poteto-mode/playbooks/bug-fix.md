@@ -1,15 +1,15 @@
-### Bug fix
+### Bug 修复
 
-**You own this task. Plan, review, verify.** Delegate investigation and the fix to subagents, stay in the lead. Pick each subagent's reasoning level for the job, per the Subagents section.
+**这个任务由你负责。规划、审查、验证。** 调查和修复委派给 subagent，你留在主导位置。按 Subagents 一节的要求，为每个 subagent 选择合适的推理档位。
 
-Be scientific. Every shipped line traces to runtime evidence. Belt-and-suspenders that "might help" is a hypothesis, not a fix. It does not ship. When evidence refutes a hypothesis, revert what it motivated. The smallest change the evidence justifies ships, nothing more.
+讲究科学方法。每一行交付的代码都能追溯到运行时证据。所谓「也许有用」的保险措施只是假设，不是修复，不发。证据推翻假设时，撤销它当初引发的改动。证据支撑的最小改动才发，仅此而已。
 
-1. Reproduce it yourself on the matching surface via the driver skill (Non-negotiables), even when a debug or instrumentation protocol says to ask the user to reproduce. Ask the user only with a stated, specific reason the control surface cannot reach the target, and only after driving it as far as it goes. If it won't reproduce directly, synthesize the trigger, tighten conditions, or instrument until it fires.
-2. Binary-search the cause. Form the candidate hypotheses, then rule them out until one survives. Seed them with `how` over the affected subsystem and the **why** skill for regression history. Each pass, take the split that cuts the most remaining problem space, get runtime evidence, eliminate. When program state is unclear, add instrumentation or logging and read it as the code runs. Don't guess. Drive a long or stubborn hunt with Claude Code's `loop` skill. Confirm the surviving *mechanism* with runtime evidence before the step-3 architect/interrogate fan-out.
-3. Plan the fix. If it crosses a function boundary, `architect` first. Delegate implementation to a subagent using your configured bug-fix model (default in poteto-mode's Models section) with a specific scope.
-4. Verify on the same surface. The original repro now passes. "Inconclusive" or wrong-surface is not a pass. Flag it. Unit tests show branch behavior, not bug absence.
-5. Stage the commits so the failing repro lands before the fix in git history. See the **tdd** skill for the failing-test-first cadence when the bug has a cheap local test path. Skip it when the test would be expensive, integration-heavy, or unclear.
-   This is the canonical **sequence-verifiable-units** principle skill, the failing test first and the fix on top.
-6. Run **Opening a PR**.
+1. 自己通过 driver 技能在对应的观测面上复现（见 Non-negotiables），即使某个调试或加探针的协议说要请用户复现。只有说清具体理由、证明控制面确实够不到目标时，且是在把它推到底之后，才去问用户。如果没法直接复现，就合成触发条件、收紧条件或加探针，直到它触发。
+2. 二分查找原因。列出候选假设，逐一排除，直到剩一个。用 `how` 对受影响子系统做功课，用 **why** 技能补回归历史。每一轮挑能最大幅度缩小剩余问题空间的切分，取得运行时证据，排除。程序状态不清楚时，加探针或日志，并在代码运行时读它。不要猜。漫长或顽固的追查用 Claude Code 的 `loop` 技能驱动。在第 3 步的 architect/interrogate 扇出之前，先用运行时证据确认幸存下来的那个*机制*。
+3. 规划修复。跨越函数边界时先叫 `architect`。用你配置的 bug-fix 模型（默认值见 poteto-mode 的 Models 一节），把实现连同明确范围委派给 subagent。
+4. 在同一个观测面上验证。原来的复现现在通过了。结论「不确定」或观测面不对都不算通过，要标出来。单元测试体现的是分支行为，不是缺陷不存在。
+5. 安排提交顺序，让失败的复现先于修复进入 git 历史。这个缺陷有便宜的本地测试路径时，按 **tdd** 技能的失败测试先行节奏来做。测试昂贵、偏集成或不清晰时跳过。
+   这是 **sequence-verifiable-units** 原则技能的典型用法，失败测试在前，修复叠在上面。
+6. 走一次 **Opening a PR**。
 
-**Reply:** what was broken, root cause, fix, how you verified. Quote the decisive failing and passing output, trimmed to the assertion and the counts.
+**回复：** 哪里坏了、根因、修复方式、你如何验证。引用决定性的失败输出和通过输出，裁到断言和计数为止。

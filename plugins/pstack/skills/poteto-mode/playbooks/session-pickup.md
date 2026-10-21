@@ -1,11 +1,11 @@
-### Session pickup
+### 会话接手
 
-**You own the resume point. Read the prior trail, don't redo it.**
+**续接点由你负责。读前一段轨迹，不要重做。**
 
-1. Read the project checkpoint first using [Resume storage](../references/resume-storage.md). A successful read gives the note and artifacts without requiring a path from the previous session. If the pointer is missing, locate the prior trail through a local transcript under Claude Code's per-project transcripts directory at `~/.claude/projects/<encoded-cwd>/*.jsonl` (where `<encoded-cwd>` is the workspace cwd with `/` → `-`. Do not glob across other directories under `~/.claude/projects/`, that crosses workspace boundaries and reads private chats from unrelated projects), a cloud-agent URL, or a pushed branch. An unavailable or incomplete checkpoint needs diagnosis rather than a silent fallback. For transcript fallback, read the metadata overview and last messages first, then scan back for the decision points. Parse a long transcript in a subagent and keep the reduced timeline in the main thread (the **principle-guard-the-context-window** skill). Pick each subagent's reasoning level for the job, per the Subagents section.
-2. Reconstruct operational state. The branch and worktree, what already landed (`git log`, `git diff` against the base), the open todos, the decisions made. Use the prior trail to recover progress. For claims about human rulings, follow [Claims about human decisions](../../why/references/epistemics.md#claims-about-human-decisions). An agent summary is not the original ruling.
-3. Diff done vs pending. Compare what shipped against what was planned, name the resume point, do not re-run the prior repro or redo completed work. Recheck claims that affect the remaining work without repeating completed investigations. Read artifacts linked by the resume note, including requested questions or checklists.
-4. Route the remaining work to the matching playbook and pick the verdict: continue the execution, ship a finished recommendation, ratify or override a prior conclusion, or postmortem a failed run. The pickup playbook ends here. The routed playbook owns the rest.
-5. Verify the inherited claims against the original goal on the real artifact (the **principle-prove-it-works** skill). A passing prior self-report is not the proof.
+1. 先按 [续接存储](../references/resume-storage.md) 读项目检查点。读取成功会直接给出说明和产物，不需要上一会话的路径。如果指针缺失，通过本地转录找到前一段轨迹：Claude Code 按项目存放转录的目录 `~/.claude/projects/<encoded-cwd>/*.jsonl`（`<encoded-cwd>` 是工作区 cwd，`/` 换成 `-`。不要在 `~/.claude/projects/` 下跨目录 glob，那会越过工作区边界，读到无关项目的私密会话），或者云端 agent URL，或者已推送的分支。检查点不可用或不完整时要诊断，不要静默降级。走转录兜底时，先读元数据概览和最后几条消息，再往回扫决策点。长转录放到 subagent 里解析，主线程只保留收敛后的时间线（**principle-guard-the-context-window** 技能）。按 Subagents 一节的要求，为每个 subagent 选择合适的推理档位。
+2. 重建运行状态。分支和 worktree、已经落地的内容（相对基线的 `git log`、`git diff`）、未完成的 todo、做过的决定。用前一段轨迹恢复进度。涉及人类裁决的说法，按 [关于人类决定的说法](../../why/references/epistemics.md#claims-about-human-decisions) 处理。agent 的总结不是原始裁决。
+3. 对比已完成与待办。把已交付的与计划中的对照，指出续接点，不要重跑之前的复现，也不要重做已完成的工作。对影响剩余工作的说法重新核实，但不要重复已完成的调查。读续接说明链接的产物，包括用户要求的问题清单或检查单。
+4. 把剩余工作路由到匹配的 playbook 并选定结论形态：继续执行、交付已完成的建议、认可或推翻先前结论、对失败的运行做事后复盘。接手 playbook 到此结束。路由到的 playbook 接管其余部分。
+5. 在真实产物上对照最初目标验证继承来的说法（**principle-prove-it-works** 技能）。前一个 agent 自述通过，不算证明。
 
-**Reply:** where the prior agent stopped, what you inherited vs redid (ideally nothing redone), the resume point, and the outcome.
+**回复：** 前一个 agent 停在哪里、你继承了什么又重做了什么（最好什么也没重做）、续接点、结果。

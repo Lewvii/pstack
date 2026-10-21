@@ -1,6 +1,6 @@
 ---
 name: how
-description: "Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use why for motivation."
+description: "用于「X 是怎么工作的」、改动前的代码走查，以及位置、归属、分层类问题（「这个该放哪」「哪个包负责这个」「这是对的那一层吗」）。讲解子系统架构、运行时流程、上手心智模型。动机方面的问题用 why。"
 ---
 
 # How
@@ -9,34 +9,34 @@ On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md),
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
+探索代码库，回答「X 是怎么工作的？」这类问题。产出达到资深工程师初接手某个子系统时所需层次的架构说明：足够建立起可用的心智模型，又不至于读起来像带注释的源码。
 
-Every spawn is a `Agent` subagent with `subagent_type: "general-purpose"` and `readonly: true`. Explorers use the `how explorer` line in `pstack-models.md` (default in [Models](#models)), and every explainer uses the `how explainer` line (default in [Models](#models)). Set `model` to that line's value, or to the default if the sheet or the line is missing. Leave `model` unset when the value is `auto` or `inherit-parent`. If the `Agent` tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
+每次派生都是用 `subagent_type: "general-purpose"` 和 `readonly: true` 的 `Agent` 子代理。探索者使用 `pstack-models.md` 中的 `how explorer` 行（默认见 [Models](#models)），每个讲解者使用 `how explainer` 行（默认见 [Models](#models)）。把 `model` 设为该行的值，若表格或该行缺失则用默认值。当值为 `auto` 或 `inherit-parent` 时不设置 `model`。如果 `Agent` 工具拒绝某个 slug，使用默认值并说明这一点。如果它拒绝默认值，根据其错误信息选择同族中最接近的合法 slug。按任务挑选每个子代理的推理等级，参见 the **poteto-mode** skill 的 Subagents 段。
 
-## 1. Assess complexity
+## 1. 评估复杂度
 
-If the scope is ambiguous, state your interpretation and explore. The user can redirect.
+如果范围有歧义，先说出你的理解再去探索。用户可以纠正方向。
 
-- **Simple** (a single module, a small utility, a narrow question such as "how does function X work"): no explorers. Spawn one explainer that explores and explains in one pass, built from `references/explainer-prompt.md` without the explorer-findings section. Go to step 4.
-- **Complex** (a subsystem spanning multiple files or services, a cross-cutting feature, a full architectural overview): go to step 2.
+- **简单**（单个模块、一个小工具，或诸如「函数 X 是怎么工作的」这类窄问题）：不要探索者。派生一个讲解者，在一次执行中完成探索和讲解，提示词由 `references/explainer-prompt.md` 去掉探索者发现段构成。跳到第 4 步。
+- **复杂**（跨多个文件或服务的子系统、横切功能、完整的架构概览）：进入第 2 步。
 
-When in doubt, take the simple path.
+拿不准时，走简单路径。
 
-## 2. Explore (complex only)
+## 2. 探索（仅复杂情形）
 
-Decompose the question into 2 to 4 angles, each a distinct slice of the subsystem. Spawn all explorers in a single message, each with `references/explorer-prompt.md` and its angle filled in.
+把问题拆成 2 到 4 个角度，每个角度是子系统的一个独立切片。在一条消息里派生所有探索者，每个都带上 `references/explorer-prompt.md` 并填好各自的角度。
 
-## 3. Synthesize (complex only)
+## 3. 综合（仅复杂情形）
 
-Once all explorers have returned, spawn one explainer with `references/explainer-prompt.md` and every explorer's findings filled in.
+所有探索者返回后，派生一个讲解者，传入 `references/explainer-prompt.md` 和每个探索者的发现。
 
-## 4. Present
+## 4. 呈现
 
-Present the explainer's output. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
+呈现讲解者的输出。为了清晰或补充对话中的上下文做轻微编辑可以。不要大幅重写。
 
-## Output format
+## 输出格式
 
-The explanation uses the sections defined in `references/explainer-prompt.md`, dropping any that do not apply: Overview, Key Concepts, How It Works, Where Things Live, Gotchas.
+讲解使用 `references/explainer-prompt.md` 中定义的各段，不适用的略去：Overview、Key Concepts、How It Works、Where Things Live、Gotchas。
 
 ## Models
 

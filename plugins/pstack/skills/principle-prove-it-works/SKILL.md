@@ -1,27 +1,27 @@
 ---
 name: principle-prove-it-works
-description: "Apply after completing a task, before declaring done. Verify against the real artifact (run the feature, read the actual value, inspect the diff), not a proxy, self-report, or 'it compiles.'"
+description: "在完成任务之后、宣布完成之前套用。对照真实产物核验（运行功能、读取实际值、查看 diff），而不是靠代理信号、自我报告或“能编译”。"
 user-invocable: false
 ---
 
-# Prove It Works
+# 证明它确实可用
 
-Verify every task output by checking the real thing directly. Do not infer from proxies, self-reports, or "it compiles."
+每一项任务产出都要直接检查真实事物来核验。不要从代理信号、自我报告或“能编译”中推断。
 
-**Why:** Unverified work has unknown correctness. Indirect verification (file mtimes, output freshness, agent self-reports, cached screenshots) feels cheaper than direct observation. Acting on a wrong inference costs far more than checking the source.
+**为什么：** 未经验证的工作，正确性未知。间接验证（文件 mtime、输出新鲜度、agent 自我报告、缓存的截图）感觉比直接观察更省事。但依据错误推断行动的代价，远高于检查源头。
 
-Check the real thing, not a proxy:
-- Check process liveness directly, not indirectly through derived state
-- Read the actual value, not a cached or derived representation
-- When verification fails, suspect the observation method before suspecting the system
-- Before you report success (merged, sent, started), read the real state and the exit code. Truncated output (`| tail -1`) and your own echo prove nothing
+检查真实事物，而不是代理信号：
+- 直接检查进程是否存活，不要通过派生状态间接判断
+- 读取实际的值，而不是缓存或派生的表示
+- 核验失败时，先怀疑观察方法，再怀疑系统
+- 在报告成功（已合并、已发送、已启动）之前，读取真实状态和退出码。被截断的输出（`| tail -1`）和你自己的 echo 证明不了任何事
 
-Verify the process as well as the outcome. A correct result can rest on a broken process, and a review that checks results passes it: a clause reconstructed from the user's paste instead of the durable record, a constraint honored by chance from a file never read. For each fact you relied on, name the record it came from and confirm that record is the one the project's rules point at.
+Verify the process as well as the outcome. 结果正确可能建立在坏掉的流程之上，而只检查结果的 review 会放过它：一条从用户粘贴内容重建、而非取自持久记录的条款；一个从未读过的文件里凑巧被遵守的约束。对你依赖的每一个事实，指出它来自哪条记录，并确认这条记录正是项目规则所指的那一条。
 
-Red is a colour, not a measurement. A failing check proves the instrument only when the failure content is the disagreement you predicted. An exception, an empty collection against a non-empty literal, and a real mismatch all print red, so quote the assertion's diff (`Extra items in the right set`), never the assertion (`assert {...} == {...}`). A convergence probe keys on behavior only the new artifact can produce, never an identity field the old one also emits. A same-SHA restart lets old code report the new commit SHA.
+Red is a colour, not a measurement. 一次失败的检查，只有在失败内容正是你预测的那个分歧时，才能证明仪器有效。异常、对非空字面量得到空集合、以及真正的值不匹配，打印出来都是红色。所以要引用断言的 diff（`Extra items in the right set`），永远不要引用断言本身（`assert {...} == {...}`）。收敛探针要盯着只有新产物才能产生的行为，而不是旧产物同样会输出的身份字段。同 SHA 重启会让旧代码报出新 commit 的 SHA。
 
-## Script the check when you can
+## 能写成脚本就写成脚本
 
-The strongest proof is a deterministic script that re-runs the same comparison, not a one-time eyeball. Write the script, run it, and keep its output as an artifact a reviewer can re-run instead of trusting your word.
+最强的证明是一个可重复运行同一比较的确定性脚本，而不是一次性的肉眼检查。写出脚本、运行它，把输出留作产物，让复查者可以重跑，而不必相信你的说法。
 
-Keep the artifact visible for the human. Commit it only for large or complex work where the trail has to be auditable later, like a big port or migration (the **show-me-your-work** skill).
+把产物留在人类能看到的地方。只有大型或复杂的工作，例如大的移植或迁移，才提交它，因为这类工作的轨迹日后必须可审计（the **show-me-your-work** skill）。

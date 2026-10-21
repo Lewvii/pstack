@@ -1,77 +1,77 @@
-# Review Rubric
+# 评审评分标准
 
-Review through whichever lenses are relevant. Not every lens applies to every change.
+按相关的视角来评审。不是每个视角都适用于每次变更。
 
-## Correctness
+## 正确性
 
-Does the code actually do what the intent says it should?
+代码真的做到了意图所说的那样吗？
 
-- Edge cases: empty inputs, nil/undefined, boundary values, concurrent access
-- Error handling: are errors caught, propagated, or silently swallowed?
-- Off-by-one, type coercion, integer overflow, string encoding
-- State management: race conditions, stale closures, dangling references
-- Do both the happy path and the sad path work?
-- Idempotency: what happens if this operation runs twice, or if a previous run crashed halfway? If the answer is "it depends on what state was left behind," a reconciliation step is missing.
-- Concurrency: if multiple actors can touch the same mutable state (files, branches, shared data), is access serialized structurally (locks, sequential phases, exclusive ownership), or by conventions that won't hold?
+- 边界情况：空输入、nil/undefined、边界值、并发访问
+- 错误处理：错误是被捕获、传播，还是被静默吞掉？
+- 差一错误、类型转换、整数溢出、字符串编码
+- 状态管理：竞态条件、过期闭包、悬空引用
+- 正常路径和异常路径都能工作吗？
+- 幂等性：这次操作执行两次会怎样，或者上一次执行中途崩溃了会怎样？如果答案是"取决于留下了什么状态"，那就缺了一步对账。
+- 并发：如果多个执行者可能碰到同一份可变状态（文件、分支、共享数据），访问是靠结构串行化的（锁、顺序阶段、独占归属），还是靠撑不住的约定？
 
-When you find a potential bug, trace the execution path. Don't just flag "this could be nil". Show the call chain that makes it nil.
+当你发现潜在 bug 时，追踪执行路径。不要只标一句"这里可能是 nil"。把导致它为 nil 的调用链展示出来。
 
-## Root Causes vs. Symptoms
+## 根因 vs. 症状
 
-Is the code fixing the actual problem or papering over a symptom?
+代码是在解决真正的问题，还是在糊弄症状？
 
-Answering this often requires looking beyond the changed files. Read the surrounding code (callers, callees, type definitions, sibling modules) and understand the architecture the change lives in. Use the tools available to you (Read, Grep, Glob) to follow the call chain, read the types, and understand why the code exists before judging whether the change addresses the right layer.
+回答这个问题通常需要看变更文件之外的东西。读周围的代码（调用方、被调用方、类型定义、同级模块），理解变更所处的架构。用你手头的工具（Read、Grep、Glob）跟踪调用链、读类型、弄清代码为什么存在，然后再判断变更是否打在正确的层上。
 
-- Guard clauses that mask a deeper invariant violation
-- Retry logic that hides a broken contract
-- Type casts that silence a modeling error
-- A workaround: why is it needed? What would a proper fix look like?
-- A fix in module A that should really be a fix in module B's contract
-- Instructions where structure would be better: if the fix is a comment saying "don't do X" or a convention someone has to remember, ask whether it could instead be a type constraint, a lint rule, or a runtime check that makes the wrong thing impossible
+- 掩盖了更深层不变量违反的守卫子句
+- 掩盖了契约破裂的重试逻辑
+- 压制了建模错误的类型断言
+- 一个 workaround：为什么需要它？正确的修复应该是什么样？
+- 本该在模块 B 的契约上修，却在模块 A 里修了
+- 本该用结构解决，却用了说明：如果修复方式是一句"不要做 X"的注释，或者一条要靠人记住的约定，就问一句能不能改成类型约束、lint 规则或运行时检查，让错误变得不可能
 
-## Structural Integrity
+## 结构完整性
 
-Does the code fit well into the system it's part of?
+代码是否与它所在的系统良好契合？
 
-- Boundary discipline: is validation at system boundaries, or scattered through business logic? Validate data once where it enters the system, then trust it internally.
-- Abstraction level: is the code mixing high-level orchestration with low-level detail?
-- Coupling: does this change introduce dependencies that will make future changes harder?
-- Data model fit: do the data structures match the actual access patterns?
-- Bolted-on vs. integrated: if the new requirement had been known from the start, would the code look like this, or does the change feel patched onto the existing design?
-- Legacy dual-paths: does the change introduce a new API while keeping the old one alive? If there are no external consumers, migrate callers and delete the old path in the same wave. Don't leave compatibility layers that will become permanent.
+- 边界纪律：校验是在系统边界上，还是散落在业务逻辑里？数据进入系统时校验一次，之后在内部信任它。
+- 抽象层级：代码是否把高层编排和底层细节混在一起？
+- 耦合：这次变更是否引入了会让未来改动更难的依赖？
+- 数据模型契合度：数据结构是否匹配实际的访问模式？
+- 硬接上去 vs. 融为一体：如果新需求从一开始就已知，代码会长成这样吗，还是这次变更像是打在现有设计上的补丁？
+- 遗留双路径：变更是否引入了新 API，同时让旧 API 继续活着？如果没有外部使用者，就在同一波里迁移调用方并删除旧路径。不要留下会变成永久的兼容层。
 
-Don't penalize simple code for lacking abstraction. Premature abstraction is worse than duplication.
+不要因为简单代码缺少抽象而扣分。过早的抽象比重复更糟。
 
-## Verification
+## 验证
 
-Can you tell that this code works from reading it?
+单凭阅读，你能判断这段代码能工作吗？
 
-- Are there tests? Do they test behavior or implementation details?
-- Are there assertions/invariants that would catch regressions?
-- If this is a bug fix: is there a test for the bug?
-- If this touches an integration boundary: is the full path tested?
-- Check the real thing, not a proxy. If the code checks liveness via file mtime or cached state instead of reading the actual value, that's a verification gap.
-- For delegated or async work: does the code verify actual output artifacts, or does it trust self-reports and summaries?
+- 有测试吗？测试的是行为还是实现细节？
+- 有能抓住回归的断言/不变量吗？
+- 如果这是 bug 修复：有覆盖该 bug 的测试吗？
+- 如果触及集成边界：完整路径被测试了吗？
+- 检查真东西，而不是代理。如果代码通过文件 mtime 或缓存状态来判断存活，而不是读取实际的值，那就是验证缺口。
+- 对于委派或异步工作：代码验证的是实际的产出物，还是信任自我汇报和摘要？
 
-## Complexity Budget
+## 复杂度预算
 
-Is the complexity justified by what the code accomplishes?
+复杂度是否被代码所成就的东西证明是合理的？
 
-- Code that could be simpler without losing correctness or clarity
-- Abstractions that serve only one call site
-- Configuration or parameterization for cases that don't exist yet
-- Dead code, unused imports, vestigial parameters
-- Over-engineering: "just in case" code paths with no current callers
-- Obsolete compatibility paths kept alive for transitional stability that's no longer needed. If the migration is done, delete the scaffolding
-- Does the user experience justify the complexity? Every feature, control, and option should earn its place. Half-finished features are worse than missing ones.
+- 可以在不损失正确性和清晰度的前提下变得更简单的代码
+- 只服务一个调用点的抽象
+- 为还不存在的场景准备的配置或参数化
+- 死代码、未使用的导入、残留参数
+- 过度工程：没有当前调用方的"以防万一"代码路径
+- 为了过渡期稳定而保留、如今已无必要的过时兼容路径。迁移做完了，就删掉脚手架
+- 用户体验是否配得上这份复杂度？每个功能、控件和选项都应该挣得自己的位置。半成品功能比没有更糟。
 
-Simpler is better unless simpler is wrong.
+更简单更好，除非简单是错的。
 
-## Security
+## 安全
 
-For each security finding, trace the input path through the code and show it.
+对每条安全发现，追踪输入路径并展示它。
 
-- User input flowing to dangerous sinks (SQL, shell, eval, innerHTML) without sanitization
-- Authentication/authorization gaps in new endpoints
-- Secrets in code, logs, or error messages
-- TOCTOU (time-of-check-time-of-use) in security-critical paths
+- 用户输入未经净化就流向危险汇聚点（SQL、shell、eval、innerHTML）
+- 新端点中的认证/授权缺口
+- 代码、日志或错误信息中的密钥
+- 安全关键路径上的 TOCTOU（检查时间与使用时间之差）

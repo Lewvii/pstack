@@ -1,57 +1,57 @@
-# Design red flags
+# 设计危险信号
 
-Screen every candidate before synthesis. A red flag is a reason to revise or reject the shape.
+在综合之前，先筛查每一个候选方案。出现危险信号，就是修改或否决该形态的理由。
 
-## Shallow module
+## 浅模块
 
-A shallow module exposes a large interface while hiding little complexity. Judge depth by the capability and policy hidden behind the public surface relative to the size of that surface. Prefer a simple interface backed by substantial behavior.
+浅模块暴露庞大的接口，却几乎不隐藏任何复杂度。判断深浅时，看公开表面背后隐藏的能力与策略，相对于这个表面本身的大小。优先选择简洁接口，背后由实实在在的行为支撑。
 
-Do not confuse a deep module with a deep call chain. A deep call chain scatters understanding across layers. A deep module concentrates capability behind one interface.
+不要把深模块和深调用链混为一谈。深调用链把理解分散到各层。深模块把能力集中在一个接口之后。
 
-Look for these signs:
+留意这些迹象：
 
-- Callers coordinate several methods to complete one operation.
-- Public options expose internal stages or implementation choices.
-- Learning the interface does not save the caller from learning the implementation.
+- 调用方需要协调多个方法才能完成一次操作。
+- 公开选项暴露了内部阶段或实现选择。
+- 学会接口并不能让调用方免于了解实现。
 
-## Information leakage
+## 信息泄漏
 
-Information leakage makes multiple modules depend on the same internal decision. A representation, policy, or protocol detail appears in more than one place, so changing it requires coordinated edits.
+信息泄漏让多个模块依赖同一个内部决策。某个表示、策略或协议细节出现在不止一处，改动它就需要协同编辑。
 
-Public re-exports of transport or wire types are leakage. Parse external data into domain types behind the interface. Keep storage schemas, framework objects, and protocol details private.
+对传输类型或 wire 类型的公开再导出就是泄漏。在接口背后把外部数据解析成领域类型。把存储 schema、框架对象和协议细节保持私有。
 
-## Temporal decomposition
+## 按时间分解
 
-Temporal decomposition organizes modules by execution order instead of the knowledge they own. Separate load, validate, transform, and save stages often repeat one representation and its invariants across several boundaries.
+按时间分解以执行顺序而非知识归属来组织模块。把加载、校验、转换、保存拆成独立阶段，往往会让同一种表示及其不变量在多个边界上重复。
 
-Group code around domain knowledge and ownership. Methods that run at different times can still belong to one module when they protect the same decisions.
+围绕领域知识和归属来聚合代码。在不同时间运行的方法，只要守护的是同一批决策，就可以属于同一个模块。
 
-## Pass-through method
+## 直通方法
 
-A pass-through method forwards the same arguments to another method with the same shape. It adds a layer without hiding complexity.
+直通方法把同样的参数以同样的形状转发给另一个方法。它增加了一层，却没有隐藏复杂度。
 
-Remove it or move responsibility to the module that can complete the operation. Keep a forwarding boundary only when it adds policy, adaptation, or a distinct abstraction.
+删掉它，或者把职责移到能独立完成该操作的模块。只有当转发边界带来策略、适配或不同的抽象时，才保留它。
 
-## Split ownership
+## 归属分裂
 
-More than one module writes the same state or keeps its own copy of it. An agent that edits one writer can't see the others, so their rules diverge.
+不止一个模块写同一份状态，或者各自保存一份副本。改动其中一个写入方的 agent 看不到其他写入方，于是规则逐渐分叉。
 
-Give each piece of state one owner. Other modules read it or ask the owner to change it.
+让每份状态只有一个归属者。其他模块读取它，或者请求归属者修改它。
 
-## Two ways to do one task
+## 一件事两种做法
 
-The design supports more than one way to do the same task. An agent copies whichever way it finds first, so every way keeps gaining callers.
+设计支持不止一种方式完成同一任务。agent 会照抄它最先遇到的那种，于是每种做法都不断积累调用方。
 
-Keep one way. Move callers off the others and delete them in the same change.
+只保留一种。把调用方从其他做法迁移走，并在同一次改动里删除它们。
 
-## Importable internals
+## 内部可导入
 
-A caller can import a module's internals. An agent takes the shortest path that compiles, so it imports them directly and they become part of the interface.
+调用方可以导入模块内部。agent 走的是最短的、能编译通过的路径，于是直接导入内部，内部也就成了接口的一部分。
 
-Make internals unreachable from outside the module, so an import from outside fails the build.
+让内部从模块外部不可达，使外部的导入无法通过构建。
 
-## Hand-synced list
+## 手工同步的列表
 
-Two or more places list the same items, and adding an item means editing every list. An agent that sees one list updates only that one.
+两处或更多地方列出同样的条目，新增一条就要修改每个列表。看到其中一个列表的 agent 只会更新那一个。
 
-Keep one list and derive the others from it. If a list can't be derived, make the build fail when the lists disagree.
+只保留一个列表，其余从它派生。如果无法派生，就让构建在列表不一致时失败。

@@ -1,22 +1,22 @@
 ---
 name: deslop
-description: Remove AI-generated code slop and clean up code style
+description: 清除 AI 生成的代码 slop，并整理代码风格
 ---
 
-# Remove AI code slop
+# 清除 AI 代码 slop
 
-Check the diff against main and remove AI-generated slop introduced in the branch.
+检查相对 main 的 diff，清除本分支引入的 AI 生成 slop。
 
-## Focus Areas
+## 关注范围
 
-- Extra comments that are unnecessary or inconsistent with local style
-- Defensive checks or try/catch blocks that are abnormal for trusted code paths
-- Casts to `any` used only to bypass type issues
-- Deeply nested code that should be simplified with early returns
-- Other patterns inconsistent with the file and surrounding codebase
+- 多余、或与本地风格不一致的注释
+- 对可信代码路径而言不正常的防御性检查或 try/catch
+- 仅为绕过类型问题而进行的 `any` 类型断言
+- 本应通过提前返回简化的深度嵌套代码
+- 与该文件及周边代码库不一致的其他模式
 
-## Guardrails
+## 护栏
 
-- Keep behavior unchanged unless fixing a clear bug.
-- Prefer minimal, focused edits over broad rewrites.
-- Keep the final summary concise (1-3 sentences).
+- 除修复明确的 bug 外，保持行为不变。
+- 优先最小、聚焦的编辑，而非大范围重写。
+- 最终总结保持简短（1-3 句）。

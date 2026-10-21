@@ -1,61 +1,58 @@
 ---
 name: unslop
-description: Cut AI tells from any writing.
+description: 从任何文字中剔除 AI 腔。
 ---
 
 # Unslop
 
-Edit text to remove AI patterns. Scan for the patterns below, then rewrite. Preserve meaning and match the intended tone.
+编辑文字，去掉 AI 腔。逐条扫描下面的模式，然后改写。保留原意，贴合原本的语气。
 
-## Patterns to detect and fix
+## 需要识别并修正的模式
 
-Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
+规则编号是固定的 id，其他技能会引用它们。删除某条规则会留下空号。
 
-### Content
+### 内容
 
-3. **Superficial -ing phrases.** "highlighting...", "ensuring...", "reflecting...", "showcasing...", "fostering...". Delete or expand with real sources.
-5. **Vague attributions.** "Experts believe", "Industry reports suggest", "Some critics argue". Name the source or delete.
+3. **空洞的 -ing 短语。** 「highlighting...」「ensuring...」「reflecting...」「showcasing...」「fostering...」这类。删掉，或用真实来源展开。
+5. **含糊的归因。** 「Experts believe」「Industry reports suggest」「Some critics argue」。点明来源，或删掉。
 
-### Language
+### 语言
 
-7. **AI vocabulary.** Additionally, crucial, delve, enduring, enhance, fostering, garner, interplay, intricate, landscape (abstract), pivotal, showcase, tapestry (abstract), testament, underscore, vibrant. Replace with plain words.
-8. **Fancy ways to say "is".** "serves as", "stands as", "boasts", "features". Say "is" or "has".
-9. **"Not just X, but Y."** State the point directly instead.
-10. **Rule of three.** Don't force ideas into groups of three. Use the natural number.
-11. **Synonym cycling.** Protagonist, main character, central figure, hero all in one paragraph. Pick one, repeat it.
-12. **False ranges.** "from X to Y" where X and Y aren't on a meaningful scale. List topics directly.
+7. **AI 词汇。** Additionally、crucial、delve、enduring、enhance、fostering、garner、interplay、intricate、landscape（抽象用法）、pivotal、showcase、tapestry（抽象用法）、testament、underscore、vibrant。换成朴素的说法。
+8. **把「是」说得花哨。** 「serves as」「stands as」「boasts」「features」。直接说「是」或「有」。
+9. **「不只是 X，更是 Y」。** 直接讲要点。
+10. **三段式排比。** 不要硬把想法凑成三个一组。该几个就几个。
+11. **同义词轮换。** 一段话里 protagonist、main character、central figure、hero 轮着用。选一个，重复它。
+12. **虚假区间。** 「从 X 到 Y」而 X 和 Y 并不在同一有意义的尺度上。直接列出各项。
 
-### Style
+### 风格
 
-13. **Em dash overuse.** Avoid em dashes entirely. Use periods or commas only (no parentheses, no en dashes, no hyphen-as-dash substitutes). If a thought needs separation, end the sentence or use a comma.
-14. **Colon overuse.** Colons are fine before a list or example, not as mid-sentence connectors. "If you're coming from traditional automation: instead of registering event handlers, you describe conditions" adds nothing with the colon. Rewrite to let the point stand on its own without comparison framing. "Describing when the scheduler should fire works best as plain English." Same meaning, no crutch punctuation.
-15. **Boldface overuse.** Don't bold every proper noun or acronym.
-16. **Inline-header lists.** The tell is a bold label and colon that restates the line: "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by genuinely new detail ("**Schema in TypeScript.** Tables live in one file.") is fine, not a tell.
-17. **Title case headings.** Use sentence case.
-18. **Decorative emojis.** Remove from headings and bullets.
-19. **Curly quotes.** Use straight quotes.
+13. **滥用破折号。** 完全避免使用长破折号。只用句号或逗号（不要用括号，不要用短破折号，也不要用连字符代替破折号）。要分隔想法就断句，或用逗号。
+14. **滥用冒号。** 列表或举例之前用冒号没问题，但不能拿来连接句子。像「如果你来自传统自动化：不要注册事件处理器，而是描述条件」，这个冒号什么也没加上。改写成让要点自己立住，不靠对比框架。「描述调度器何时应当触发，用大白话讲最好」。意思一样，不靠标点当拐杖。
+15. **滥用加粗。** 不要给每个专有名词或缩写加粗。
+16. **内联标题式列表。** 破绽是用冒号把该行内容重复一遍的加粗标签：「**Performance:** Performance improved...」。这类改成散文。以句号结尾、点出条目、后面跟真正新信息的加粗引导语（「**Schema in TypeScript.** Tables live in one file.」）是可以的，不算破绽。
+17. **标题用标题大小写。** 用句子大小写。
+18. **装饰性 emoji。** 从标题和列表项里去掉。
+19. **弯引号。** 用直引号。
 
-### Communication artifacts
+### 交流痕迹
 
-20. **Chatbot phrases.** "I hope this helps!", "Let me know if...", "Of course!", "Certainly!", "Found the smoking gun!" Remove.
-22. **Sycophantic tone.** "Great question! You're absolutely right!" Respond directly.
+20. **聊天机器人套话。** 「I hope this helps!」「Let me know if...」「Of course!」「Certainly!」「Found the smoking gun!」删掉。
+22. **谄媚语气。** 「Great question! You're absolutely right!」直接回应。
 
-### Filler
+### 填充
 
-23. **Filler phrases.** "In order to" becomes "To". "Due to the fact that" becomes "Because". Delete "It is important to note that".
-24. **Excessive hedging.** "could potentially possibly be argued that it might" becomes "may".
-25. **Generic conclusions.** "The future looks bright." State specific plans or facts.
+23. **填充短语。** 「In order to」改成「To」。「Due to the fact that」改成「Because」。删掉「It is important to note that」。
+24. **过度模糊限定。** 「could potentially possibly be argued that it might」改成「may」。
+25. **空泛的结尾。** 「The future looks bright.」给出具体计划或事实。
 
-### Jargon
+### 行话
 
-26. **Abstract metaphor nouns.** Substrate (base), wedge, wedge in (add), vector (way, method), locus, vantage, nexus, primitive as a noun, harness as a metaphor, surface as in "API surface", bedrock, scaffolding as a metaphor, modality, paradigm, gold-plating (more than the job needs), ratchet as a metaphor (the mechanism's real name, or a limit that only tightens), evacuate for moving code (move out), endgame (the last phase), north star, flywheel. These read as technical but usually have a plainer concrete word. Pick the concrete word.
-
-### Plain speech
-
-27. **Say what it does, not how it feels.** "the database stays close at hand", "SQL you can read", "types that follow your schema" name a feeling. The fix names the mechanism or a number: "`.toSQL()` returns the exact string sent to the database", "a column rename fails the build". Ask what the sentence tells the reader to do or know, then write that. If you can't restate it as a concrete instruction, fact, or number, cut it. One more check: if the sentence could appear unchanged in another project's docs, it says nothing about this one. Cut it.
-28. **Shorten or split dense sentences.** If the reader has to backtrack to parse a sentence, break it in two or drop clauses. One idea per sentence.
-29. **Active voice.** Prefer it. Catch "is/are/was/were + past participle" and name the actor: "queries are validated" becomes "the compiler validates queries", "the file is parsed by the loader" becomes "the loader parses the file". Passive is fine only when the actor is unknown or genuinely doesn't matter.
-30. **Cut adverbs, or use a stronger verb.** "runs quickly" becomes "is fast" or the number, and "significantly improves" becomes the measured delta. An adverb propping up a weak verb means the verb is wrong.
-31. **Prefer the plain word.** "utilize" and "leverage" become "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if". The fancier synonym is rarely clearer.
-32. **Mannered prose.** Metaphor or flourish where a literal phrase exists: aphorisms ("wire it or delete it"), rhetorical fragments for effect, personified code ("the plan holds it"), figurative verbs ("rides along", "stands on"), stock framing phrases. "A dial worth turning" becomes "a parameter worth varying". Say what you mean. Rule 26 covers the metaphor nouns.
-33. **Over-compression.** Dropped articles, verbless fragments, symbol-speak, and abbreviations that make the reader decode instead of read. "Parser rejects bad date → exit 2, no write" becomes "The parser rejects a bad date, exits with code 2, and writes nothing." Write whole sentences with their articles and verbs, and spell out arrows and abbreviations.
+26. **抽象隐喻名词。** Substrate（base）、wedge、wedge in（add）、vector（way、method）、locus、vantage、nexus、作名词用的 primitive、作隐喻用的 harness、如「API surface」中的 surface、bedrock、作隐喻用的 scaffolding、modality、paradigm、gold-plating（超出任务所需）、作隐喻用的 ratchet（说的是机制的真名，或只紧不松的限值）、指移动代码的 evacuate（move out）、endgame（最后阶段）、north star、flywheel。这些看起来专业，但通常有更朴素具体的词。挑具体的那个。
+27. **讲它做什么，不讲它感觉如何。** 「the database stays close at hand」「SQL you can read」「types that follow your schema」说的是感觉。修正方式是点明机制或给出数字：「`.toSQL()` returns the exact string sent to the database」「a column rename fails the build」。问自己这句话告诉读者去做什么、知道什么，然后写那个。如果你没法把它重述成一条具体指令、事实或数字，就删掉。再检查一次：如果这句话原封不动出现在别的项目的文档里也成立，那它对当前项目什么都没说。删掉。
+28. **压缩或拆分过密的句子。** 如果读者要回头重读才能解析一句，就拆成两句或砍掉从句。一句话一个想法。
+29. **主动语态。** 优先使用。抓到「is/are/was/were + 过去分词」就点明施动者：「queries are validated」改成「the compiler validates queries」，「the file is parsed by the loader」改成「the loader parses the file」。只有在施动者未知或确实无关时才用被动。
+30. **砍掉副词，或换更强的动词。** 「runs quickly」改成「is fast」或直接给数字，「significantly improves」改成实测的差值。用副词撑着弱动词，说明该换动词了。
+31. **优先用朴素词。** 「utilize」和「leverage」改成「use」，「facilitate」改成「help」，「numerous」改成「many」，「in the event that」改成「if」。花哨的同义词很少更清楚。
+32. **做作的文风。** 有直白说法却用隐喻或修饰：格言（「wire it or delete it」）、为效果而用的反问碎片、让代码拟人（「the plan holds it」）、比喻性的动词（「rides along」「stands on」）、套话框架。「A dial worth turning」改成「a parameter worth varying」。怎么想就怎么写。第 26 条管的是隐喻名词。
+33. **过度压缩。** 省略冠词、无动词的碎片、符号化写法，以及让读者需要解码而不是阅读的缩写。「Parser rejects bad date → exit 2, no write」改成「The parser rejects a bad date, exits with code 2, and writes nothing.」写出带冠词和动词的完整句子，把箭头和缩写都展开。

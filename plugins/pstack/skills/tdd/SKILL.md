@@ -1,41 +1,41 @@
 ---
 name: tdd
-description: "Use only when the user explicitly asks for TDD, a failing test, or a regression test, OR when the bug has an obvious cheap local test target. Skip when the test path is unclear, expensive, integration-heavy, or not requested."
+description: "仅在用户明确要求 TDD、失败测试或回归测试时使用，或当 bug 有明显且成本很低的本地测试目标时使用。测试路径不清晰、代价高、偏集成测试，或未被要求时，跳过。"
 ---
 
-# TDD Bug Fix
+# TDD 修 Bug
 
-When fixing a bug with a clear, cheap test path, make the broken behavior executable before changing production code. The goal is a focused regression test that fails before the fix and passes after it.
+在测试路径清晰且成本很低的情况下修 bug 时，先把出问题的行为变成可执行的测试，再改生产代码。目标是写一个聚焦的回归测试：修复前失败，修复后通过。
 
-Do not force a test when it would be impractical. If the available test would require broad harness setup, brittle mocks, slow end-to-end infrastructure, production-only state, vague reproduction steps, or large unrelated fixture churn, skip adding a new test and use the closest useful verification instead.
+测试不可行时不要硬写。如果现成的测试需要大范围的测试脚手架、脆弱的 mock、缓慢的端到端基础设施、仅生产环境才有的状态、模糊的复现步骤，或大量无关的 fixture 变动，就跳过新增测试，改用最接近的有效验证手段。
 
-## Workflow
+## 工作流
 
-1. **Understand the bug.** Identify the intended behavior, current behavior, affected path, and smallest observable reproduction.
-2. **Choose the narrowest executable check.** Prefer the closest unit, component, integration, or regression test already used for that codepath. If no practical test path is obvious, do not create one from scratch just to satisfy the workflow.
-3. **Write the failing test first.** Add the smallest focused test that would have caught the bug. The test should encode intended behavior, not mirror the current implementation.
-4. **Run the new test before fixing.** Confirm it fails for the intended reason. Quote the failure content, not the assertion line: an exception, an empty result against a literal, and the predicted mismatch all print red, and only the last one proves the test measures the bug. If it passes or fails for an unrelated reason, correct the test or reproduction before editing the implementation.
-5. **Fix the bug.** Make the smallest production change that satisfies the intended behavior while preserving nearby contracts.
-6. **Rerun the regression test.** Confirm the test now passes.
+1. **理解 bug。** 确定预期行为、当前行为、受影响的路径，以及最小的可观察复现。
+2. **选择最窄的可执行检查。** 优先用该代码路径上已有的、最接近的单元测试、组件测试、集成测试或回归测试。如果没有明显可行的测试路径，不要仅仅为了走完流程而从零造一个。
+3. **先写失败测试。** 添加能抓住这个 bug 的最小聚焦测试。测试应当编码预期行为，而不是照抄当前实现。
+4. **修复前先运行新测试。** 确认它因预期原因失败。引用失败的具体内容（Quote the failure content），而不是断言那一行：抛异常、对照字面值得到空结果、预测值不匹配，都会印成红色，只有最后一种才证明测试度量的是这个 bug。如果它以无关原因通过或失败，在改实现之前先修正测试或复现。
+5. **修 bug。** 做满足预期行为、同时不破坏周边契约的最小生产代码改动。
+6. **重跑回归测试。** 确认测试现在通过。
 
-## If a Failing Test Is Impractical
+## 失败测试不可行时
 
-Use the closest executable regression check instead: a targeted script, manual reproduction command, browser automation, snapshot comparison, log assertion, or focused integration check.
+改用最接近的可执行回归检查：有针对性的脚本、手工复现命令、浏览器自动化、快照对比、日志断言，或聚焦的集成检查。
 
-Prefer no new test over a bad test. A bad test is one that mostly tests mocks, encodes current implementation details, depends on timing or unrelated global state, needs expensive infrastructure for a small fix, or would be deleted immediately after proving the fix.
+宁可没有新测试，也不要坏测试。坏测试是指：主要在测 mock、把当前实现细节写死、依赖时序或无关的全局状态、为一个小修复需要昂贵的基础设施，或者刚证明完修复就该被删掉。
 
-## Guardrails
+## 护栏
 
-- Do not change tests merely to match a wrong implementation.
-- Do not weaken existing assertions unless the expected behavior has genuinely changed and the reason is clear.
-- Keep the regression test focused on the bug. Avoid broad fixture churn or unrelated coverage expansion.
-- If the bug is flaky, make the test deterministic where possible and document the signal being locked down.
-- If the bug exposes a broader class of failures, first land the focused regression path, then consider additional sibling coverage.
+- 不要仅仅为了迁就错误的实现而改测试。
+- 不要削弱已有的断言，除非预期行为确实变了且原因清楚。
+- 让回归测试聚焦于该 bug。避免大范围 fixture 变动或无关的覆盖率扩张。
+- 如果 bug 是偶发的，尽量让测试确定化，并把所锁定的信号记录下来。
+- 如果该 bug 暴露出更广泛的一类失败，先落地聚焦的回归路径，再考虑补充同类的覆盖。
 
-## Final Response
+## 最终回答
 
-Report the evidence, not just the outcome:
+汇报证据，而不只是结论：
 
-- Name the failing-before test or executable check and quote the failure it produced, trimmed to the diff.
-- Name the passing-after test run and any nearby validation performed.
-- If failing-before evidence could not be demonstrated, state why and describe the closest regression check used instead.
+- 点名修复前失败的那个测试或可执行检查，并引用它产生的失败信息，裁剪到 diff 的范围。
+- 点名修复后通过的测试运行，以及所做的任何邻近验证。
+- 如果无法展示修复前失败的证据，说明原因，并描述实际采用的、最接近的回归检查。

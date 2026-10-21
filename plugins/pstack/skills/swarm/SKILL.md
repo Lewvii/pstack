@@ -1,6 +1,6 @@
 ---
 name: swarm
-description: "Fan out N parallel workers, drain them, and return one report. Use for /swarm, 'swarm this', or parallel coverage, races, gauntlets, and exploration."
+description: "分发 N 个并行 worker，收敛它们，返回一份报告。用于 /swarm、'swarm this'，或并行覆盖、竞赛、车轮战和探索。"
 ---
 
 # Swarm
@@ -9,39 +9,39 @@ On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md),
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-## Start
+## 开始
 
-Open a todolist with one entry per phase before launching anything.
+在启动任何东西之前，先开一个 todolist，每个阶段一条。
 
-1. Frame
-2. Fan out
-3. Aggregate
-4. Report
+1. 框定
+2. 分发
+3. 汇总
+4. 报告
 
-## Phase A: Frame
+## 阶段 A：框定
 
-1. State the done predicate and the artifact or report the swarm must return.
-2. Choose the shape. Partition into slices, race N workers on identical briefs, or mix both. For a race or mixed shape, declare `first pass`, `rank all`, or `best-of` before spawning.
-4. Pick the worker model from the `swarm workers` line in `pstack-models.md`. If the sheet or that line is missing, use the default in [Models](#models). For `auto` or `inherit-parent`, omit `model` so the workers run on the parent model. If the `Agent` tool rejects a slug, use the default and say so. If it rejects the default, use the closest valid slug of the same family from its error message. For a model race, name each arm's model up front. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
-5. Give each worker its own writable output when it writes. When workers verify or measure commits, each brief names the exact SHAs. A measurement brief also names the method (sample count, what one sample is, order). The worker records both in its result.
+1. 说明完成谓词，以及 swarm 必须返回的产物或报告。
+2. 选择形态。切分成若干片、让 N 个 worker 在相同 brief 上竞赛，或两者混合。对于竞赛或混合形态，在 spawn 之前声明 `first pass`、`rank all` 或 `best-of`。
+4. 从 `pstack-models.md` 的 `swarm workers` 行选择 worker 模型。如果覆盖表或该行缺失，使用 [Models](#models) 中的默认值。对于 `auto` 或 `inherit-parent`，省略 `model`，让 worker 运行在父模型上。如果 `Agent` 工具拒绝某个 slug，使用默认值并说明。如果它连默认值也拒绝，就从错误信息中取同家族最近的合法 slug。模型竞赛时，提前为每一方命名模型。按照 **poteto-mode** skill 的 Subagents 一节，为工作挑选每个 subagent 的推理级别。
+5. worker 需要写入时，给每个 worker 各自可写的输出。当 worker 要验证或测量 commit 时，每份 brief 都要写明确切的 SHA。测量类 brief 还要写明方法（样本数、一个样本是什么、顺序）。worker 把这两项都记录在结果里。
 
-## Phase B: Fan out
+## 阶段 B：分发
 
-Spawn all N workers in one message with `subagent_type: "general-purpose"`, `run_in_background: true`, and the step 4 model, left unset for `auto` or `inherit-parent`. Claude Code subagents all run on this machine, so isolation comes from the worktree or output directory assigned in Phase A, not from a remote environment.
+在一条消息中 spawn 全部 N 个 worker，使用 `subagent_type: "general-purpose"`、`run_in_background: true`，以及步骤 4 的模型（`auto` 或 `inherit-parent` 时留空）。Claude Code 的所有 subagent 都运行在本机，所以隔离来自阶段 A 分配的 worktree 或输出目录，而不是远程环境。
 
-When a worker must start from a non-default branch, check that branch out in the worker's own worktree and name the worktree path in its brief.
+当 worker 必须从非默认分支开始时，在它自己的 worktree 中检出该分支，并在其 brief 中写明 worktree 路径。
 
-Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence. A worker that can prove a defect reports `ISSUES` and lists every issue it can prove, not only the first.
+每份 brief 都要自成一体。写明目标、范围、确切的切片或竞赛方、如何验证、以及要报告什么。报告使用 `PASS`、`ISSUES` 或 `BLOCKED` 并附证据。能证明缺陷的 worker 报告 `ISSUES`，并列出它能证明的每个问题，而不只是第一个。
 
-If a worker drops out, proceed with N-1 and note it.
+如果有 worker 掉线，用 N-1 继续并注明。
 
-## Phase C: Aggregate
+## 阶段 C：汇总
 
-Read the terminal results. Drop a result that does not record the SHAs and method its brief names, and respawn that worker once. After a second miss, record a gap. A gap does not count as a pass. For coverage, every required slice needs a result. For a race, apply the selection rule declared up front. Use first pass, rank all, or best-of. Do not paste raw worker dumps.
+读取各终端结果。丢弃未记录其 brief 所述 SHA 和方法的结果，并让该 worker 重跑一次。第二次仍缺失时，记为缺口。缺口不算通过。覆盖形态下，每个必需的切片都需要结果。竞赛形态下，应用事先声明的选择规则。使用 first pass、rank all 或 best-of。不要粘贴 worker 的原始输出。
 
-## Phase D: Report
+## 阶段 D：报告
 
-Return one consolidated in-chat report with the table, issue one-liners, gaps or dropouts, and the race rule when used.
+返回一份统一的聊天内报告，包含表格、每个问题的一行说明、缺口或掉线情况，以及使用时的竞赛规则。
 
 ## Models
 

@@ -1,21 +1,21 @@
 ---
 name: principle-attack-the-premise
-description: "Apply when two or more fixes that share one premise have failed the same gate. Write the premise down and test it directly before you write another fix that assumes it."
+description: "当两个或更多共享同一前提的修法都没通过同一道关卡时套用。把前提写下来并直接检验它，然后再写下一个以该前提为假设的修法。"
 user-invocable: false
 ---
 
-# Attack the Premise
+# 攻击前提
 
-When two or more fixes that share one premise have failed the same gate, suspect the premise, not the fixes.
+当两个或更多共享同一前提的修法都没通过同一道关卡时，要怀疑的是前提，不是这些修法。
 
-**Why:** Each failed fix is evidence against the belief it assumed. A third fix on the same premise spends effort where the evidence already says the cause is not.
+**为什么：** 每一个失败的修法，都是对它所作假设的一份反证。基于同一前提的第三个修法，是在证据已经指出病根不在这里的地方继续投入。
 
-**Pattern:**
-- **Write the premise down.** The premise is the one sentence that every failed fix assumed.
-- **Test the premise before the next fix.** Find an observation that would come out differently if the premise were false, and make it. Look at how the failures are distributed, not only at how large they are. Make the check rerunnable per [Build the Lever](../principle-build-the-lever/SKILL.md).
-- **Follow the evidence.** If it contradicts the premise, the cause is elsewhere. Look for what the failures have in common that the premise did not predict. If it confirms the premise, ask the next "why" per [Fix Root Causes](../principle-fix-root-causes/SKILL.md). The earlier fixes may have treated a consequence instead of the cause.
-- **Remove the condition instead of compensating for it**, per the [Laziness Protocol](../principle-laziness-protocol/SKILL.md). If the evidence shows that one part always lands on the losing side, change what puts it there. A mechanism that cleans up after it leaves the cause in place and adds work on every run.
+**做法：**
+- **把前提写下来。** 前提就是每一个失败修法都默认成立的那一句话。
+- **在下一个修法之前先检验前提。** 找一个如果前提为假就会呈现不同结果的观察，然后去做这个观察。要看失败是如何分布的，而不只是看失败有多大。按 [Build the Lever](../principle-build-the-lever/SKILL.md) 的要求把这项检查做成可重跑的。
+- **跟着证据走。** 如果证据与前提矛盾，病根在别处。去找这些失败共同具备、而前提没有预料到的东西。如果证据确认了前提，就按 [Fix Root Causes](../principle-fix-root-causes/SKILL.md) 去追问下一个「为什么」。之前的修法可能只是在处理后果，而不是原因。
+- **消除条件，而不是为它做补偿**，按 [Laziness Protocol](../principle-laziness-protocol/SKILL.md) 所说。如果证据表明某一部分总是落在失败的一侧，就去改那个把它推到那里去的东西。一个事后清理的机制，会留下病根，还会在每次运行时增加负担。
 
-**Stop:** Do not start the next fix before the premise is written down and tested.
+**停：** 在前提被写下来并检验过之前，不要开始下一个修法。
 
-This principle is distinct from [Redesign from First Principles](../principle-redesign-from-first-principles/SKILL.md), which rebuilds a design around a new requirement. It questions a fact the current design assumes.
+这条原则不同于 [Redesign from First Principles](../principle-redesign-from-first-principles/SKILL.md)，后者是围绕一项新需求重建设计。这条原则质疑的是当前设计所假设的某个事实。

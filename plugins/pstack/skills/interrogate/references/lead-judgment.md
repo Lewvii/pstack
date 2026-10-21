@@ -1,39 +1,39 @@
-# Lead Judgment Framework
+# 主审判断框架
 
-## Filtering Principles
+## 过滤原则
 
-### Nitpick Gravity
+### 挑刺的重力
 
-Reviewers, especially adversarial ones, tend to fill their review. If they don't find critical issues, they'll inflate nits to fill the space. If a reviewer's findings are all nits and style preferences, the code is probably fine. Say so.
+评审者，尤其是对抗性评审者，倾向于把自己的评审写满。如果找不到关键问题，他们就会把小毛病夸大成问题来填满篇幅。如果一位评审者的所有发现都是小毛病和风格偏好，代码很可能没问题。直说即可。
 
-### Hypothetical vs. Actual
+### 假设 vs. 实际
 
-"What if someone passes null here?" is only a finding if the caller can actually pass null. Trace the call site. If the input is validated upstream or the type system prevents it, dismiss the finding. Reviewers working from a diff can't always see the full call chain. You can.
+"要是有人在这里传 null 呢？"只有在调用方真的能传 null 时才算一条发现。追踪调用点。如果输入在上游已校验，或者类型系统已经拦住，就驳回这条发现。基于 diff 工作的评审者未必看得到完整调用链。你看得到。
 
-### Premature Abstraction Warnings
+### 过早抽象警告
 
-Reviewers often suggest extracting functions, adding interfaces, or creating abstractions. Does this code need to change in a second way? If not, the abstraction is premature. Simple inline code that works beats a clean abstraction that's overkill for the current scope.
+评审者经常建议抽取函数、增加接口或创建抽象。这段代码需要以第二种方式变化吗？如果不需要，这个抽象就是过早的。能用的一行内联代码胜过对当前范围而言过度设计的干净抽象。
 
-### "I Would Have Done It Differently"
+### "我会用另一种写法"
 
-This is the most common false positive in code review. A finding that amounts to "I prefer a different approach" is not a bug, not a design flaw, and not actionable unless the reviewer shows a concrete problem with the current approach. Dismiss these, and say why.
+这是代码评审中最常见的误报。一条实质是"我更喜欢另一种做法"的发现，不是 bug，不是设计缺陷，除非评审者指出现有做法有具体问题，否则也不可执行。驳回它们，并说明原因。
 
-### Missing Context Signals
+### 上下文缺失的信号
 
-Watch for findings that reveal the reviewer didn't understand the context:
-- Suggesting changes to code the author didn't write or modify
-- Flagging patterns that are consistent with the rest of the codebase (the reviewer just doesn't know that)
-- Recommending approaches that conflict with constraints you know about
+留意那些暴露评审者没理解上下文的发现：
+- 建议修改作者没有编写或改动的代码
+- 指出的问题其实是与代码库其余部分一致的写法（评审者只是不知道这一点）
+- 推荐与你所知的约束相冲突的做法
 
-These are honest mistakes from reviewers working with limited information. Dismiss them gracefully.
+这些都是评审者在信息有限的情况下犯的诚实错误。得体地驳回。
 
-## When Reviewers Are Right
+## 评审者正确的时刻
 
-Don't dismiss findings just because they're uncomfortable. The whole point of adversarial review is to catch things you'd miss. Signs a finding deserves attention:
+不要只是因为发现让人不舒服就驳回。对抗性评审的全部意义就在于抓到你可能会漏的东西。一条发现值得重视的信号：
 
-- Multiple models flag the same issue independently (consensus signal)
-- The finding identifies a concrete execution path, not a hypothetical
-- The finding reveals a gap in your mental model of the code
-- You read the finding and think "...yeah, actually"
+- 多个模型各自独立地指出了同一个问题（共识信号）
+- 发现指出了具体的执行路径，而不是假设
+- 发现揭示了你对这段代码心智模型中的空白
+- 你读完这条发现后想"...嗯，还真别说"
 
-Be especially careful about dismissing security findings and correctness bugs. These deserve more scrutiny even when they come from a single model.
+对驳回安全类发现和正确性 bug 要格外谨慎。即使只来自一个模型，它们也值得更多审视。

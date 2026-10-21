@@ -1,17 +1,17 @@
 ---
 name: principle-explain-the-number
-description: "Apply before you trust, report, or act on a number you measured: a speedup, a regression, a throughput, a latency, or an eval result. Find what limits it, and rule out that it measured something other than the work you think."
+description: "在你信任、汇报或依据某个实测数字行动之前套用：加速比、回退、吞吐、延迟或 eval 结果。找出是什么限制了它，并排除它其实测的是别的东西。"
 user-invocable: false
 ---
 
-# Explain the Number
+# 解释这个数字
 
-- **Ask "why not double?"** Name the resource or code path that bounds the result, such as a core, a lock, the disk, the network, or the load generator itself. Get it from a profile or from system counters taken during a run, then map it to source. A guess from reading the code is not a limiter. If you cannot say why the number is not twice as good, you do not know what you measured.
-- **List what else the number could be measuring, and rule out each one with evidence.** The usual suspects are errors, skipped or cached work, code that never ran, an untuned side (one left on default settings), noise, and a piece too small to matter end to end.
-- **Keep the evidence with the number.** Put the run count, the spread, and the limiter in the notes or a linked artifact.
+- **问一句“为什么不翻倍？”** 点名限制该结果的资源或代码路径，例如某个核、某把锁、磁盘、网络，或压测工具本身。从 profile 或运行期间的系统计数器里取出这个限制因素，再映射回源码。靠读代码猜出来的不算限制因素。如果你说不出这个数字为什么没有好上一倍，你就不知道你测的是什么。
+- **列出这个数字还可能测到什么，并用证据逐条排除。** 常见的嫌疑是：错误、被跳过或走缓存的工作、根本没运行的代码、未调优的一侧（仍停留在默认设置）、噪声，以及小到在端到端上无足轻重的部分。
+- **把证据和数字放在一起。** 把运行次数、离散程度和限制因素写进备注或一个链接的产物中。
 
-For a performance number, run the full procedure with the [benchmark-checklist](../benchmark-checklist/SKILL.md) skill. For an eval result, ask the same of the trials: did every run do the task, does the gap hold across trials and models, and does the scenario matter.
+对于性能数字，用 [benchmark-checklist](../benchmark-checklist/SKILL.md) skill 走完整流程。对于 eval 结果，对各个 trial 问同样的问题：每次运行都真的完成了任务吗？这个差距在多个 trial 和多个模型上依然成立吗？场景本身有影响吗？
 
-You skipped this when the evidence behind a number has no run count, no spread, or no named limiter, or when the time saved is larger than the time the changed piece took.
+如果某个数字背后的证据没有运行次数、没有离散程度、也没有点名限制因素，或者省下的时间比被改动那部分本身花的时间还多，那就说明你跳过了这一步。
 
-Distinct from [Prove It Works](../principle-prove-it-works/SKILL.md), which checks that an output is real.
+与 [证明它确实可用](../principle-prove-it-works/SKILL.md) 不同，后者检查的是一个产出的结果是否真实存在。

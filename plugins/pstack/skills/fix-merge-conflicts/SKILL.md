@@ -1,32 +1,32 @@
 ---
 name: fix-merge-conflicts
-description: Resolve merge conflicts non-interactively, validate build and tests, and finalize conflict resolution
+description: 以非交互方式解决合并冲突，验证构建和测试，并完成冲突处理的收尾
 ---
 
 # Fix merge conflicts
 
-## Trigger
+## 触发时机
 
-Branch has unresolved merge conflicts and needs a reliable path to a buildable state.
+分支存在未解决的合并冲突，需要一条可靠路径回到可构建状态。
 
-## Workflow
+## 工作流
 
-1. Detect all conflicting files from git status and conflict markers.
-2. Resolve each conflict with minimal, correctness-first edits.
-3. Prefer preserving both sides when safe. Otherwise, choose the variant that compiles and keeps public behavior stable.
-4. Regenerate lockfiles with package manager tools instead of hand-editing.
-5. Run compile, lint, and relevant tests.
-6. Stage resolved files and summarize key decisions.
+1. 从 git status 和冲突标记中检测出所有冲突文件。
+2. 以最小且正确性优先的编辑解决每一处冲突。
+3. 在安全时优先保留双方内容。否则，选择能编译、并保持公开行为稳定的那一版。
+4. 用包管理器工具重新生成 lockfile，不要手工编辑。
+5. 运行编译、lint 和相关测试。
+6. 暂存已解决的文件，并总结关键决策。
 
-## Guardrails
+## 约束
 
-- Keep changes minimal and readable.
-- Do not leave conflict markers in any file.
-- Avoid broad refactors while resolving conflicts.
-- Do not push or tag during conflict resolution.
+- 保持改动最小且可读。
+- 任何文件中都不得留下冲突标记。
+- 解决冲突期间避免大范围重构。
+- 解决冲突期间不要 push 或打 tag。
 
-## Output
+## 输出
 
-- Files resolved
-- Notable resolution choices
-- Build/test outcome
+- 已解决的文件
+- 值得注意的解决选择
+- 构建与测试结果

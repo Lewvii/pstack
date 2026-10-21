@@ -1,6 +1,6 @@
 ---
 name: arena
-description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
+description: "针对同一任务并行生成 N 个候选，选出一个基底，再把落选者最强的部分嫁接到基底里。用于 /arena、“arena this”、“throw it in the arena”，或当对一件非平凡产物只尝试一次就会锁死错误形态时。"
 ---
 
 # Arena
@@ -9,46 +9,46 @@ On Codex, read the [platform mapping](../poteto-mode/references/codex-tools.md),
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-Open a todolist with one entry per phase (Frame, Fan out, Cross-judge, Pick, Graft, Verify) before launching anything.
+在启动任何东西之前，先开一个待办清单，每个阶段一条（Frame、Fan out、Cross-judge、Pick、Graft、Verify）。
 
-## Phase A: Frame
+## 阶段 A：定框
 
-Every candidate gets the same prompt, so the prompt is the contract.
+每个候选拿到的是同一份提示词，所以提示词就是契约。
 
-1. State the artifact each candidate is producing.
-2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Use the `arena runners` line in `pstack-models.md`. If the sheet or that line is missing, run one each on the defaults in [Models](#models). An `auto` or `inherit-parent` entry in this line or the cross-judge line means the parent model, so omit `model` for it. If the `Agent` tool rejects a configured entry, run that seat on its family's default and say so. Families go by model name, such as Opus, Fable, or Sonnet. With no family match, use the single-role default in [Models](#models). If it rejects a default, use the closest valid slug of the same family from its error message. Spawn more runners when the arena covers multiple design directions. Use the same model N times when the work is generation-bound rather than judgment-sensitive. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
-4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
+1. 写清每个候选要产出的产物是什么。
+2. 推导评分表：针对*这一*任务，给出 3-6 条具体、可打分的成功标准。它是阶段 D 中挑选者的工具。候选只看得到任务本身。
+3. 选择执行者。使用 `pstack-models.md` 里的 `arena runners` 行。如果该表或该行缺失，就按 [Models](#models) 中的默认值各跑一个。这一行或交叉评判行里出现 `auto` 或 `inherit-parent`，表示使用父模型，此时省略 `model`。如果 `Agent` 工具拒绝某个已配置的条目，就让该席位改跑其所属家族的默认模型，并说明这一点。家族按模型名划分，例如 Opus、Fable、Sonnet。没有对得上的家族时，使用 [Models](#models) 中的单角色默认值。如果它拒绝某个默认值，就从报错信息里取同家族最近的合法 slug。竞技场要覆盖多个设计方向时，多起几个执行者。当工作受限于生成能力而不是判断力时，用同一个模型跑 N 次。按 **poteto-mode** 技能的 Subagents 一节，为每个子代理的活挑选推理档位。
+4. 按 **separate-before-serializing-shared-state** principle skill 的要求，让每个候选有自己的输出位置（尽量用 git worktree，否则用 `/tmp/arena-<slug>/candidate-<n>/`）。
 
-## Phase B: Fan out
+## 阶段 B：铺开
 
-Spawn all N subagents in one message with `run_in_background: true`, each with the task, the path to the shared grounding, its own output path, and instructions to produce the artifact and a short rationale naming the alternatives it considered and what it rejected.
+在一条消息里用 `run_in_background: true` 启动全部 N 个子代理，每个都带上任务、共享背景材料的路径、自己的输出路径，并要求它产出产物，外加一段简短说明：它考虑过哪些替代方案、否决了什么。
 
-If a candidate produces no output, proceed with N-1 and note the dropout.
+如果某个候选没有产出，就用 N-1 继续，并记录这次掉队。
 
-## Phase C: Cross-judge
+## 阶段 C：交叉评判
 
-After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in `pstack-models.md`. If the sheet or that line is missing, choose from the runner defaults in [Models](#models). Prefer a different model family from the parent's. Spawn one readonly judge subagent on that model. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't spawn it while candidates are still writing.
+等阶段 B 的候选全部完成后，从 `pstack-models.md` 的 `arena cross-judge pool` 行里选一个模型。如果该表或该行缺失，就从 [Models](#models) 中的执行者默认值里选。优先选与父模型不同的模型家族。在该模型上起一个只读的评判子代理。它拿到评分表和按标签指代的候选，逐条打分，并给出推荐的基底及理由。它与你阶段 D 的阅读并行进行。候选还在写的时候不要起它。
 
-## Phase D: Pick a base
+## 阶段 D：选定基底
 
-Read every candidate end to end before picking. Score each against the rubric criterion by criterion, not on holistic feel, and compare with the cross-judge. Agreement on the base confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous. Read both rationales before deciding.
+选之前把每个候选从头读到尾。按评分表逐条打分，不要凭整体感觉，再和交叉评判的结果对照。基底一致，说明这个选择站得住。不一致，说明你们之中有一个带偏见，或者评分表本身含糊。做决定前把两边的理由都读完。
 
-Pick the base a future maintainer can extend most easily without breaking invariants. When two feel tied, prefer the cleaner boundary or smaller API, per the Laziness Protocol.
+选那个后续维护者最容易扩展、又不会破坏不变量的基底。两边难分高下时，按 Laziness Protocol 选边界更干净或 API 更小的那个。
 
-## Phase E: Graft
+## 阶段 E：嫁接
 
-Walk each losing candidate once more for what is worth porting into the base, usually one or two things per candidate, not most of it. Fold each graft in by hand, per the **redesign-from-first-principles** principle skill, so the result stays coherent under one mental model. Don't paste mechanically.
+把每个落选候选再过一遍，挑出值得移植进基底的东西，通常每个候选一两处，而不是大半。按 **redesign-from-first-principles** principle skill 的要求，逐处手工并入，让结果在同一套心智模型下保持自洽。不要机械粘贴。
 
-If the candidates converge on one shape, that is strong agreement. Note it and ship the consensus shape. No graft is needed. If they wildly diverge, Phase A was under-specified. Reframe and re-run rather than averaging the divergence.
+如果几个候选收敛到同一种形态，那是很强的共识。记录它，直接交付共识形态，不需要嫁接。如果它们分歧极大，说明阶段 A 定义得不够。重新定框再跑一遍，而不是把分歧平均掉。
 
-## Phase F: Verify
+## 阶段 F：验证
 
-Verify the synthesized artifact like any other output, per the **prove-it-works** principle skill. If verification finds a problem the arena missed, either Phase A was wrong (re-frame and re-run) or a candidate caught it and you missed the graft (go back to Phase E). Don't paper over it.
+按 **prove-it-works** principle skill 的要求，像对待任何产出一样验证合成后的产物。如果验证发现了竞技场漏掉的问题，要么阶段 A 错了（重新定框再跑），要么某个候选抓到过而你漏了嫁接（回到阶段 E）。不要把它糊过去。
 
-## Outputs
+## 产出
 
-One synthesized artifact, with a short synthesis note alongside naming the base and why, the cross-judge's verdict, each graft with its source candidate, what was rejected and why, any convergence or dropouts, and the verification result.
+一件合成后的产物，旁边配一份简短的综合作注：基底是哪个、为什么，交叉评判的结论，每一处嫁接及其来源候选，否决了什么、为什么，有哪些收敛或掉队，以及验证结果。
 
 ## Models
 

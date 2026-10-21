@@ -1,11 +1,11 @@
-### Pause safely
+### 安全暂停
 
-**You own a clean stop. Leave a checkpoint a cold-start agent can resume from.** This is explicit only. On "keep going", "going to bed, keep going", or "don't stop", do not pause.
+**干净地停下来是你的责任。留下一个冷启动 agent 能接着用的检查点。** 这只在明确要求时执行。遇到「继续跑」「我要睡了，继续跑」「别停」时，不要暂停。
 
-1. Stop at a safe boundary. Finish the current atomic step or back out of it. Start nothing new, and cancel any nested subagents.
-2. Take no irreversible action to pause. No PR and no push unless you already had one out.
-3. Make the work durable. Commit uncommitted edits as one clear `wip:` commit on the current branch so nothing is lost. If the tree is broken, say so in the commit body in one line.
-4. Write the resume note off-context. Capture intent, what you were doing, progress and what's verified, current state, next steps, key files, and gotchas. Use the canonical checkpoint directory from [Resume storage](../references/resume-storage.md), which defines the shared writer/reader locator for every runtime. It must survive the expected interruption. If a show-me-your-work trail exists, point at it instead of duplicating it.
-5. Preserve artifacts the user explicitly requested for use after resume, such as questions, an acceptance checklist, or a procedure. Reuse the existing artifact when there is one; otherwise save the requested material beside the resume note and link it. Preserve exact wording, completeness, and order when requested. Publish the checkpoint through `resume.mjs`, which verifies links and files before atomically updating the project pointer. Then read it using only the project directory and check the requested contents before declaring the checkpoint ready. Ten requested questions means all ten are reachable from the note alone. This does not require archiving every aside or pausing an ongoing task.
+1. 停在安全边界上。把当前这个原子步骤做完，或者撤回它。不要开新事，并取消所有嵌套的 subagent。
+2. 暂停不要做任何不可逆的操作。除非已经有 PR 在外面，否则不开 PR、不推送。
+3. 让工作落盘。把未提交的改动在当前分支上做成一个清晰的 `wip:` 提交，避免丢失。如果工作树是坏的，在提交正文里用一行说明。
+4. 在上下文之外写续接说明。记录意图、正在做什么、进度与已验证部分、当前状态、后续步骤、关键文件和坑。使用 [续接存储](../references/resume-storage.md) 中规定的标准检查点目录，它定义了所有运行时共用的读写定位方式。这份说明必须能在预期的中断之后存活。如果已有 show-me-your-work 轨迹，指向它，不要复制一份。
+5. 保留用户明确要求在续接后使用的东西，例如问题清单、验收清单或某个流程。已有现成产物就复用；否则把所需材料存在续接说明旁边并链接过去。用户要求时，保留原文措辞、完整性和顺序。通过 `resume.mjs` 发布检查点，它会在原子更新项目指针之前校验链接和文件。然后只用项目目录读回它，并在宣布检查点就绪之前核对所要求的内容。要求十个问题，就意味着仅凭这份说明能触达全部十个。这不要求归档每一条枝节，也不要求因此暂停正在进行的任务。
 
-**Reply:** where you are in the loop, what's on disk versus still in your head (paths, no diff dumps), the commits you made and whether the tree is clean, and the first action on resume. This is a pause, not a final report.
+**回复：** 你在循环中的位置；磁盘上有什么、还有什么只在你脑子里（给路径，不要贴 diff）；你做了哪些提交、工作树是否干净；以及续接后的第一个动作。这是暂停，不是最终报告。

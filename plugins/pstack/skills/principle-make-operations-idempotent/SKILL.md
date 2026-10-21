@@ -1,22 +1,22 @@
 ---
 name: principle-make-operations-idempotent
-description: "Apply when designing commands, lifecycle steps, or processing loops that run amid crashes, restarts, and retries. Converge to the same end state regardless of partial prior runs."
+description: "在设计命令、生命周期步骤，或在崩溃、重启、重试中运行的处理循环时套用。无论此前的运行完成到哪一步，都收敛到同一终态。"
 user-invocable: false
 ---
 
-# Make Operations Idempotent
+# 让操作幂等
 
-Design operations so they converge to the correct state regardless of how many times they run or where the previous run stopped. Every state-mutating operation should answer: "What happens if this runs twice? What happens if the previous run crashed halfway?"
+让操作无论运行多少次、上一次停在哪里，都收敛到正确的状态。每个会改变状态的操作都该回答两个问题：“这段逻辑跑两次会怎样？上一次在半路崩了会怎样？”
 
-**Why:** Commands, lifecycle operations, and processing loops run where crashes, restarts, and retries are normal. If partial state changes the next run's outcome, every restart becomes a debugging session.
+**为什么：** 命令、生命周期操作和处理循环所处的环境里，崩溃、重启和重试都是常态。如果残留的部分状态会改变下一次运行的结果，那么每次重启都会变成一场调试。
 
-**The idea:** derive each step from the state that exists, not from what the previous run meant to do. Read the current state, compare it to the goal, and apply only the difference. A step written this way is safe to repeat, because a repeat finds nothing left to do.
+**核心思路：** 每一步都从当前存在的状态推导，而不是从上次运行“打算”做什么推导。读出当前状态，和目标比较，只施加差异。这样写出的步骤可以安全重复，因为重复时已经无事可做。
 
-Anything a run leaves behind, such as a lock, a temporary file, a half-written record, or a claimed job, must be recognizable as stale by the next run. Judge staleness by evidence that stays true wherever the previous run could have stopped, not only in the common case. A marker that the next run cannot judge turns every crash into manual cleanup. For example, write to a temporary path and rename it into place, or compare artifacts by content instead of by creation order.
+一次运行留下的任何东西，例如锁、临时文件、写了一半的记录、被认领的任务，都必须能被下一次运行识别为过期。判断是否过期，要依据在上次运行所有可能中断点上依然成立的证据，而不只是常见情形。下一次运行无法判断的标记，会把每次崩溃都变成手工清理。例如先写入临时路径再 rename 到位，或按内容而不是按创建顺序比较产物。
 
-**The test:**
-1. What happens if this runs twice in a row?
-2. What happens if the previous run crashed at every possible point?
-3. Does re-execution converge to the same end state?
+**检验：**
+1. 连续跑两次会怎样？
+2. 上一次运行在每个可能的点崩溃，会怎样？
+3. 重新执行是否收敛到同一终态？
 
-If any answer is "it depends on what state was left behind," the operation needs a reconciliation step.
+只要有一个答案是“取决于留下了什么状态”，这个操作就需要一个对账步骤。

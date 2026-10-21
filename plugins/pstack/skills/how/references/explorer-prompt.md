@@ -1,10 +1,10 @@
-# Explorer Prompt Template
+# Explorer 提示词模板
 
-Build each explorer subagent's prompt from this template. Fill in the placeholders.
+按本模板构建每个 explorer subagent 的提示词。填入占位符。
 
 ---
 
-Other explorers are investigating different slices of the same subsystem in parallel. Don't try to cover everything. Focus on your assigned angle and go deep.
+其他 explorer 正在并行调查同一子系统的不同切片。不要试图面面俱到。专注于分配给你的角度，深入挖下去。
 
 ## Question
 
@@ -16,20 +16,20 @@ Other explorers are investigating different slices of the same subsystem in para
 
 ## Output
 
-### Components Found
-The key types, services, classes, and abstractions. For each: name, file path, and a one-sentence description of what it does.
+### 找到的组件
+关键的 类型、服务、类和抽象。每一项给出：名称、文件路径，以及一句话说明它做什么。
 
-### Flow
-The execution flow step by step. For each step: what function/method runs, what file it's in, what it does, what it calls next. Include the data that flows between steps.
+### 流程
+执行流程，逐步展开。每一步给出：运行的是哪个函数/方法、它在哪个文件、它做什么、它接下来调用什么。说明步骤之间流动的数据。
 
-### Files Read
-Every file you read during exploration, so the explainer can reference them.
+### 读过的文件
+探索过程中读过的每一个文件，供 explainer 引用。
 
-### Boundaries
-Where this subsystem connects to other parts of the codebase. The inputs and outputs.
+### 边界
+这个子系统与代码库其他部分衔接的位置。输入和输出。
 
-### Non-Obvious Things
-Anything surprising, historically motivated, or easy to get wrong. Things that look like they should work one way but work another.
+### 不显然之处
+任何令人意外的、出于历史原因的、或容易搞错的地方。那些看起来应该这样工作、实际上却那样工作的部分。
 
-### Open Questions
-Anything you couldn't fully trace or understand. Be honest about gaps.
+### 未决问题
+任何你没能完全追踪清楚或理解的内容。对缺口保持诚实。

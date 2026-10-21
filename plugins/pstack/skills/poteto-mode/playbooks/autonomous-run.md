@@ -1,13 +1,13 @@
-### Autonomous run
+### 自主运行
 
-**You own the exit condition. Define done, then drive to it without stopping.**
+**退出条件由你负责。先定义完成，然后不停顿地驱使它达成。**
 
-1. State the exit condition as a checkable predicate before the first iteration (tests green, repro fixed, all N PRs merged, pixel-diff zero).
-2. Pick the wake mechanism using Claude Code's `loop` skill (a built-in, not a pstack skill). An event to watch (CI, a merge, a ref advancing) gets a watcher subagent that wakes you on the event, with a long time-based heartbeat as fallback. No event gets a fixed-interval heartbeat sized to when the result is worth re-checking. Pick each subagent's reasoning level for the job, per the Subagents section.
-3. Each iteration makes the smallest change the evidence justifies, verifies it against the predicate, commits if it advanced, discards changes that didn't help. Belt-and-suspenders that "might help" gets reverted, not left to ride.
-   Sequence the work via the **sequence-verifiable-units** principle skill, verifying each unit before the next instead of batching checks at the end.
-4. Mid-run discoveries are yours. Address broken skills, related bugs, flaky verifiers, review noise, tooling failures, orphaned follow-ups, and fixable drift yourself via poteto-mode. Put out-of-band fixes in their own PR. Do not park reversible work for the human or use `AskUserQuestion`. Surface only irreversible actions, genuine product or preference calls no experiment can settle, or a real dead end. Keep the predicate as the main drive, and return to it after each side fix.
-5. Checkpoint every iteration via the **show-me-your-work** skill, a row for what changed and whether the predicate moved.
-6. Stop when the predicate is met. A plateau is not a stop, so keep going and pivot your approach to push past it. Surface a genuine dead end rather than spinning, and never relax the predicate to declare victory.
+1. 在第一次迭代之前，把退出条件写成一个可检查的谓词（测试全绿、复现修好、N 个 PR 全部合并、像素差为零）。
+2. 用 Claude Code 的 `loop` 技能（内置技能，不是 pstack 技能）选定唤醒机制。有可等待的事件（CI、合并、远端 ref 前进），就用 watcher subagent 在事件发生时唤醒你，并以长周期的定时心跳兜底。没有事件，就走固定间隔的心跳，间隔按结果值得复查的时间来定。按 Subagents 一节的要求，为每个 subagent 选择合适的推理档位。
+3. 每次迭代只做证据支撑的最小改动，对照谓词验证，有进展就提交，没帮助就丢弃。「也许有用」的保险措施要撤销，不能留着碰运气。
+   用 **sequence-verifiable-units** 原则技能安排顺序，每完成一个单元就验证，不要把检查攒到最后。
+4. 运行中的发现归你处理。损坏的技能、相关缺陷、不稳定的验证器、审查噪音、工具故障、无人接手的后续事项、可修的漂移，用 poteto-mode 自己处理。计划外的修复单独开 PR。可逆的工作不要留给人类，也不要用 `AskUserQuestion`。只上报不可逆的操作、任何实验都定不了的产品或偏好取舍，或者真正的死胡同。让谓词保持主导，每次侧修之后回到它。
+5. 每次迭代都通过 **show-me-your-work** 技能记录检查点，一行写改了什么、谓词是否移动。
+6. 谓词满足时停止。进入平台期不算停止，继续做并调整方法越过它。真正的死胡同就上报，不要空转，也绝不为了让「胜利」成立而放宽谓词。
 
-**Reply:** the exit condition, iterations run, what landed, what was discarded, final predicate state.
+**回复：** 退出条件、运行的迭代数、落地了什么、丢弃了什么、谓词的最终状态。

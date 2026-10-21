@@ -1,10 +1,10 @@
 ---
 name: principle-laziness-protocol
-description: "Apply when refactoring, evaluating diff size, or tempted to add abstractions, layers, or signal threading. Bias toward deletion and the smallest change that solves the problem."
+description: "在重构、评估 diff 规模，或忍不住想加抽象、加层、加信号透传时套用。倾向于删除，以及能解决问题的最小改动。"
 user-invocable: false
 ---
 
-# Laziness Protocol
+# 懒惰协议
 
-- **Consolidate decisions.** Do not repeat the same choice in several places. Put it behind one source of truth and pass the result as a simple flag.
-- **Minimize the diff.** Make the smallest change that solves the problem. Fewer lines beat "elegant" boilerplate.
+- **统一决策。** 不要在多个地方重复同一个选择。把它收进唯一的真相来源，再把结果作为简单的标志往下传。
+- **最小化 diff。** 只做能解决问题的最小改动。行数更少胜过「优雅」的样板。

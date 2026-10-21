@@ -1,11 +1,11 @@
-### Runtime forensics
+### 运行时取证
 
-**You own the diagnosis. Instrument the live process, don't theorize from source.** The deliverable is a cited diagnosis, not a fix.
+**诊断是你的责任。给活着的进程加探针，别对着源码空想。** 交付物是一份有证据引用的诊断，不是修复。
 
-1. Capture the live signal on the matching surface via the driver skill: a CPU profile for a spinning process, a heap snapshot for a leak, a CDP trace for a visual glitch. A real artifact, not a guess.
-2. Reduce the artifact to the smoking gun: the function on the hot path, the retainer chain from the leaked object to a GC root, the loop firing without input. Parse large artifacts in a subagent (the **guard-the-context-window** principle skill), keep the reduced finding in the main thread. Pick each subagent's reasoning level for the job, per the Subagents section.
-3. Prove the mechanism before believing it. Inject instrumentation via CDP eval on the running process, or hotfix the live code without reloading, to confirm the hypothesis cheaply.
-4. Map the finding back to source: file, symbol, the line that allocates or schedules.
-5. Throughput checkpoint stays one line: `throughput checkpoint: n/a, read-only forensics`.
+1. 通过 driver 技能在对应的观测面抓取活信号：空转进程的 CPU profile，泄漏的堆快照，视觉异常的 CDP trace。要真实产物，不要猜测。
+2. 把产物收敛到确凿证据：热路径上的那个函数、从泄漏对象到 GC root 的引用链、没有输入却在触发的循环。大产物放到 subagent 里解析（**guard-the-context-window** 原则技能），主线程只保留收敛后的结论。按 Subagents 一节的要求，为每个 subagent 选择合适的推理档位。
+3. 相信机制之前先证明它。通过对运行中进程的 CDP eval 注入探针，或者不重载就热修活代码，用低成本方式确认假设。
+4. 把结论映射回源码：文件、符号、分配或调度的那一行。
+5. 吞吐检查点保持一行：`throughput checkpoint: n/a, read-only forensics`。
 
-**Reply:** the signal captured, the reduced finding, how you proved the mechanism, the source location, artifact paths. No fix unless asked. Hand back to Bug fix or Perf once the cause is known.
+**回复：** 抓到的信号、收敛后的结论、你如何证明了机制、源码位置、产物路径。没被要求就不给修复。原因查明后交回 Bug fix 或 Perf。

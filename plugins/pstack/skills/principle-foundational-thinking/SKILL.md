@@ -1,21 +1,21 @@
 ---
 name: principle-foundational-thinking
-description: "Apply before writing logic: choosing core types and data structures, sequencing scaffold-vs-feature work, asking what concurrent actors share. Get the data structures right so downstream code becomes obvious."
+description: "在写逻辑之前套用：挑选核心类型与数据结构、安排脚手架与功能的先后顺序、确认并发参与者共享了什么。把数据结构定对，下游代码自然变得清晰。"
 user-invocable: false
 ---
 
-# Foundational Thinking
+# 基础思考
 
-**Structural decisions** protect option value. **Code-level decisions** protect simplicity.
+**结构性决策**保护可选项的价值。**代码级决策**保护简洁性。
 
-**Data structures first.** Get the data shape right before writing logic. Define core types early, trace every access pattern, and choose structures that match the dominant paths.
+**数据结构优先。** 在写逻辑之前先把数据形状定对。尽早定义核心类型，把每一种访问模式都梳理一遍，选出与主要路径相匹配的结构。
 
-At code level, DRY the structure, not every line. Types and data models should converge. Three similar statements still beat a premature abstraction. Prefer explicit over clever. Test behavior and edge cases, not line counts.
+在代码层面，DRY 的是结构，不是每一行。类型和数据模型应当收敛。三条相似的语句仍然胜过一次过早的抽象。宁可显式，不要机巧。测的是行为和边界情况，不是行数。
 
-**Concurrency corollary.** Before sharing state between actors, ask "what happens if another actor modifies this concurrently?" If not "nothing", isolate.
+**并发推论。** 在多个参与者之间共享状态之前，先问一句「如果另一个参与者并发修改了它会发生什么？」如果答案不是「什么也不会发生」，就把它隔离开。
 
-**Scaffold first.** If something helps every later phase, do it first. Ask "does every subsequent phase benefit from this existing?" CI, linting, test infrastructure, and shared types are scaffold. Sequence for option value: setup before features, tests before fixes. Keep commits small and single-purpose.
+**脚手架先行。** 如果某件事能让后面每一个阶段都受益，就先做它。问一句「后面每一个阶段是否都会因为它的存在而受益？」CI、lint、测试基础设施和共享类型都属于脚手架。按可选项的价值来排序：先搭建后功能，先测试后修复。保持提交小且单一目的。
 
-Each increment should land a coherent abstraction or deepen one that exists. Do not spread a new capability across callers as special-case coordination.
+每一次增量都应当落地一个内聚的抽象，或者加深一个已有的抽象。不要把一项新能力摊到各个调用方，靠特例协调来拼合。
 
-Subtraction comes before scaffolding. Remove dead code first, then lay foundations.
+减法先于脚手架。先删掉死代码，再打地基。

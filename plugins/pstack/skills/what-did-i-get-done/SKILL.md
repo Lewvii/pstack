@@ -1,31 +1,31 @@
 ---
 name: what-did-i-get-done
-description: Summarize authored commits over a user-specified time period into a concise update
+description: 把用户指定时间段内自己提交的 commit 汇总成一份简洁的进展更新
 ---
 
 # What did I get done
 
-## Trigger
+## 触发时机
 
-Need a short, high-signal summary of work completed in a specific time range (for example: yesterday, last 3 days, or last week).
+需要一份针对特定时间范围（例如：昨天、最近 3 天或最近一周）已完成工作的简短、高信号总结。
 
-## Workflow
+## 工作流
 
-1. Resolve the requested time window into concrete dates.
-2. Read commits authored by the current git user email within that range.
-3. Exclude merge commits and uncommitted changes.
-4. Synthesize the most important shipped changes into a concise status update.
-5. Include the actual date range used in the final summary.
+1. 把请求的时间窗口换算成具体日期。
+2. 读取该范围内由当前 git 用户邮箱提交的 commit。
+3. 排除 merge commit 和未提交的改动。
+4. 把最重要的已交付变更综合成一份简洁的状态更新。
+5. 在最终总结中写明实际使用的日期范围。
 
-## Guardrails
+## 约束
 
-- Be extremely concise and information-dense.
-- Prioritize substantial behavior or architecture changes.
-- Omit cosmetic-only changes (formatting, imports, minor renames).
-- Do not infer intent or motivation. Describe changes functionally.
+- 极其简洁，信息密度要高。
+- 优先关注实质性的行为变更或架构变更。
+- 省略纯外观性的改动（格式化、import、小的重命名）。
+- 不要推断意图或动机。从功能上描述改动。
 
-## Output
+## 输出
 
-- One short summary suitable for a status update
-- Real date range
-- Optional 2-5 bullets for major changes only
+- 一份适合用作状态更新的简短总结
+- 实际的日期范围
+- 可选：仅针对重大变更的 2 到 5 条要点

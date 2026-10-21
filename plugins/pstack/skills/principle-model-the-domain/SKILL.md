@@ -1,24 +1,24 @@
 ---
 name: principle-model-the-domain
-description: "Apply when writing stateful logic, or when code branches a lot or repeats a shape assumption across files."
+description: "在编写有状态的逻辑时套用，或者在代码分支很多、或在多个文件里重复同一种形状假设时套用。"
 user-invocable: false
 ---
 
-# Model the Domain
+# 为领域建模
 
-Encode the real domain in a data structure instead of scattering it across conditionals. A structure that matches the domain makes invalid states unrepresentable and deletes branches. Choosing it at write time is cheap. Recovering it later reads as a refactor and gets deferred.
+把真实的领域编码进一种数据结构，而不是把它散落到各个条件判断里。与领域相符的结构能让非法状态无法表示，并删掉一批分支。在写的时候选定它，成本很低。事后再想找回它，读起来就像一次重构，于是被搁置。
 
-Reach for:
+可以考虑：
 
-- A state machine instead of scattered booleans, phases, or lifecycle checks.
-- A typed model instead of loose parameters or repeated shape assumptions.
-- A map, registry, lookup table, or discriminated union instead of branching spread across files.
-- A reducer or command/event model instead of ad hoc state mutations.
-- A module organized around one body of domain knowledge instead of a sequence such as load, validate, transform, and save. Execution order is not ownership.
-- A small module boundary that gathers repeated behavior, ownership, or invariants.
-- A queue, cache, index, graph, tree, or normalized collection where the access pattern calls for it.
-- Any other structure that fits. When none fits, work out what the code must never allow and how the data gets read, then find the structure that encodes exactly that.
+- 用状态机，取代散落各处的布尔量、阶段标记或生命周期检查。
+- 用类型化模型，取代松散的参数或反复出现的形状假设。
+- 用映射表、注册表、查找表或可辨识联合，取代散落在多个文件里的分支。
+- 用 reducer 或命令/事件模型，取代临时性的状态修改。
+- 用一个围绕单块领域知识组织的模块，取代按「加载、校验、转换、保存」这类序列组织的模块。执行顺序不是归属关系。
+- 用一个小的模块边界，把重复的行为、归属关系或不变量聚拢起来。
+- 在访问模式需要时，用队列、缓存、索引、图、树或规范化集合。
+- 任何其他合适的结构。当都不合适时，先弄清代码绝不能允许什么、数据会怎样被读取，再找出恰好编码了这些的结构。
 
-Do not force an abstraction. Prefer boring code if the current shape is already clear, local, and unlikely to grow. Be skeptical of an abstraction that adds indirection without removing branches, duplicated rules, invalid states, or lifecycle risk.
+不要强行套用抽象。如果当前的形状已经清晰、局部、而且不太可能增长，就宁可要无聊的代码。对那种只增加间接、却不消除分支、重复规则、非法状态或生命周期风险的抽象，保持怀疑。
 
-The sign that you skipped this is a new feature that grows an existing if/else chain by one more branch, or a second boolean that must stay in sync with the first. Temporal decomposition is another sign. Phase-named modules repeat the same domain rules across steps.
+你跳过了这一步的迹象是：一个新特性让已有的 if/else 链又多出一个分支，或者多出一个必须与第一个保持同步的布尔量。按时间顺序切分也是迹象之一。以阶段命名的模块，会在各个步骤之间重复同一套领域规则。

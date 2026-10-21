@@ -1,47 +1,47 @@
-# Notes verification map
+# Notes 验证地图
 
-This directory is the maintained source for verifying the user-facing behavior of Notes. Read the index before driving the app, then use the matching feature file as the recipe.
+本目录是验证 Notes 面向用户行为的维护来源。驱动应用之前先读索引，然后用匹配的功能文件作为配方。
 
-## Baseline preconditions
+## 基线前置条件
 
-- Launch Notes at `http://127.0.0.1:4173` with a disposable data directory.
-- Set `NOTES_DATA_DIR=/tmp/notes-verify-$RUN_ID` so concurrent runs do not share state.
-- Seed notes titled `Quarterly plan` and `Grocery list`.
-- Put `control-notes` and the `notes` CLI on `PATH`.
-- Run `control-notes doctor` and require the expected URL, data directory, and build revision.
-- Never drive an instance that was not started by this verification run.
+- 在 `http://127.0.0.1:4173` 启动 Notes，使用一次性的数据目录。
+- 设置 `NOTES_DATA_DIR=/tmp/notes-verify-$RUN_ID`，避免并发运行共享状态。
+- 预置标题为 `Quarterly plan` 和 `Grocery list` 的笔记。
+- 把 `control-notes` 和 `notes` CLI 放入 `PATH`。
+- 运行 `control-notes doctor`，要求报告出预期的 URL、数据目录和构建版本。
+- 绝不驱动不是由本次验证运行启动的实例。
 
-## Driving conventions
+## 驱动约定
 
-- Start every recipe from the baseline state unless its preconditions say otherwise.
-- Prefer ARIA roles and accessible names over CSS selectors or DOM position.
-- Treat every command as literal. Keep quoted names and flags unchanged.
-- Run browser actions through `control-notes browser`.
-- Run terminal actions through `control-notes cli -- <command>`.
-- Restore seeded data after a mutation. Do not remove proof artifacts during cleanup.
+- 除非某配方的前置条件另有说明，每条配方都从基线状态开始。
+- 优先使用 ARIA 角色和可访问名称，而不是 CSS 选择器或 DOM 位置。
+- 每条命令都按字面执行。带引号的名称和标志保持不变。
+- 浏览器操作通过 `control-notes browser` 执行。
+- 终端操作通过 `control-notes cli -- <command>` 执行。
+- 变更之后恢复预置数据。清理时不要删除证据产物。
 
-## Proof and skip reporting
+## 证据与跳过报告
 
-- Capture the user action and the resulting state, not only the final screen.
-- UI proof includes an ARIA snapshot and a screenshot with the app identity visible.
-- CLI proof includes the command, stdout, stderr, and exit code.
-- Mutation proof includes a read-only second view of the stored value.
-- Record the feature ID and entry point used with every artifact.
-- Report an unreachable path with the attempted command and the unmet precondition.
-- Do not report a skipped entry point as verified through a different path.
+- 记录用户操作和由此产生的状态，而不只是最终画面。
+- UI 证据包括 ARIA 快照，以及一张能看到应用标识的截图。
+- CLI 证据包括命令、stdout、stderr 和退出码。
+- 变更类证据包括对存储值的只读二次查看。
+- 每份产物都记录所用的功能 ID 和入口点。
+- 无法到达的路径，要报告尝试过的命令和未满足的前置条件。
+- 不要把一个被跳过的入口点报告成经由另一条路径验证通过。
 
-## Feature entry contract
+## 功能文件契约
 
-Each feature file starts with an H1 title and one paragraph describing the user-visible behavior. It then uses exactly four H2 sections in this order.
+每个功能文件以一个 H1 标题和一段描述用户可见行为的文字开头。随后按此顺序使用恰好四个 H2 小节。
 
-1. `Sub-features` lists short IDs with one line for each behavior.
-2. `How to get to it (user POV)` lists every user entry point.
-3. `Driving it with <harness>` starts with `Preconditions:` and uses labeled bullets that pair each user action with an exact command and observable result.
-4. `Gotchas` lists traps that can waste or invalidate a verification run.
+1. `Sub-features` 用短 ID 列出每种行为，各占一行。
+2. `How to get to it (user POV)` 列出全部用户入口点。
+3. `Driving it with <harness>` 以 `Preconditions:` 开头，用带标签的条目把每个用户操作与确切的命令和可观察结果配对。
+4. `Gotchas` 列出会浪费时间或让验证运行作废的陷阱。
 
-Keep implementation details out of the map. Name only user paths, stable handles, required state, commands, and observable proof.
+地图里不要写实现细节。只点名用户路径、稳定的句柄、必需状态、命令和可观察的证据。
 
-## Features
+## 功能
 
-- [Create a note](./create-note.md) covers browser and CLI creation, cancellation, persistence, and cleanup.
-- [Search notes](./search.md) covers toolbar, keyboard, and CLI search with matching, empty, and clear states.
+- [Create a note](./create-note.md) 覆盖浏览器和 CLI 创建、取消、持久化和清理。
+- [Search notes](./search.md) 覆盖工具栏、键盘和 CLI 搜索，含匹配、空结果和清除状态。

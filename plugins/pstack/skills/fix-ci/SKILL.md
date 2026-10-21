@@ -1,29 +1,29 @@
 ---
 name: fix-ci
-description: Find failing PR checks, inspect logs or external check links, and apply focused fixes
+description: 找出失败的 PR 检查，查看日志或外部检查链接，并做针对性修复
 ---
 
 # Fix CI
 
-## Trigger
+## 触发时机
 
-Branch or PR CI is failing and needs a fast, iterative path to green checks.
+分支或 PR 的 CI 正在失败，需要一条快速、可迭代的路径让检查变绿。
 
-## Workflow
+## 工作流
 
-1. Resolve the active PR and inspect `gh pr checks --json name,bucket,state,workflow,link`.
-2. Inspect failed jobs and extract the first actionable error. Use GitHub Actions logs when available; otherwise use the check link to identify the failing command or service.
-3. Apply the smallest safe fix.
-4. Push, re-check the PR check set, and repeat until green.
+1. 确定当前活跃的 PR，检查 `gh pr checks --json name,bucket,state,workflow,link`。
+2. 检查失败的 job，提取第一个可处理的错误。有 GitHub Actions 日志时就用它；否则用检查链接确定失败的命令或服务。
+3. 应用最小的安全修复。
+4. Push，重新检查 PR 的检查集合，重复直到变绿。
 
-## Guardrails
+## 约束
 
-- Fix one actionable failure at a time.
-- Prefer minimal, low-risk changes before broader refactors.
-- Keep `gh pr checks` as the source of truth for overall PR CI state.
+- 一次修复一个可处理的失败。
+- 在更大的重构之前，优先采用最小、低风险的改动。
+- 以 `gh pr checks` 作为 PR CI 整体状态的唯一依据。
 
-## Output
+## 输出
 
-- Primary failing job and root error
-- Fixes applied in iteration order
-- Current CI status and next action
+- 主要失败的 job 与根因错误
+- 按迭代顺序列出的修复
+- 当前 CI 状态与下一步动作

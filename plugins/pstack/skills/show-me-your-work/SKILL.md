@@ -1,28 +1,28 @@
 ---
 name: show-me-your-work
-description: "Keep a reviewable decision trail for long-running or unattended work: a TSV log with one row per decision (what, why, evidence, result). Local by default; commit it when a reviewer needs the trail to trust the result. Use for /show-me-your-work, autonomous or multi-phase runs, or work a human reviews after stepping away."
+description: "为长时间运行或无人值守的工作留下一份可复核的决策轨迹：一个 TSV 日志，每个决策一行（做了什么、为什么、证据、结果）。默认留在本地；当复核者需要这份轨迹才能信任结果时再提交。用于 /show-me-your-work、自主运行或多阶段运行，或人离开一阵后回来复核的工作。"
 ---
 
 # Show me your work
 
 On GitHub Copilot, read the [platform mapping](../poteto-mode/references/copilot-tools.md), including its per-skill notes, before following this skill.
 
-Keep one canonical log.
+只保留一份权威日志。
 
-## The format
+## 格式
 
-A single TSV file, one row per decision. Cells stay single-line. Evidence is a pointer, not prose.
+一个 TSV 文件，每个决策一行。单元格保持单行。证据是指针，不是散文。
 
-Copy `references/decision-log-template.tsv` (the header row) to start a clean log. Columns:
+复制 `references/decision-log-template.tsv`（表头行）来开始一份干净的日志。各列如下：
 
-- **ts.** ISO8601 timestamp.
-- **phase.** The phase or workstream.
-- **decision.** What was chosen or done, one line.
-- **why.** The reason in plain words. If a principle drove it, say it plainly, not as a jargon tag.
-- **evidence.** A link or path that proves it: commit SHA, PR number, `file:line`, or an artifact, trace, or screenshot path. Never a paragraph.
-- **result.** The outcome or predicate state: `tests green`, `reverted`, `pixel-diff 0`, `INCONCLUSIVE`, `open`.
+- **ts.** ISO8601 时间戳。
+- **phase.** 阶段或工作流。
+- **decision.** 选择了什么或做了什么，一行说明。
+- **why.** 用平实的话说清原因。如果某条原则驱动了它，就直说，不要当成行话标签。
+- **evidence.** 能证明它的链接或路径：commit SHA、PR 编号、`file:line`，或某个产物、trace、截图的路径。绝不要写成一段话。
+- **result.** 结果或谓词状态：`tests green`、`reverted`、`pixel-diff 0`、`INCONCLUSIVE`、`open`。
 
-An example, plain-spoken so a reviewer reads it at a glance.
+下面是一个例子，用大白话写，让复核者一眼就能读懂。
 
 ```
 ts	phase	decision	why	evidence	result
@@ -32,52 +32,52 @@ ts	phase	decision	why	evidence	result
 2026-05-24T12:30:00Z	widget	threw out a helper's work because its screenshots were blank	checked the real files instead of trusting its summary	worktree reset	reverted, tightened the instructions for next time
 ```
 
-## Logging a row
+## 记录一行
 
-Write each entry the way you'd tell a teammate what you did. Plain words, concrete actions, no AI speak or abstract jargon (the **unslop** skill applies to log text too).
+像跟同事讲你做了什么那样写每一条。平实的语言、具体的动作，不用 AI 腔或抽象行话（**unslop** skill 同样适用于日志文本）。
 
-Use the helper `scripts/log.sh <logfile> <phase> <decision> <why> <evidence> <result>`. It stamps `ts`, writes the header on first use, strips stray tabs/newlines, and prefixes any cell starting with `=`, `+`, `-`, `@`, or `"` with a single quote. A bare `printf` appending a row works too, but mind those same bytes if cells come from generated or user-supplied text.
+使用辅助脚本 `scripts/log.sh <logfile> <phase> <decision> <why> <evidence> <result>`。它会打上 `ts` 时间戳，首次使用时写入表头，去掉多余的制表符和换行，并把以 `=`, `+`, `-`, `@`, 或 `"` 开头的单元格加上单引号前缀。直接用 `printf` 追加一行也可以，但如果单元格内容来自生成文本或用户提供的文本，就要注意这些同样的字符。
 
-Log decision points and checkpoints, not every action: a fork chosen, a unit completed with its verification result, a pivot or revert with its trigger, a blocker surfaced, a gate fixed. For loop runs, one row per iteration. Skip the trivial and self-evident.
+记录决策点和检查点，而不是每个动作：选择了一条分叉、完成了一个单元并附其验证结果、一次转向或回退并附其触发原因、浮现了一个阻塞、修好了一道关卡。循环运行中，每次迭代一行。琐碎和显然的事跳过。
 
-A run is one agent conversation, including its later turns and any summary of it. A pickup, a replacement agent, or a new chat starts a new run. When a run adds to a log that already has rows, its first row has phase `start`, and so does its first row after another run's `start` row. So a run that comes back to a log in a later turn first reads the log's last rows to see whether another run wrote since. A `start` row names the `ts` range of the rows before it that this run did not write, and its evidence names this run, such as its agent id. Use phase `start` for nothing else.
+一次运行就是一个 agent 对话，包括它后续的轮次以及对其的任何总结。接手、替换的 agent 或新的聊天都开始一次新的运行。当一次运行向已有行的日志追加时，它的第一行 phase 为 `start`；在另一次运行的 `start` 行之后的它的第一行也是如此。因此，若某次运行在后续轮次回到某份日志，它先读日志的最后几行，看这期间是否有别的运行写过。`start` 行会标明它之前那些本运行未写入的行的 `ts` 范围，其证据指向本次运行，例如 agent id。`start` 这个 phase 不用作其他用途。
 
-## Where it lives
+## 日志放在哪
 
-By default the log is a working artifact, not committed. Keep it at `decisions.tsv` in the work dir, or `.audit/<task-slug>.tsv` when several efforts run at once, and leave it out of git.
+默认情况下，日志是工作产物，不提交。放在工作目录的 `decisions.tsv`，或多个工作同时进行时的 `.audit/<task-slug>.tsv`，并把它排除在 git 之外。
 
-Commit it only when the work is ambitious enough that a reviewer needs the trail to trust the result.
+只有当工作够大、复核者需要这份轨迹才能信任结果时，才提交它。
 
-## Rules
+## 规则
 
-- Append-only. A wrong call gets a new row that supersedes it. Never edit or delete history.
-- Prefer evidence produced by committed scripts over hand-made one-offs (the **encode-lessons-in-structure** principle skill).
+- 只追加。错误的判断用新的一行取代它。绝不编辑或删除历史。
+- 优先使用由已提交脚本产出的证据，而不是手工的一次性操作（**encode-lessons-in-structure** principle skill）。
 
-## Audit the log against the transcript
+## 对照 transcript 审计日志
 
-At the end of the run, before handing back, check the log told the truth. Read this run's transcript under Claude Code's per-project transcripts directory at `~/.claude/projects/<encoded-cwd>/`. Don't glob across `~/.claude/projects/`. That reads unrelated private chats. Walk this run's rows against what actually happened. Each stretch of them begins at one of this run's `start` rows, or at the first row if this run created the log, and ends at the next `start` row of another run:
+运行结束时，在交付之前，检查日志说的是真话。读取本次运行在 Claude Code 各项目 transcript 目录下的记录，即 `~/.claude/projects/<encoded-cwd>/` 中的本次运行记录。不要对 `~/.claude/projects/` 做通配。那会读到无关的私人聊天。把本次运行的各行与实际发生的事逐一核对。这些行的每一段都始于本次运行的某个 `start` 行（若日志由本次运行创建，则始于第一行），止于下一次运行的 `start` 行：
 
-- Check that every row maps to a real decision or action.
-- Check that each row's evidence resolves and shows what the row claims.
-- A fork, pivot, or abandoned approach that shaped the work but isn't logged is a gap. Add it.
+- 检查每一行都对应一个真实决策或动作。
+- 检查每一行的证据都能解析，并显示出该行所声称的内容。
+- 一个影响了工作却没有被记录的分叉、转向或放弃的方案，是一个缺口。把它补上。
 
-Correct the log, not the story. The audit never edits or removes a row, even an invented one. When a row records neither a real decision nor a real action, or its claim or evidence is wrong, add a row that supersedes it with what actually happened and a pointer that resolves. This audit does not check rows outside this run's stretches. If this run's own work shows one of them is wrong, supersede it like any wrong call.
+修正日志，而不是改故事。审计绝不编辑或删除任何一行，哪怕是编造的。当某行既没记录真实决策也没记录真实动作，或其声称或证据有误时，补一行取代它，写明实际发生了什么以及一个能解析的指针。本次审计不检查本运行各段之外的行。如果本次运行自己的工作发现其中某行有误，就照任何错误判断一样取代它。
 
-## Cross-model review of the trail
+## 对轨迹做跨模型复核
 
-Before handing back, spawn a subagent on a different model family from the one that did the work. Self-review is not a substitute. The subagent reads the audit trail and the run's transcript, then flags what the user should pay attention to. Not a redo of the work, a scan for what's suboptimal or risky. Pick each subagent's reasoning level for the job, per the Subagents section of the **poteto-mode** skill.
+交付之前，在一个与完成该工作的模型家族不同的模型上启动一个 subagent。自我复核不能替代它。该 subagent 阅读审计轨迹和本次运行的 transcript，然后标出用户应当留意的点。这不是重做工作，而是扫描次优或有风险之处。按照 **poteto-mode** skill 的 Subagents 一节，为工作挑选每个 subagent 的推理级别。
 
-- Decisions logged with weak or absent evidence.
-- Verification steps skipped or claimed without proof in the transcript.
-- Choices that look risky in hindsight (premature, scope-creeping, papering over a symptom).
-- Gaps the user would otherwise miss on a casual skim.
+- 证据薄弱或缺失的决策记录。
+- 被跳过、或在 transcript 中未获证明就被声称完成的验证步骤。
+- 事后看来有风险的选择（过早、范围蔓延、掩盖症状）。
+- 用户随手扫一眼就会错过的缺口。
 
-Every reply for a run that produced a trail ends with an "Attention" section. Lead with the reviewer's model on its own line (`reviewed by <model>`), then list each flag pointing to specific rows or moments. "No flags" is a valid value. The model name is not.
+凡是产出了轨迹的运行，其每条回复都以 "Attention" 一节结尾。先用 reviewer 的模型单独成行（`reviewed by <model>`），然后列出每个标记，指向具体的行或时刻。"No flags" 是合法取值。模型名则不是。
 
-## Reviewing the trail
+## 复核轨迹
 
-Read top to bottom, follow the evidence pointers, spot-check. GitHub renders a committed TSV as a table. `column -s$'\t' -t decisions.tsv` renders it in a terminal.
+从上到下读，沿证据指针查看，做抽查。GitHub 会把已提交的 TSV 渲染成表格。`column -s$'\t' -t decisions.tsv` 可在终端中渲染。
 
-## Composing this skill
+## 组合使用本技能
 
-Other skills route their audit trail here instead of inventing one. Reference it by name and let it own the format. Don't restate the columns.
+其他技能把审计轨迹交给这里处理，而不是自己另造一份。按名称引用它，让本技能掌管格式。不要重述各列。
