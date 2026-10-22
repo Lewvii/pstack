@@ -1,6 +1,6 @@
 ---
 name: automate-me
-description: draft your own personal -mode skill from recent transcripts
+description: 从近期会话记录起草你自己的个人 -mode 技能
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: recall
-description: catch up on recent working context from chat history, live state, and the shared record
+description: 从聊天历史、实时状态和共享记录中补上近期工作上下文
 disable-model-invocation: true
 ---
 

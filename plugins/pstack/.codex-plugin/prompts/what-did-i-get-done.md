@@ -1,6 +1,6 @@
 ---
 name: what-did-i-get-done
-description: summarize authored commits over a user-chosen period
+description: 汇总用户选定时间段内你提交的 commit
 disable-model-invocation: true
 ---
 

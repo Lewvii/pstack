@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: deslop a diff before commit
+description: 提交前对 diff 做 deslop
 disable-model-invocation: true
 ---
 

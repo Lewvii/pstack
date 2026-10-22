@@ -37,6 +37,24 @@ poteto-mode 的 Subagents 一节设定了 Claude 专属默认值（`subagent_typ
 - 策略的其余部分保持不变。传递文件指针而不是内联上下文，写入的 worker 各自使用独立的 worktree 或分支，并亲自评审每个 subagent 的 diff。
 
 @@MODEL_NAMES@@
+
+## Model names
+
+Skills name Claude Code model aliases in their Models sections. Those aliases are not Copilot model IDs, and the Copilot build ships no default model IDs: the models an account can reach depend on its plan and policy, so the user picks them once.
+
+- The model sheet is `${COPILOT_HOME:-~/.copilot}/pstack-models.md`. It sits outside the workspace, so reading it asks for path access. The plugin's SessionStart hook reads it, checks it, and adds its role lines to the session context as the user's saved pstack model choices. Take role models from that block and do not `view` the sheet. A role line names the model for that role.
+- Read the sheet only when that block and the hook's `sheet invalid` or no-sheet note are all missing, as in a skills-only install with no hook. `view`, `create`, and `edit` take literal paths and expand neither `~` nor `$COPILOT_HOME`, so print the sheet's absolute path with `bash` first (`echo "${COPILOT_HOME:-$HOME/.copilot}/pstack-models.md"`) and read and write exactly that path; do not append `.copilot` or any other segment to it. A session with its own `COPILOT_HOME` then never touches `~/.copilot`.
+- No sheet, or the hook reports `sheet invalid`: before a skill that needs a role model (`architect`, `arena`, `how`, `interrogate`, `poteto-mode`, `reflect`, `swarm`, `why`), stop, load `setup-pstack` with the `skill` tool, and finish it first. In that same session, use the values it just wrote; later sessions get them from the hook. Do not ask again on later runs.
+- A role line in the sheet is the user's explicit model instruction, so pass it as the `task` tool's `model` parameter. `inherit-parent` or `auto` omits `model`.
+- The plugin's `PreToolUse` hook enforces this for pstack agents. While the sheet is valid, it denies a `task` call whose `agent_type` starts with `pstack:` and whose `model` is not one of the sheet's values, and its reason lists the saved IDs. Retry with the role's saved model; never retry on another unsaved model. It leaves calls with no `model` and other agent types alone.
+- Roles that default to the worker model (`feature, refactoring`): the worker model the user chose.
+- Roles that default to the strongest model (`strongest judgment`): the strongest model the user chose.
+- Diverse-model panels (`arena`, `architect`, `interrogate`, `how` critics, `reflect`): the adversarial signal comes from model diversity, so fill a panel from distinct vendors in the `task` tool's `model` list (Claude, GPT, Gemini, Grok, and so on). pstack ships no default Copilot panel. If only one vendor is reachable, vary reasoning effort and note in the verdict that diversity was reduced.
+
+`setup-pstack` lists the models from the `model` enum of the `task` tool and writes only IDs it saw there. After it writes the sheet, it runs its `check-sheet.sh` script, which applies the hook's checks.
+
+Run `setup-pstack`, and the parent session that orchestrates a panel, on a model at least as strong as gpt-5.4-mini or a Sonnet-class Claude model. On a Haiku-class model, setup picked models the user never chose in about half of the smoke runs.
+
 ## Session routing hook
 
 插件的 `SessionStart` hook 在 Copilot CLI 和 Copilot app 中运行。Copilot 通过它自己的 Copilot manifest 和 hook 文件加载插件，而不是 Claude Code 的那些。hook 把路由指令作为 Copilot 注入的 `additionalContext` JSON 输出。它读取 `${COPILOT_HOME:-~/.copilot}/pstack-models.md`，而会话本身读取该文件需要路径访问授权。`session hook: off` 关闭注入。当配置表通过 `check-sheet.sh` 所做的检查时，注入的上下文末尾按角色各附一行，由检查过的值重建；配置表的其他文本不会进入上下文。检查失败时，上下文会写明 `sheet invalid` 并列出每个问题。没有配置表时也会注明。无论哪种情况，它都会告诉会话在第一个按角色模型派发的技能之前运行 `setup-pstack`。指令以 `pstack:<skill>` 的形式提及技能；在 Copilot 上按裸名称加载它们。

@@ -1,6 +1,6 @@
 ---
 name: fix-merge-conflicts
-description: non-interactively resolve merge conflicts, validate, finalize
+description: 非交互地解决合并冲突，验证并收尾
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: make-pr-easy-to-review
-description: clean noisy history and improve PR description before review
+description: 审查前清理噪声历史并改进 PR 描述
 disable-model-invocation: true
 ---
 

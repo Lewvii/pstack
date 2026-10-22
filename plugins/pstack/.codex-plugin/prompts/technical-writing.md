@@ -1,6 +1,6 @@
 ---
 name: technical-writing
-description: write docs, RFCs, readmes, PR descriptions, and commit messages to one layered standard
+description: 按统一的分层标准写文档、RFC、readme、PR 描述和提交信息
 disable-model-invocation: true
 ---
 

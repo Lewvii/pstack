@@ -1,6 +1,6 @@
 ---
 name: figure-it-out
-description: design a rigorous, auditable playbook for a task no bundled playbook fits
+description: 为没有现成 playbook 可用的任务，设计一份严谨、可审计的 playbook
 disable-model-invocation: true
 ---
 

@@ -44,6 +44,18 @@ poteto-mode 的 Subagents 一节设定了 Claude 专属默认值（`subagent_typ
 - 策略的其余部分保持不变。传递文件指针而不是内联上下文，写入的 worker 各自使用独立的 worktree 或分支，并亲自评审每个 subagent 的 diff。
 
 @@MODEL_NAMES@@
+
+## Model names
+
+Skills name Claude defaults (a single-role default for code/prose/judgment, a worker model for feature and refactoring code, plus a diverse-model panel for diverse-model panels; each model-consuming skill lists its own in a Models section). These slugs do not resolve on Codex. Substitute your configured Codex models:
+
+- Single-model roles: your primary Codex model (for example `gpt-6-sol`).
+- Roles that default to the Claude worker model (`feature, refactoring`): your fast Codex code model (for example `gpt-6-sol`).
+- Roles that default to the strongest Claude model (`strongest judgment`): your strongest Codex model (for example `gpt-6-astra`).
+- Diverse-model panels (`arena`, `architect`, `interrogate`, `how` critics, `reflect`): the adversarial signal comes from model diversity, so use the distinct Codex models available to you. A good default panel on ChatGPT is `gpt-6-astra`, `gpt-6-sol`, `gpt-6-luna`. If only one model family is reachable, vary reasoning effort and note in the verdict that diversity was reduced.
+
+`/setup-pstack` writes the configured model list. On Codex, set it to your Codex model slugs.
+
 ## Session routing hook
 
 原生 pstack 插件捆绑了与 Claude Code 插件相同的 `SessionStart` 路由指令，在 macOS 和 Linux 上通过 `session-start.sh`，在 Windows 上通过 `session-start.ps1`。用户通过 `/hooks` 信任该 hook 后，Codex 会在启动、恢复、清空和压缩时运行它。hook 从 Codex 配置表读取 `session hook`，路径见 [setup-pstack 的运行时表](../../setup-pstack/SKILL.md#other-runtimes)；`session hook: off` 关闭注入。

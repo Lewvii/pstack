@@ -1,6 +1,6 @@
 ---
 name: architect
-description: settle types and module shape before writing code that crosses a function boundary
+description: 在写跨函数边界的代码之前，先定下类型与模块形状
 disable-model-invocation: true
 ---
 

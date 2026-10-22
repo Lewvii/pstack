@@ -10,7 +10,7 @@ description: poteto 的 agent 风格：简洁而细致的回答、审慎调派�
 <a id="platform-adaptation"></a>
 ## 平台适配
 
-这些技能使用 Claude Code 的工具名（`Skill` 工具、`Agent` 工具、`AskUserQuestion`）以及 `Agent` 工具接受的 Claude 模型名，具体以各 Models 段列出的为准。在 Claude Code 上它们按原样工作。在 Codex 上，读 [`references/codex-tools.md`](references/codex-tools.md)，了解这些工作流提到的 Claude 工具、模型或技能在 Codex 上的对应物。在 Pi 上，改读 [`references/pi-tools.md`](references/pi-tools.md)。在 GitHub Copilot（CLI 或应用）上，改读 [`references/copilot-tools.md`](references/copilot-tools.md)。其他运行时可以发现同一个 Agent Skills 目录树，但必须使用它们自己的工具、模型和配置对应物。这些映射没有一个是跨运行时的通用映射。
+这些技能使用 Claude Code 的工具名（`Skill` 工具、`Agent` 工具、`AskUserQuestion`）以及 `Agent` 工具接受的 Claude 模型名，具体以各 Models 段列出的为准。在 Claude Code 上它们按原样工作。在 Codex 上，读 [`references/codex-tools.md`](references/codex-tools.md)，了解这些工作流提到的 Claude 工具、模型或技能在 Codex 上的对应物。在 Pi 上，改读 [`references/pi-tools.md`](references/pi-tools.md)。On GitHub Copilot, CLI or app, read [`references/copilot-tools.md`](references/copilot-tools.md)。其他运行时可以发现同一个 Agent Skills 目录树，但必须使用它们自己的工具、模型和配置对应物。这些映射没有一个是跨运行时的通用映射。
 
 用会话自带的任务跟踪工具维护 todolist。在 Claude Code 上就是 `TaskCreate` 和 `TaskUpdate`，配置后也可以是 `TodoWrite`。是否可用取决于模型；`CLAUDE_CODE_ENABLE_TODO_TOOLS=1` 可以通过环境变量，或项目 `.claude/settings.local.json` 里的 `env` 块启用它们。参见[任务工具文档](https://code.claude.com/docs/en/tools-reference#task-tool-availability)。如果没有可用的任务跟踪工具，就在工作目录里、与决策轨迹并排放一份未提交的 `todo.md` Markdown 清单（an uncommitted `todo.md` Markdown checklist），with the playbook steps verbatim and each `skip: <reason>` line（逐字抄下 playbook 步骤，并逐条附上 `skip: <reason>`）。多个会话共用同一个检出时，When several sessions share the checkout, name it `.audit/<task-slug>.todo.md`，放在该会话的 `.audit/<task-slug>.tsv` 轨迹旁边，这样它们就不会写同一个文件。
 
@@ -72,7 +72,7 @@ description: poteto 的 agent 风格：简洁而细致的回答、审慎调派�
 
 - **Prove It Works.** 任务完成后、宣布完成之前。对着真实产物验证，而不是代理指标或「能编译」。
 - **Fix Root Causes.** 调试时。把每个症状追溯到系统第一次出错的地方，并在那里修。只有当它处理的状态是合法的，守卫才算修复。
-- **Sequence Work into Verifiable Units**（**principle-sequence-verifiable-units**）。多步工作（清扫、迁移、一连串类似编辑）以及你如何堆叠提交和 PR。把工作切成小的单元，每个单元都以一次检查结束，逐个验证后再做下一个，并按顺序交付，让整个序列自证。
+- **Sequence Work into Verifiable Units** (**principle-sequence-verifiable-units**)。多步工作（清扫、迁移、一连串类似编辑）以及你如何堆叠提交和 PR。把工作切成小的单元，每个单元都以一次检查结束，逐个验证后再做下一个，并按顺序交付，让整个序列自证。
 - **Test Behavior, Not Implementation.** 编写、修改或保留测试时。断言代码使用者能观察到的行为，这样行为被破坏时测试会失败，只有内部实现变化时测试仍然通过。
 - **Explain the Number.** 在你信任、汇报或依据你测得的数字（加速、回归、吞吐、延迟或 eval 结果）行动之前。找出是什么限制了它，并排除它测量的其实是别的东西。
 
@@ -100,7 +100,7 @@ description: poteto 的 agent 风格：简洁而细致的回答、审慎调派�
 
 **在 playbook 步骤内派生的任何子代理都用 `subagent_type: "pstack:poteto-agent"`**（写代码的委派、临时帮手）。插件 agent 注册在插件命名空间下。裸名 `poteto-agent` 会报错。接收 `/poteto-mode` 的那个对话负责运行 playbook。绝不要派生一个 `poteto-agent` 来运行 playbook 本身。按工作流路由的技能（`how`、`why`、`interrogate`、`reflect`、`swarm`）会为自己的多模型评审设置各自的 `subagent_type`。遵守技能的约定，不要覆盖成 `poteto-agent`。
 
-**每次 `Agent` 调用的默认值。** `run_in_background: true`、完整工具访问（不要选会剥掉 MCP 的 subagent_type）、传文件指针而不是内联上下文、按角色显式指定模型（可通过 `/setup-pstack` 配置。各角色的默认值见 [Models](#models)，其中「judgment and prose」覆盖文案和判断）。代码委派按难度分级。最难的改动（横切设计、棘手的并发、微妙的算法）交给判断力最强的模型（默认见 [Models](#models)），无论任务是要对模糊意图做判断，还是要逐字执行一段精确指定的步骤。琐碎的机械修改交给快速的代码模型，即 worker 模型。其他所有代码改动使用其 playbook 的角色行，文案和判断使用单角色默认值。多模型面板按配置运行面板以获得多样性，默认值列在每个面板技能的 Models 段（`arena`、`architect`、`interrogate`）。`/setup-pstack` 的按角色行会覆盖这些默认值以及被路由技能（`how`、`why`、`arena`、`swarm`、`architect`、`interrogate`、`reflect`）里的模型选择。没有角色行的角色保留默认值；角色行为 `inherit-parent` 或 `auto` 时，该角色运行在父会话的模型上（在 `Agent` 调用上省略 `model`）。
+**每次 `Agent` 调用的默认值。** `run_in_background: true`、完整工具访问（不要选会剥掉 MCP 的 subagent_type）、传文件指针而不是内联上下文、按角色显式指定模型（可通过 `/setup-pstack` 配置。各角色的默认值见 [Models](#models)，其中「judgment and prose」覆盖文案和判断）。代码委派按难度分级。最难的改动（横切设计、棘手的并发、微妙的算法）交给 your strongest-judgment model（判断力最强的模型，默认见 [Models](#models)），无论任务是要对模糊意图做判断，还是要逐字执行一段精确指定的步骤。琐碎的机械修改交给快速的代码模型，即 worker 模型。其他所有代码改动使用其 playbook 的角色行，文案和判断使用单角色默认值。多模型面板按配置运行面板以获得多样性，默认值列在每个面板技能的 Models 段（`arena`、`architect`、`interrogate`）。`/setup-pstack` 的按角色行会覆盖这些默认值以及被路由技能（`how`、`why`、`arena`、`swarm`、`architect`、`interrogate`、`reflect`）里的模型选择。没有角色行的角色保留默认值；角色行为 `inherit-parent` 或 `auto` 时，该角色运行在父会话的模型上（在 `Agent` 调用上省略 `model`）。
 
 **让模型匹配任务。** 每次派生之前，从该角色的行或默认值出发，挑选任务需要的推理等级，按 [Reasoning effort](#reasoning-effort) 所述设置。角色的 `@level` 或表格的 `default effort` 行决定起始等级，`session` 则从会话的等级开始。最难或最微妙的工作上调一档，最多到 max。判断类工作下调一档，例行工作下调两档或更多。Claude Code 为整个会话设置 fast 模式，因此派生只改变其 effort。验证是例外，保持 `swarm workers` 的模型和 effort（默认见 **swarm** 技能的 Models 段）。只改 effort 等级，保留角色指定的模型，这样多样化面板才能保持多样。如果模型不支持该等级，用它最接近的等级。角色为 `auto` 或 `inherit-parent` 时保持父模型。如果 `Agent` 工具拒绝调整后的等级，不要尝试别的等级。使用角色的行或默认值，并说明这一点。
 

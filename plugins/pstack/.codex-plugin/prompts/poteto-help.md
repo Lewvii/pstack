@@ -1,6 +1,6 @@
 ---
 name: poteto-help
-description: answer a question about pstack with the prompt to send and the file the answer came from
+description: 回答关于 pstack 的问题，并给出该发送的 prompt 和答案所出自的文件
 disable-model-invocation: true
 ---
 

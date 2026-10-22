@@ -50,28 +50,28 @@ Per-role model choices for pstack skills on GitHub Copilot, written by setup-pst
 
 下面每个层级问题会写入其所在行的所有角色。面板行的角色各自采用整个面板列表。
 
-| 层级 | 角色 |
+| Tier | Roles |
 | --- | --- |
-| 默认 | `bug-fix`、`perf-issue`、`hillclimb`、`judgment and prose`、`how explorer`、`how explainer`、`why investigators`、`why synthesizer`、`reflect tooling`、`reflect judgment, divergent, synthesizer`、`swarm workers` |
-| 最强 | `strongest judgment` |
+| Default | `bug-fix`, `perf-issue`, `hillclimb`, `judgment and prose`, `how explorer`, `how explainer`, `why investigators`, `why synthesizer`, `reflect tooling`, `reflect judgment, divergent, synthesizer`, `swarm workers` |
+| Strongest | `strongest judgment` |
 | Worker | `feature, refactoring` |
-| 面板 | `arena runners`、`arena cross-judge pool`、`architect runners`、`interrogate reviewers` |
+| Panel | `arena runners`, `arena cross-judge pool`, `architect runners`, `interrogate reviewers` |
 
 <a id="question-order"></a>
-## 问题顺序
+## Question sequence
 
 按这个顺序提问。每个模型问题就是上面的厂商加模型两步；其他每个问题都是一次 `ask_user` 调用。
 
-0. **会话模型。** "Run every pstack role on this session's model?"，选项为 `Yes, use the session's model for every role` 和 `No, choose models by tier`。这适用于只提供一个模型或只提供自动选择的方案，也适用于不想逐角色选择的用户。重新运行时，把与已保存覆盖表相符的选项放在最前，标注 `(current)`。选 Yes 会跳过问题 1 到 7 以及模型检测。把所有角色行设为 `inherit-parent`，每个面板角色写三个 `inherit-parent` 条目。然后问问题 8 和 9，并在步骤 8 说明面板的多样性被削弱，且面板条目只能靠推理强度区分。这条路径不需要 `panel vendors: any` 行，因为只含 `inherit-parent` 的面板无需检查厂商。选 No 则进入下面的问题。
-1. **默认模型。** "Default model: runs <the Default row's roles>." 它会写入 Default 行的所有角色。
-2. **Worker 模型。** "Worker model: runs <the Worker row's roles>." 它会写入 Worker 行的所有角色。
-3. **最强模型。** "Strongest model: runs <the Strongest row's roles>." 它会写入 Strongest 行的所有角色。
-4. **面板模型第 1 个（共 3 个）**，然后是**第 2 个（共 3 个）**，再是**第 3 个（共 3 个）**，作为三个独立问题。"Panel model N of 3: panels run one subagent per model, and models from different vendors catch different mistakes." 在第 2 和第 3 个槽位，先列出尚未进入面板的厂商，再列其余厂商，最后是 `inherit-parent`。不要提供已在面板中的模型。
-5. **更多面板模型。** "Add a 4th panel model?"，第一个选项是 `Done`，第二个是 `Add a 4th`。选择添加会以同样方式再问一个槽位，然后询问是否加第 5 个。到 5 个模型就停止提供。
-6. **厂商检查。** 当面板的模型 ID（不计 `inherit-parent`）全部来自同一厂商，且检测到了多个厂商时，询问 "The panel is single-vendor (Claude), so its cross-checks share blind spots."，选项为 `Pick the panel again` 和 `Keep it anyway`。重选会回到面板模型第 1 个。`Keep it anyway` 会在 `session hook` 行之后写入 `panel vendors: any` 行。只检测到一个厂商时，跳过此问题，写入 `panel vendors: any`，并在步骤 8 说明面板的多样性被削弱。只含 `inherit-parent` 的面板无需检查。
-7. **覆盖。** "Override any individual role?"，第一个选项是 `No, write the sheet (Recommended)`，随后每个层级行一个选项，选项标签带上该行的当前值，例如 `Strongest (<its model ID>)`。选中某一行后会问要改其中哪些角色，然后按[选择单个模型](#choosing-one-model)的方式为该角色问一个模型，并把其当前值放在最前标为 `(current)`。面板角色则改按问题 4 到 6 的方式逐个询问其列表的槽位。每次覆盖之后重新问这个问题，直到答案为 `No, write the sheet`。
-8. **Session hook。** "Keep the session hook that routes tasks to poteto-mode?"，选项为 `On (default)` 和 `Off`。重新运行时，已保存值放在最前并标注 `(current)`。
-9. **默认强度。** "Default reasoning effort for pstack subagents?"，第一个选项是 `session (keep the parent's effort)`，然后是 `low`、`medium`、`high`、`xhigh` 和 `max`。它会写入 `default effort` 行。重新运行时，已保存值放在最前并标注 `(current)`。不要逐角色询问强度；角色值上已保存的 `@<level>` 后缀按原样保留。
+0. **Session model.** "Run every pstack role on this session's model?"，选项为 `Yes, use the session's model for every role` 和 `No, choose models by tier`。这适用于只提供一个模型或只提供自动选择的方案，也适用于不想逐角色选择的用户。重新运行时，把与已保存覆盖表相符的选项放在最前，标注 `(current)`。选 Yes 会跳过问题 1 到 7 以及模型检测。把所有角色行设为 `inherit-parent`，每个面板角色写三个 `inherit-parent` 条目。然后问问题 8 和 9，并在步骤 8 说明面板的多样性被削弱，且面板条目只能靠推理强度区分。这条路径不需要 `panel vendors: any` 行，因为只含 `inherit-parent` 的面板无需检查厂商。选 No 则进入下面的问题。
+1. **Default model.** "Default model: runs <the Default row's roles>." 它会写入 Default 行的所有角色。
+2. **Worker model.** "Worker model: runs <the Worker row's roles>." 它会写入 Worker 行的所有角色。
+3. **Strongest model.** "Strongest model: runs <the Strongest row's roles>." 它会写入 Strongest 行的所有角色。
+4. **Panel model 1 of 3**, then **Panel model 2 of 3**, then **Panel model 3 of 3**, 作为三个独立问题。"Panel model N of 3: panels run one subagent per model, and models from different vendors catch different mistakes." 在第 2 和第 3 个槽位，先列出尚未进入面板的厂商，再列其余厂商，最后是 `inherit-parent`。不要提供已在面板中的模型。
+5. **More panel models.** "Add a 4th panel model?"，第一个选项是 `Done`，第二个是 `Add a 4th`。选择添加会以同样方式再问一个槽位，然后询问是否加第 5 个。到 5 个模型就停止提供。
+6. **Vendor check.** 当面板的模型 ID（不计 `inherit-parent`）全部来自同一厂商，且检测到了多个厂商时，询问 "The panel is single-vendor (Claude), so its cross-checks share blind spots."，选项为 `Pick the panel again` 和 `Keep it anyway`。重选会回到面板模型第 1 个。`Keep it anyway` 会在 `session hook` 行之后写入 `panel vendors: any` 行。只检测到一个厂商时，跳过此问题，写入 `panel vendors: any`，并在步骤 8 说明面板的多样性被削弱。只含 `inherit-parent` 的面板无需检查。
+7. **Overrides.** "Override any individual role?"，第一个选项是 `No, write the sheet (Recommended)`，随后每个层级行一个选项，选项标签带上该行的当前值，例如 `Strongest (<its model ID>)`。选中某一行后会问要改其中哪些角色，然后按[选择单个模型](#choosing-one-model)的方式为该角色问一个模型，并把其当前值放在最前标为 `(current)`。面板角色则改按问题 4 到 6 的方式逐个询问其列表的槽位。每次覆盖之后重新问这个问题，直到答案为 `No, write the sheet`。
+8. **Session hook.** "Keep the session hook that routes tasks to poteto-mode?"，选项为 `On (default)` 和 `Off`。重新运行时，已保存值放在最前并标注 `(current)`。
+9. **Default effort.** "Default reasoning effort for pstack subagents?"，第一个选项是 `session (keep the parent's effort)`，然后是 `low`、`medium`、`high`、`xhigh` 和 `max`。它会写入 `default effort` 行。重新运行时，已保存值放在最前并标注 `(current)`。不要逐角色询问强度；角色值上已保存的 `@<level>` 后缀按原样保留。
 
 问题 4 到 6 得到的面板按槽位顺序写入每个面板角色。重新运行时，每个层级问题的已保存值是它所在行的第一个角色，而面板模型第 N 个的已保存值是第一个面板角色的第 N 个条目。若某角色的已保存值与其问题的已保存值不同，则保留该角色自己的值，问题 6 会显示出来。
 

@@ -1,6 +1,6 @@
 ---
 name: ketchup
-description: catch up on everything in this chat since your last message, with an executive summary for each action item
+description: 补上这个对话自你上一条消息以来的所有内容，并为每个待办事项给出执行摘要
 disable-model-invocation: true
 ---
 

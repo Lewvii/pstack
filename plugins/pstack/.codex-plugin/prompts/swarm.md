@@ -1,6 +1,6 @@
 ---
 name: swarm
-description: fan out N parallel workers across slices or races, then return one aggregated report
+description: 跨切片或竞速并行铺开 N 个 worker，然后返回一份汇总报告
 disable-model-invocation: true
 ---
 

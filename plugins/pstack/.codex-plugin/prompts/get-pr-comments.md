@@ -1,6 +1,6 @@
 ---
 name: get-pr-comments
-description: fetch and summarize review comments from the active PR
+description: 抓取并汇总当前 PR 的审查评论
 disable-model-invocation: true
 ---
 

@@ -1,5 +1,7 @@
 ### Refactoring
 
+Resolve the driver skill through [poteto-mode's Non-negotiables](../SKILL.md#non-negotiables).
+
 通过 [poteto-mode 的 Non-negotiables](../SKILL.md#non-negotiables) 解析出 driver 技能。
 
 **契约由你负责。结构变，行为不变。** 这与 Feature（增加行为）和 Bug fix（纠正行为）不同。

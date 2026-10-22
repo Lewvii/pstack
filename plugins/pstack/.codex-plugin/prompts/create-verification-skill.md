@@ -1,6 +1,6 @@
 ---
 name: create-verification-skill
-description: generate a project-local verification skill and feature map
+description: 生成一个项目本地的验证技能与功能地图
 disable-model-invocation: true
 ---
 

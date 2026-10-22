@@ -1,6 +1,6 @@
 ---
 name: babysit
-description: monitor an open PR, fix CI/comments, keep it merge-ready
+description: 盯住一个进行中的 PR，修 CI/评论，保持 merge-ready
 disable-model-invocation: true
 ---
 

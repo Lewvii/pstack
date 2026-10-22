@@ -1,6 +1,6 @@
 ---
 name: benchmark-checklist
-description: vet a measured speedup or regression (limiter, tuning, errors, repeat runs, end-to-end relevance) before you report or act on it
+description: 在报告或依据某个实测加速/回退之前先做校验（限制因素、调优、误差、重复运行、端到端相关性）
 disable-model-invocation: true
 ---
 

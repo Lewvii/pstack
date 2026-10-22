@@ -1,6 +1,6 @@
 ---
 name: unslop
-description: clean up writing by removing AI tells
+description: 清除 AI 腔调，把文字清理干净
 disable-model-invocation: true
 ---
 

@@ -49,9 +49,9 @@ Claude Code 没有 Cursor 的 `.mdc` 那样自动生效的 "rules" 机制。当 
 
 写入的每个真实 slug 都必须属于检测集合。`inherit-parent` 和 `auto` 始终通过。校验 slug 时去掉任何 `@<level>` 后缀，并对照 [Models](#models) 中的强度级别校验该级别。`default effort` 的值是这些级别之一或 `session`。在 Codex 上，级别改为你的 Codex 模型所接受的 `reasoning_effort` 值。如果选中的真实 slug 或级别不可用，停下来重新询问。
 
-### 6. 写出覆盖表
+### 6. Write the override sheet
 
-按下面的形状写出当前运行时的覆盖表。整份文件覆盖写入，这样重复运行保持幂等。
+写出覆盖表。按下面的形状写出当前运行时的覆盖表。整份文件覆盖写入，这样重复运行保持幂等。
 
 ```markdown
 # pstack model configuration

@@ -46,6 +46,24 @@ poteto-mode 的 Subagents 一节在 Pi 上通过 `agent` 工具生效：
 - 策略的其余部分保持不变。传递文件指针而不是内联上下文，写入的 worker 各自使用独立的 worktree，并亲自评审每个 subagent 的 diff。
 
 @@MODEL_NAMES@@
+
+## Model names
+
+Skills name models by the Claude aliases in their Models sections. On Pi, pass the alias as the `agent` tool's `model`. The pstack extension resolves it in the column of the provider the session's current model comes from, and in the `anthropic` column for any other provider:
+
+| Alias | `anthropic` | `openai` | `openai-codex` |
+| --- | --- | --- | --- |
+| `opus` | `anthropic/claude-opus-5-5` | `openai/gpt-6.1-sol` | `openai-codex/gpt-6.1-sol` |
+| `fable` | `anthropic/claude-fable-5-1` | `openai/gpt-6-astra` | `openai-codex/gpt-6-astra` |
+| `sonnet` | `anthropic/claude-sonnet-5-5` | `openai/gpt-6-sol` | `openai-codex/gpt-6-sol` |
+| `haiku` | `anthropic/claude-haiku-5-5` | `openai/gpt-6-luna` | `openai-codex/gpt-6-luna` |
+
+Pi warns that Anthropic bills Claude used through Pi per token, as extra usage, even on a Claude subscription. Pi shows that warning only in interactive mode, never for the `pi --mode rpc` children the `agent` tool runs.
+
+A `pi models: opus=<provider/id>, sonnet=<provider/id>` line in the Pi override sheet points each alias it names at another Pi model, whatever the session's provider. Add one when the session's provider has no column above and Pi has no credentials for `anthropic`, because each alias then resolves to an `anthropic/*` ID and the `agent` call fails with `No API key found for anthropic`. The `agent` tool also takes a full `provider/id`, passed through unchanged, and `inherit-parent`, `auto`, or no `model` runs the child on the parent's current model. Diverse-model panels (`arena`, `architect`, `interrogate`, `how` critics, `reflect`) stay diverse only while their aliases resolve to distinct models. If one model family is all you can reach, vary the reasoning effort and note in the verdict that diversity was reduced.
+
+`/setup-pstack` writes the configured model list. On Pi, keep the aliases and remap them with `pi models:`.
+
 ## Session routing
 
 pstack Pi 扩展在每次 agent 启动时，把 poteto-mode 指令（即 Claude Code 和 Codex 的 `SessionStart` hook 注入的文本）加入系统提示词，因此该指令在压缩后依然存在。它还会加入 Pi 覆盖配置表，因为 Pi 的上下文文件没有 include 语法。配置表是 Pi agent 目录下的 `pstack-models.md`，该目录在设置了 `$PI_CODING_AGENT_DIR` 时为其值，否则为 `~/.pi/agent`。配置表中的 `session hook: off` 停止注入指令。由 `agent` 工具启动的子 agent 会得到配置表，但得不到指令，这与 Claude Code subagent 能看到 CLAUDE.md 但不运行 `SessionStart` hook 的情况一致。每个会话（包括子 agent 和关闭了 hook 的会话）还会得到指向本文件的指针，以及 Claude Code 中关于在一次响应中发出相互独立的工具调用的那句话。

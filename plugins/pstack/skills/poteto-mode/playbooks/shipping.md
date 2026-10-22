@@ -1,5 +1,7 @@
 ### Shipping
 
+Resolve the driver skill through [poteto-mode's Non-negotiables](../SKILL.md#non-negotiables).
+
 通过 [poteto-mode 的 Non-negotiables](../SKILL.md#non-negotiables) 解析出 driver 技能。
 
 **落地什么由你负责。独立验证每个 PR，只从根节点落地那段连续验证通过的链，然后别再碰这个栈。** 落地需要用户的落地授权，且每次落地都要在开始下一次之前得到确认。

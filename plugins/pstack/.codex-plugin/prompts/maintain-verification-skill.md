@@ -1,6 +1,6 @@
 ---
 name: maintain-verification-skill
-description: re-sync a drifted verification skill and its feature map
+description: 重新同步一个已漂移的验证技能及其功能地图
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: sharpen
-description: aim a task at what you are really after, the way a top expert would, without overspecifying it
+description: 像顶尖专家那样，把任务瞄向你真正想要的东西，同时不过度规定
 disable-model-invocation: true
 ---
 

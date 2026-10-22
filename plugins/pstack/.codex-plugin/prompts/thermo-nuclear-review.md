@@ -1,6 +1,6 @@
 ---
 name: thermo-nuclear-review
-description: audit a branch's changes for bugs, breakage, security issues, devex regressions, and feature-gate leaks
+description: 审计一个分支的改动中的缺陷、破坏、安全问题、开发者体验回退和功能开关泄漏
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: in-your-own-words
-description: play back your goal and the problem before the agent starts
+description: 在 agent 开始之前，把你的目标与问题复述回来
 disable-model-invocation: true
 ---
 

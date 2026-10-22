@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: capture a long task's lessons as a skill edit
+description: 把一次长任务的教训固化为技能修改
 disable-model-invocation: true
 ---
 

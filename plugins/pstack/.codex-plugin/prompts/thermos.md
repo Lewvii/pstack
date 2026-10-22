@@ -1,6 +1,6 @@
 ---
 name: thermos
-description: run both thermo-nuclear reviews as parallel subagents and synthesize their findings
+description: 把两个 thermo-nuclear 审查作为并行 subagent 运行，并综合它们的发现
 disable-model-invocation: true
 ---
 

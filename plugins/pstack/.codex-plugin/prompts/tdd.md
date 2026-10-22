@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: fix a bug by writing the failing test first, then the fix
+description: 先写失败的测试，再修复缺陷
 disable-model-invocation: true
 ---
 

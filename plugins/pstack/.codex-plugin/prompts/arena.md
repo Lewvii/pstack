@@ -1,6 +1,6 @@
 ---
 name: arena
-description: run N parallel attempts at the same task and pick the best parts
+description: 同一任务并行跑 N 次尝试，挑出最好的部分
 disable-model-invocation: true
 ---
 

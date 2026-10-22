@@ -1,6 +1,6 @@
 ---
 name: correct
-description: find the mistakes agents keep repeating in a repo and make each one impossible, enforced at the highest level that works
+description: 找出 agent 在仓库里反复犯的错误，并以可行的最高层级让每一个不可能再犯
 disable-model-invocation: true
 ---
 

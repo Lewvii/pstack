@@ -1,6 +1,6 @@
 ---
 name: how
-description: walk through how a subsystem works
+description: 走查一个子系统如何工作
 disable-model-invocation: true
 ---
 

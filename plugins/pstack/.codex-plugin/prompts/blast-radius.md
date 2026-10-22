@@ -1,6 +1,6 @@
 ---
 name: blast-radius
-description: find what a change could break beyond the diff and prove safety by running code
+description: 找出改动在 diff 之外可能破坏什么，并通过运行代码来证明安全
 disable-model-invocation: true
 ---
 

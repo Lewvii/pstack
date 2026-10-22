@@ -1,6 +1,6 @@
 ---
 name: why
-description: investigate why something was built this way (parallel multi-MCP evidence)
+description: 调查某处为什么这样构建（并行多 MCP 证据）
 disable-model-invocation: true
 ---
 

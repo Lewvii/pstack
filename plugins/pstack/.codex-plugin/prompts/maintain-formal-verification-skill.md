@@ -1,6 +1,6 @@
 ---
 name: maintain-formal-verification-skill
-description: re-sync a formal verification after the code it covers changed
+description: 在所覆盖的代码变化之后，重新同步形式验证
 disable-model-invocation: true
 ---
 

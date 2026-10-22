@@ -1,6 +1,6 @@
 ---
 name: setup-pstack
-description: configure pstack per-role model choices
+description: 配置 pstack 的逐角色模型选择
 disable-model-invocation: true
 ---
 

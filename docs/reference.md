@@ -241,7 +241,7 @@ CI 还会检查 shell 脚本、工作流、Markdown、相对链接，以及自�
 <a id="port-scope-and-attribution"></a>
 ### 移植范围与署名
 
-技能树同步自上游 `7b353f7`（v0.15.27 及之后）。thermos 技能与 agent 同步自 `118e73b`（thermos 1.0.0）。
+技能树 synced against upstream `7b353f7`（v0.15.27 及之后）。thermos 技能与 agent synced against `118e73b`（thermos 1.0.0）。
 
 本仓库把 Lauren Tan 的 pstack 从 Cursor 移植到 Claude Code，并与其他运行时共享技能。它包含六个 cursor-team-kit 技能、三个 thermos 技能及其两个审查 subagent，以及一个独立编写的 `babysit` 技能。移植提供 Claude Code 插件注册与路由、Codex 清单与快捷方式、Codex 工具映射、Pi 包、扩展与工具映射，以及 GitHub Copilot 的 hook 与工具映射。
 
